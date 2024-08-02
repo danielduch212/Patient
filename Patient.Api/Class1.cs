@@ -1,4 +1,4 @@
-﻿namespace Patient.Api
+﻿namespace Patient.API
 {
     public class Class1
     {

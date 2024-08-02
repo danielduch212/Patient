@@ -1,7 +1,18 @@
-﻿@page "/logowanieLekarz"
+﻿@using Patient.Components.PageControlls
 
-<h3>DoctorLoggingPage</h3>
+@layout Layout.Layouts.LoggingLayout
+@page "/logowanieLekarz"
+
+
+
+<Logger OnLoginCallback="HandleLogin" />
+   
+
 
 @code {
 
+    private async Task HandleLogin()
+    {
+        
+    }
 }
