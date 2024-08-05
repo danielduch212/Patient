@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Patient.API", "Patient.Api\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Patient.Infrastructure", "Patient.Infrastructure\Patient.Infrastructure.csproj", "{B396A7F9-361B-441F-8C3D-C59F6A7DB9EC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Patient.Application", "Patient.Application\Patient.Application.csproj", "{C776EA31-0366-4B02-A743-F8B653D75C89}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Patient.Application", "Patient.Application\Patient.Application.csproj", "{C776EA31-0366-4B02-A743-F8B653D75C89}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
