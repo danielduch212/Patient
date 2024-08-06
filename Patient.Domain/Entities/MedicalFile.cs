@@ -1,12 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Patient.Domain.Entities;
 
-namespace Patient.Domain.Entities
+public class MedicalFile
 {
-    internal class MedicalFile
-    {
-    }
+    public int  Id { get; set; } 
+    public string Name { get; set; } = default!;
+    public string? Description { get; set; } 
+    public string? FileName {  get; set; } 
+
+    
+    //
+    public int PatientId { get; set; }
+    public Patient Patient { get; set; } = default!;
+
 }

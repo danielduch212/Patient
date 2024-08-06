@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Identity;
 
-namespace Patient.Domain.Entities
+
+namespace Patient.Domain.Entities;
+
+
+public class Admin : IdentityUser
 {
-    internal class Admin
-    {
-    }
+    public string Name { get; set; } = default!;
+    public string Surname { get; set; } = default!;
+
 }
