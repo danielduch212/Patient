@@ -1,4 +1,4 @@
-﻿namespace Patient.Domain.Entities;
+﻿namespace Patient.Domain.Entities.Additional;
 
 public class Address
 {

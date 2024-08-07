@@ -1,4 +1,6 @@
-﻿namespace Patient.Domain.Entities;
+﻿using Patient.Domain.Entities.Actors;
+namespace Patient.Domain.Entities;
+
 
 public class MedicalFile
 {
@@ -9,7 +11,7 @@ public class MedicalFile
 
     
     //
-    public int PatientId { get; set; }
-    public Patient Patient { get; set; } = default!;
+    public string PatientId { get; set; } = default!;
+    public Patient.Domain.Entities.Actors.Patient Patient { get; set; } = default!;
 
 }

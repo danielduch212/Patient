@@ -1,4 +1,5 @@
 ﻿using Patient.Domain.Constants;
+using Patient.Domain.Entities.Actors;
 
 namespace Patient.Domain.Entities;
 
@@ -13,8 +14,8 @@ public class Report
 
 
     //
-    public int PatientId { get; set; }
-    public Patient Patient { get; set; } = default!;
+    public string PatientId { get; set; } = default!;
+    public Patient.Domain.Entities.Actors.Patient Patient { get; set; } = default!;
     public IEnumerable<Doctor>? DoctorsWhoChecked { get; set; } = new List<Doctor>();
 
 

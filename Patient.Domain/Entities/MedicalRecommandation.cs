@@ -1,4 +1,6 @@
-﻿namespace Patient.Domain.Entities;
+﻿using Patient.Domain.Entities.Actors;
+
+namespace Patient.Domain.Entities;
 
 public class MedicalRecommandation
 {
@@ -9,8 +11,8 @@ public class MedicalRecommandation
     
 
     //
-    public int PatientId { get; set; }
-    public Patient Patient { get; set; } = default!;
-    public int DoctorId { get; set; }
+    public string PatientId { get; set; } = default!;
+    public Patient.Domain.Entities.Actors.Patient Patient { get; set; } = default!;
+    public string DoctorId { get; set; } = default!;
     public Doctor Doctor { get; set; } = default!;
 }
