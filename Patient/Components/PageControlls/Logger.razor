@@ -1,4 +1,6 @@
-﻿
+﻿@rendermode InteractiveServer
+
+
 <div class="login-container" >
     <div class="login-box">
         <h2> Logowanie </h2>
@@ -10,7 +12,8 @@
             <label for="password"> Haslo </label>
             <input type="password" id="password" @bind="password"/>
         </div>
-        <button @onclick="OnLogin">Zaloguj</button>
+        <button @onclick="OnLogin"> Zaloguj </button>
+        
     </div>
 </div>
 
@@ -25,6 +28,7 @@
 
     private async Task OnLogin()
     {
+        
         if (OnLoginCallback.HasDelegate)
         {
             await OnLoginCallback.InvokeAsync((username, password));

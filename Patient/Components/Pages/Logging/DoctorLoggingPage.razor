@@ -1,4 +1,8 @@
 ﻿@using Patient.Components.PageControlls
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+
 
 @layout Layout.LoggingLayout
 @page "/logowanieLekarz"
@@ -13,6 +17,6 @@
 
     private async Task HandleLogin()
     {
-        
+        Navigation.NavigateTo("/lekarz");
     }
 }

@@ -52,11 +52,11 @@
 }
 
     .nav-item:first-of-type {
-        padding-top: 1rem;
+        padding-left: 1rem;
     }
 
     .nav-item:last-of-type {
-        padding-bottom: 1rem;
+        padding-right: 1rem;
     }
 
     .nav-item ::deep .nav-link {
@@ -68,7 +68,7 @@
         display: flex;
         align-items: center;
         line-height: 3rem;
-        width: 100%;
+        width: 20rem;
     }
 
 .nav-item ::deep a.active {

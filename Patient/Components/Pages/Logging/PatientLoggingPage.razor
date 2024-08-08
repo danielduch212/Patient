@@ -1,4 +1,9 @@
 ﻿@using Patient.Components.PageControlls
+@using Microsoft.AspNetCore.Components;
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+
 
 @layout Layout.LoggingLayout
 @page "/logowaniePacjent"
@@ -8,9 +13,9 @@
 
 
 @code {
-    
+
     private async Task HandleLogin()
     {
-
+        Navigation.NavigateTo("/pacjent");
     }
 }
