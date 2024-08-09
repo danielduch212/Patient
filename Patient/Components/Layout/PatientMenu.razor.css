@@ -66,7 +66,7 @@
         border-radius: 4px;
         height: 3rem;
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         line-height: 3rem;
         width: 20rem;
     }
@@ -83,23 +83,36 @@
 
 .nav-scrollable {
     display: none;
+    flex-direction: row;    
 }
 
 .navbar-toggler:checked ~ .nav-scrollable {
     display: block;
 }
 
+/*tutaj moje*/
+.navbar-row {
+    display:none;
+    
+}
+
+.flex-row{
+    display:flex;
+    flex-direction: row;
+}
+
+
 @media (min-width: 641px) {
     .navbar-toggler {
         display: none;
     }
 
-    .nav-scrollable {
+    .nav-row {
         /* Never collapse the sidebar for wide screens */
         display: block;
-
         /* Allow sidebar to scroll for tall menus */
-        height: calc(100vh - 3.5rem);
+        width: 100vw;
+        
         overflow-y: auto;
     }
 }

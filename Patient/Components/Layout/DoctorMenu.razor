@@ -1,19 +1,32 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="/lekarz">UserMenu</a>
-    </div>
-</div>
-
-<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
-
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/lekarz" >
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Strona Główna
+﻿
+<div class="container-fluid" onclick="document.querySelector('.navbar-toggler').click()">
+    <nav class="flex-row">
+        <div class="nav-item">
+            <NavLink class="nav-link" href="/lekarz">
+                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Panel Główny
             </NavLink>
         </div>
-               
+        <div class="nav-item">
+            <NavLink class="nav-link" href="/lekarz/raport">
+                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Raporty
+            </NavLink>
+        </div>       
+        <div class="nav-item">
+            <NavLink class="nav-link" href="/lekarz/recepty">
+                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Recepty
+            </NavLink>
+        </div>
+        <div class="nav-item">
+            <NavLink class="nav-link" href="/lekarz/wizyty">
+                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Umow wizyte
+            </NavLink>
+        </div>
+        <div class="nav-item">
+            <NavLink class="nav-link" href="/lekarz/zdrowie">
+                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Zdrowie
+            </NavLink>
+        </div>
+
     </nav>
 </div>
 

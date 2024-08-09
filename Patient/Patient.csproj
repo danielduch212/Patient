@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Components\Pages\PatientPages\Reports.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Components\Pages\Admin\" />
   </ItemGroup>
 
@@ -20,5 +24,17 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <UpToDateCheckInput Remove="Components\Pages\PatientPages\Reports.razor" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <_ContentIncludedByDefault Remove="Components\Pages\PatientPages\Reports.razor" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="Components\Pages\PatientPages\Reports.razor" />
 	</ItemGroup>
 </Project>
