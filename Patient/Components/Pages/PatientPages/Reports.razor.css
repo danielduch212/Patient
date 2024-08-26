@@ -1,0 +1,20 @@
+﻿
+
+.page-background {
+    background-image: linear-gradient(45deg, rgb(0,123,255,0.5) 0%, rgb(144, 238, 144,0.5)80%);
+}
+
+.container{
+    background-color: white;
+    
+}
+
+.d-flex-column{
+    flex-direction: column;
+}
+
+.widget-list {
+    border: solid 1px black;
+    border-radius: 5%;
+    width: 100%;
+}

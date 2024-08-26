@@ -1,0 +1,30 @@
+﻿.bi-arrow-left {
+    background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22currentColor%22%20class%3D%22bi%20bi-arrow-left%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20d%3D%22M15%208a.5.5%200%200%200-.5-.5H2.707l3.147-3.146a.5.5%200%201%200-.708-.708l-4%204a.5.5%200%200%200%200%20.708l4%204a.5.5%200%200%200%20.708-.708L2.707%208.5H14.5A.5.5%200%200%200%2015%208%22%2F%3E%3C%2Fsvg%3E");
+    border: 1px solid black;
+    border-radius: 50%;
+}
+
+.back-icon {
+    display: inline-block;
+    position: relative;
+    width: 2.5rem;
+    height: 2.5rem;
+    top: -1px;
+    background-size: cover;
+}
+
+.page-background {
+    background-image: linear-gradient(45deg, rgb(0,123,255,0.5) 0%, rgb(144, 238, 144,0.5)80%);
+}
+
+.container {
+    background-color: white;
+}
+
+.d-flex-column {
+    flex-direction: column;
+}
+
+.width-100{
+    width: 100%;
+}
