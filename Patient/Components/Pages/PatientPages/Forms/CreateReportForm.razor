@@ -1,4 +1,5 @@
 ﻿@layout Patient.Components.Layout.UserLayout
+@rendermode InteractiveServer
 
 
 @page "/pacjent/dodaj-raport"
@@ -46,14 +47,35 @@
 
                     <h3>Pliki</h3>
 
-                </div>
-                <div class="col-8 d-flex">
+                </div>  
+                <div class="col-8 d-flex d-flex-column">
                     <div>
 
-                        <InputFile OnChange="HandleFileSelected" id="File" @bind-Value="report.Files" class="form-control"></InputFile>
+                        <InputFile OnChange="HandleFileSelected" multiple id="File" class="form-control"></InputFile>
 
                     </div>
-                    
+                    @if (filesPreview.Count > 0)
+                    {
+                        <div class="d-flex d-flex-row pt-5">
+
+                            @foreach (var file in filesPreview)
+                            {
+                                <div>
+                                    <div class="file-block mx-2">
+                                        <div @onclick="() => HandleEraseFile(file)" class="bi-x-circle"></div>
+                                        <div class="bi-file-icon"></div>
+                                        <p class="font-10px text-center">@file.Name</p>
+                                    </div>
+
+                                </div>
+                                
+
+                            }
+
+                        </div>
+
+                        
+                    }
                 </div>
 
             </div>
@@ -66,9 +88,55 @@
 @code {
 
     private ReportDto report = new();
+    private List<Stream> files = new();
+    private List<string> filePreviewUrls = new List<string>();
+    private List<IBrowserFile> filesPreview = new ();
 
-    private void HandleFileSelected()
+    private string filePreviewUrl;
+    private int maxAllowedSize = 10 * 1024 * 1024;
+
+    private async void HandleFileSelected(InputFileChangeEventArgs e)
     {
-        
+        var currentGivenFiles = e.GetMultipleFiles();
+        files = report.Files.ToList();
+
+        if (currentGivenFiles.Count > 0)
+        {
+            foreach(var file in currentGivenFiles)
+            {
+
+                filesPreview.Add(file);
+
+            }
+
+        }
+    }
+
+    private async void HandleEraseFile(IBrowserFile file)
+    {
+        filesPreview.Remove(file);
+    }
+
+    private async void MakeFileStreams()
+    {
+        files.Clear();
+
+        foreach (var file in filesPreview)
+        {
+            using (var stream = file.OpenReadStream(maxAllowedSize))
+            {
+
+                //var buffer = new byte[file.Size];
+                //await stream.ReadAsync(buffer);
+                //filePreviewUrl = $"data:image/{file.ContentType.Split('/')[1]};base64,{Convert.ToBase64String(buffer)}";
+                //filePreviewUrls.Add(filePreviewUrl);
+                files.Add(stream);
+
+            }
+
+
+        }
+        report.Files = files;
+        //albo odpalac to za kazdym usunieciem - albo po prostu na koncu gdy zdjecia sa juz zaladowane to odpalic te streamy ;)
     }
 }
