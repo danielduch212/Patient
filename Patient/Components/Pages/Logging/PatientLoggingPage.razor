@@ -1,5 +1,6 @@
 ﻿@using Patient.Components.PageControlls
 @using Microsoft.AspNetCore.Components;
+@using Patient.Domain.Entities.Actors
 @inject NavigationManager Navigation
 @rendermode InteractiveServer
 
@@ -14,8 +15,15 @@
 
 @code {
 
-    private async Task HandleLogin()
+    [Inject] SignInManager<User> signInManager { get; set; }
+
+    private async Task HandleLogin((string email, string password)loginData)
     {
-        Navigation.NavigateTo("/pacjent");
+        var result = await signInManager.PasswordSignInAsync(loginData.email, loginData.password, isPersistent: false, lockoutOnFailure: true);
+
+        if(result.Succeeded){
+            Navigation.NavigateTo("/pacjent");
+
+        }
     }
 }

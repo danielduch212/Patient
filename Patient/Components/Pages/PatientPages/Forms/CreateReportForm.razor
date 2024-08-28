@@ -12,7 +12,10 @@
     <div class="container px-4">
         <div class="row pt-5">
             <div class="col justify-content-start align-content-start">
-                <btn type="button" class="back-icon bi-arrow-left"></btn>
+                <NavLink href="/pacjent/raporty">
+                    <btn type="button" class="back-icon bi-arrow-left"></btn>
+                </NavLink>
+                
             </div>
             <div class="col">
                 <h2 class="text-center">Dodaj raport</h2>
@@ -32,10 +35,10 @@
                     <h3>Opis</h3>
 
                 </div>
-                <div class="col-8 d-flex">
+                <div class="col-8 d-flex d-flex-column">
                     <div>
 
-                        <InputTextArea id="description" @bind-Value="report.Description" class="form-control width-100"></InputTextArea>
+                        <InputTextArea id="description" style="width: 100%; height: 400px; resize: none;" @bind-Value="report.Description" class="form-control"></InputTextArea>
 
                     </div>
                     
@@ -79,6 +82,21 @@
                 </div>
 
             </div>
+            <div class="row pt-5">
+                <div class="d-flex d-flex-column justify-content-center align-items-center" >
+                    <btn type="button" id="BtnAddReport" @onclick="HandleAddReport" style="width: 200px;" class="btn btn-primary">Dodaj raport</btn>
+                </div>
+            </div>
+            <div class="d-flex d-flex-column align-items-center justify-content-center pt-3">
+                @if (IsReportBeingAdded == true)
+                {
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+
+                    </div>
+
+                }
+            </div>
         </EditForm>
         
     </div>
@@ -94,6 +112,8 @@
 
     private string filePreviewUrl;
     private int maxAllowedSize = 10 * 1024 * 1024;
+
+    private bool IsReportBeingAdded = false;
 
     private async void HandleFileSelected(InputFileChangeEventArgs e)
     {
@@ -138,5 +158,13 @@
         }
         report.Files = files;
         //albo odpalac to za kazdym usunieciem - albo po prostu na koncu gdy zdjecia sa juz zaladowane to odpalic te streamy ;)
+    }
+
+    private async void HandleAddReport()
+    {
+        IsReportBeingAdded = true;
+        //
+        MakeFileStreams();
+
     }
 }

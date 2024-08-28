@@ -1,11 +1,12 @@
 using Patient.Components;
+using Patient.Extensions;
 using Patient.Infrastructure.Extensions;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
+
+builder.AddPresentation();
 builder.Services.AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();
@@ -23,5 +24,8 @@ app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
+
+app.UseAuthorization();
+
 
 app.Run();

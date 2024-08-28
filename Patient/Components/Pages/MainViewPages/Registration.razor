@@ -1,0 +1,28 @@
+﻿@using Patient.Components.PageControlls
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+@layout Layout.LoggingLayout
+@page "/rejestracja"
+
+<div class="container">
+    <div class="row">
+        <div class="col-6 d-flex align-items-center">
+            <NavLink href="/rejestracjaPacjent">
+                <btn type="button" class="btn btn-primary"> Pacjent</btn>
+            </NavLink>
+            
+        </div>
+        <div class="col-6 d-flex align-items-center">
+            <NavLink href="/rejestracjaLekarz">
+                <btn type="button" class="btn btn-primary"> Lekarz</btn>
+            </NavLink>
+            
+        </div>
+    </div>
+
+</div>
+
+@code {
+
+}
