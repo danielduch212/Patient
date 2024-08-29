@@ -1,0 +1,29 @@
+﻿@using Patient.Api.Components.PageControlls
+@using Microsoft.AspNetCore.Components;
+@using Patient.Domain.Entities.Actors
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+
+
+@layout Layout.LoggingLayout
+@page "/logowaniePacjent"
+
+
+@* <Logger OnLoginCallback="HandleLogin" /> *@
+
+
+@code {
+
+    // [Inject] SignInManager<User> signInManager { get; set; }
+
+    // private async Task HandleLogin((string email, string password)loginData)
+    // {
+    //     var result = await signInManager.PasswordSignInAsync(loginData.email, loginData.password, isPersistent: false, lockoutOnFailure: true);
+
+    //     if(result.Succeeded){
+    //         Navigation.NavigateTo("/pacjent");
+
+    //     }
+    // }
+}

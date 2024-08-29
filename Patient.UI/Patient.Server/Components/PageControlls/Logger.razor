@@ -1,0 +1,40 @@
+﻿@rendermode InteractiveServer
+
+
+<div class="container" >
+    <div class="d-flex justify-content-center align-items-center">
+        <div class="login-box" style="position:relative; top: 8rem;" >
+            <h2> Logowanie </h2>
+            <div>
+                <label for="username"> Uzytkownik </label>
+                <input type="text" id="username" @bind="username" />
+            </div>
+            <div>
+                <label for="password"> Haslo </label>
+                <input type="password" id="password" @bind="password" />
+            </div>
+            <button @onclick="OnLogin"> Zaloguj </button>
+        </div>
+        
+        
+    </div>
+</div>
+
+
+
+@code {
+    private string username { get; set; }
+    private string password { get; set; }
+
+    [Parameter]
+    public EventCallback<(string Username, string Password)> OnLoginCallback { get; set; }
+
+    private async Task OnLogin()
+    {
+        
+        if (OnLoginCallback.HasDelegate)
+        {
+            await OnLoginCallback.InvokeAsync((username, password));
+        }
+    }
+}

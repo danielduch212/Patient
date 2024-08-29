@@ -1,0 +1,48 @@
+﻿@layout Patient.Client.Components.Layout.UserLayout
+
+@page "/pacjent/raporty"
+
+
+
+<div class="page-background">
+
+    <div class="container px-4">
+        <header class="text-center">
+            <span>
+                Niesprawdzone raporty:
+            </span>
+            <span>
+                Nowe wiadomosci:
+            </span>
+
+        </header>
+        <div class="row pt-5">
+            <div class="col d-flex justify-content-center align-items-center">
+                <NavLink class="nav-link" href="/pacjent/dodaj-raport">
+                    <btn type="button" href="/pacjent/dodaj-raport" class="btn btn-primary">Zloz raport tutaj</btn>
+                </NavLink>
+                
+
+            </div>
+            <div class="col-4 d-flex d-flex-column justify-content-center align-items-center">
+                <div class="text-center">
+                    Twoje raporty
+                </div>
+                <div class="widget-list align-items-center text-center">
+                    <ul>
+                        <li>content1</li>
+                        <li>content1</li>
+                        <li>content1</li>
+                        <li>content1</li>
+                    </ul>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@code {
+
+}
