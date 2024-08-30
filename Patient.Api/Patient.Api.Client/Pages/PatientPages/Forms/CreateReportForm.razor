@@ -1,10 +1,9 @@
-﻿@layout Patient.Api.Components.Layout.UserLayout
+﻿@layout Patient.Api.Client.Layout.UserLayout
 @rendermode InteractiveServer
 
 
 @page "/pacjent/dodaj-raport"
-@using Patient.Domain.Entities
-@using Patient.Domain.Entities.DTOs
+@using Patient.Api.Client.AdditionalClasses
 
 
 <div class="page-background">
@@ -105,7 +104,7 @@
 
 @code {
 
-    private ReportDto report = new();
+    private ReportDtoFront report = new();
     private List<Stream> files = new();
     private List<string> filePreviewUrls = new List<string>();
     private List<IBrowserFile> filesPreview = new ();

@@ -1,0 +1,43 @@
+﻿@using Microsoft.AspNetCore.Components;
+@inject NavigationManager Navigation
+@rendermode InteractiveWebAssembly
+
+
+
+@layout Layout.LoggingLayout
+@page "/logowaniePacjent"
+
+<div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="card shadow-sm" style="width: 100%; max-width: 400px;">
+        <div class="card-body">
+            <h2 class="card-title text-center mb-4">Logowanie</h2>
+            <form>
+                <div class="mb-3">
+                    <label for="username" class="form-label">Użytkownik</label>
+                    <input type="text" id="username" @bind="username" class="form-control" />
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Hasło</label>
+                    <input type="password" id="password" @bind="password" class="form-control" />
+                </div>
+                <button type="button" @onclick="OnLogin" class="btn btn-primary w-100">Zaloguj</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+@code {
+    private string username { get; set; }
+    private string password { get; set; }
+
+    //[Parameter]
+    //public EventCallback<(string Username, string Password)> OnLoginCallback { get; set; }
+
+    private async Task OnLogin()
+    {
+        Navigation.NavigateTo("/pacjent");
+
+    }
+}
