@@ -30,10 +30,12 @@ public static class ServiceCollectionExtensions
          .AddEntityFrameworkStores<PatientDbContext>()
          .AddDefaultTokenProviders();
 
-        
-        
+        services.AddScoped<UserManager<Patient.Domain.Entities.Actors.Patient>>();
+        services.AddScoped<IUserStore<Patient.Domain.Entities.Actors.Patient>, UserStore<Patient.Domain.Entities.Actors.Patient, IdentityRole, PatientDbContext, string>>();
+        services.AddScoped<SignInManager<Patient.Domain.Entities.Actors.Patient>>();
 
-        
+        services.AddScoped<IPasswordHasher<Patient.Domain.Entities.Actors.Patient>, PasswordHasher<Patient.Domain.Entities.Actors.Patient>>();
+
 
         services.AddScoped<IReportRepository, ReportRepository>();
         

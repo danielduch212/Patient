@@ -9,10 +9,16 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Patient.Application\Patient.Application.csproj" />
     <ProjectReference Include="..\..\Patient.Infrastructure\Patient.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Shared\Shared.csproj" />
     <ProjectReference Include="..\Patient.Api.Client\Patient.Api.Client.csproj" />
     <PackageReference Include="MediatR" Version="12.4.0" />
     <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.7" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Serilog" Version="4.0.1" />
   </ItemGroup>
 
   <ItemGroup>

@@ -22,9 +22,23 @@ internal class PatientDbContext(DbContextOptions<PatientDbContext> options) : Id
     {
         base.OnModelCreating(modelBuilder);
 
-        //User
-        modelBuilder.Entity<User>()
-            .OwnsOne(u => u.Address);
+        //modelBuilder.Entity<User>()
+        //  .OwnsOne(u => u.Address);
+
+        
+        modelBuilder.Entity<Admin>()
+            .ToTable("Admins")
+            .OwnsOne(a => a.Address);
+
+
+
+        modelBuilder.Entity<Domain.Entities.Actors.Patient>()
+        .ToTable("Patients")
+        .OwnsOne(p => p.Address);
+
+        modelBuilder.Entity<Doctor>()
+        .ToTable("Doctors")
+        .OwnsOne(d => d.Address);
 
         //patient
         modelBuilder.Entity<Domain.Entities.Actors.Patient>()

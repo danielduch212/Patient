@@ -1,13 +1,15 @@
 ﻿@using System.Diagnostics
 @using System.Timers
+@using Patient.Api.Client.AdditionalClasses
+@using Shared.Identity
 
 @inject NavigationManager Navigation
+@inject Patient.Api.Client.Services.UserApiService userApiService 
+@* @rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false)) *@
 @rendermode InteractiveWebAssembly
 
 @layout Layout.LoggingLayout
 @page "/rejestracjapacjent"
-
-
 
 <div class="container">
     <div class="row justify-content-center pt-5">
@@ -18,109 +20,103 @@
                     <form>
                         <div class="form-group">
                             <label for="name">Imię</label>
-                            <input type="text" class="form-control" id="name" placeholder="Wprowadź imię" required @bind="name">
+                            <input type="text" class="form-control" id="name" placeholder="Wprowadź imię" required @bind="registerData.Name">
                         </div>
                         <div class="form-group">
                             <label for="surname">Nazwisko</label>
-                            <input type="text" class="form-control" id="surname" placeholder="Wprowadź nazwisko" required @bind="surname">
+                            <input type="text" class="form-control" id="surname" placeholder="Wprowadź nazwisko" required @bind="registerData.Surname">
                         </div>
                         <div class="form-group">
                             <label for="pesel">Pesel</label>
-                            <input type="number" class="form-control" id="pesel" placeholder="Wprowadź numer pesel" required @bind="pesel">
+                            <input type="number" class="form-control" id="pesel" placeholder="Wprowadź numer pesel" required @bind="registerData.Pesel">
                         </div>
                         <div class="form-group">
                             <label for="email">Adres e-mail</label>
-                            <input type="email" class="form-control" id="email" placeholder="Wprowadź adres e-mail" required @bind="email">
+                            <input type="email" class="form-control" id="email" placeholder="Wprowadź adres e-mail" required @bind="registerData.Email">
                         </div>
                         <div class="form-group">
                             <label for="password">Hasło</label>
-                            <input type="password" class="form-control" id="password" placeholder="Wprowadź hasło" required @bind="password">
+                            <input type="password" class="form-control" id="password" placeholder="Wprowadź hasło" required @bind="registerData.Password">
                         </div>
                         <div class="form-group">
                             <label for="confirmPassword">Potwierdź hasło</label>
                             <input type="password" class="form-control" id="confirmPassword" placeholder="Potwierdź hasło" required @bind="confirmPassword">
                         </div>
-                        @* <div class="text-center">
-                            <button  @onclick="OnRegister" type="submit" class="btn btn-primary mt-4">Zarejestruj się</button>
-                        </div> *@
-                        
+                        <div class="text-center">
+                            <button @onclick="OnRegister" type="submit" class="btn btn-primary mt-4">Zarejestruj się</button>
+                        </div>
+
                     </form>
                 </div>
+
+            </div>
+            @if (successfullRegistration == false && isRequestSent==true)
+            {
+                <div class="alert alert-info" role="alert">
+                    Nieprawidlowa rejestracja
+                    @foreach (var error in registrationResult.Errors)
+                    {
+                        <div class="alert alert-info">
+                            @error
+                        </div>
+                    }
                 
             </div>
-            @* @if (registrationResult.Length>0 && successfullRegistration!=true){
-                <div class="alert alert-info" role="alert">
-                    @registrationResult
-                </div>
             }
-            @if (successfullRegistration == true)
+            @if (successfullRegistration == true && isRequestSent==true)
             {
-                <div class="alert alert-success" role="alert">
-                    Rejestracja przebiegla pomyslnie!
-                </div>
+            <div class="alert alert-success" role="alert">
+            Rejestracja przebiegla pomyslnie!
+            </div>
 
-            } *@
-            
+            }
+
         </div>
     </div>
 </div>
 
+    
+
+
+
+
+
 
 @code {
-    private string email { get; set; }
-    private string name { get; set; }
-    private string surname { get; set; }
-    private string pesel { get; set; }
-    private string password { get; set; }
-    private string confirmPassword { get; set; }
+    private Shared.Identity.RegisterUserData registerData = new Shared.Identity.RegisterUserData();
+    private string confirmPassword;
+    private IdentityOperationResult registrationResult = new IdentityOperationResult();
+    private bool successfullRegistration;
+    private bool isRequestSent;
 
-    // [Inject] private UserManager<Patient.Domain.Entities.Actors.User> userManager { get; set; }
-
-    // private bool successfullRegistration = false;
-
-    // System.Timers.Timer aTimer;
-
-    // private string registrationResult="";
-
-    // private async Task OnRegister()
+    // protected override async Task OnInitializedAsync()
     // {
-    //     if (password != confirmPassword)
-    //     {
-    //         return;
-    //     }
+    //     await Task.Delay(500);
+    //     isInitialized = true;
+    // }
 
-    //     var patient = new Patient.Domain.Entities.Actors.Patient
-    //     {
-    //         Email = email,
-    //         Name = name,
-    //         Surname = surname,
-    //         Pesel = pesel,
 
-    //     };
-    //     var result = await userManager.CreateAsync(patient, password);
-
-    //     //
-    //     if (result!=IdentityResult.Success)
-    //     {
+    private async Task OnRegister()
+    {
+        if (registerData.Password   != confirmPassword)
+        {
+            return;
+        }
+        registrationResult = await userApiService.SendRegisterRequest(registerData);
+        isRequestSent = true;
+        if (registrationResult.IsSuccess == true)
+        {
             
-    //         foreach (var error in result.Errors)
-    //         {
-    //             registrationResult += error.ToString();
-    //         }
-    //     }
-    //     else 
-    //     {
-    //         successfullRegistration = true;
-    //         aTimer = new System.Timers.Timer(5000);
-    //         aTimer.Elapsed += TimerElapsed;
-    //         aTimer.AutoReset = true;
-    //         aTimer.Enabled = true;
-    //     }
+            successfullRegistration =true;
+            StateHasChanged();
+        }
+        else
+        {
+            successfullRegistration = false;
+            StateHasChanged();
+        }
 
-    // }
+    }
 
-    // private async void TimerElapsed(Object source, ElapsedEventArgs e)
-    // {
-    //     Navigation.NavigateTo("/logowaniePacjent");
-    // }
+    
 }
