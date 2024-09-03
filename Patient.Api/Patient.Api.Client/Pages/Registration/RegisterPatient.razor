@@ -43,8 +43,15 @@
                             <input type="password" class="form-control" id="confirmPassword" placeholder="Potwierdź hasło" required @bind="confirmPassword">
                         </div>
                         <div class="text-center">
-                            <button @onclick="OnRegister" type="submit" class="btn btn-primary mt-4">Zarejestruj się</button>
+                            <button @onclick="OnRegister" type="button" class="btn btn-primary mt-4">Zarejestruj się</button>
                         </div>
+                        @if (waitingForResult != false)
+                        {
+                            <div class="spinner-border" role="status">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                        }
+                        
 
                     </form>
                 </div>
@@ -88,13 +95,7 @@
     private IdentityOperationResult registrationResult = new IdentityOperationResult();
     private bool successfullRegistration;
     private bool isRequestSent;
-
-    // protected override async Task OnInitializedAsync()
-    // {
-    //     await Task.Delay(500);
-    //     isInitialized = true;
-    // }
-
+    private bool waitingForResult;
 
     private async Task OnRegister()
     {
@@ -102,16 +103,18 @@
         {
             return;
         }
+        waitingForResult = true;
         registrationResult = await userApiService.SendRegisterRequest(registerData);
         isRequestSent = true;
         if (registrationResult.IsSuccess == true)
         {
-            
+            waitingForResult = false;
             successfullRegistration =true;
             StateHasChanged();
         }
         else
         {
+            waitingForResult = false;
             successfullRegistration = false;
             StateHasChanged();
         }

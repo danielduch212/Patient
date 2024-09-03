@@ -1,9 +1,10 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Shared.Identity;
 
 namespace Patient.Application.Users.Commands.Patients.Register;
 
-public class RegisterPatientCommand() : IRequest<IdentityResult>
+public class RegisterPatientCommand() : IRequest<IdentityOperationResult>
 {
     public string Email { get; set; } = default!;
     public string Name { get; set; } = default!;

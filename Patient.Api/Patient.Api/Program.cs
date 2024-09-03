@@ -6,6 +6,8 @@ using Patient.Application.Extensions;
 using Patient.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Patient.Api.Middlewares;
+using Patient.Api.Extensions;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,7 +18,9 @@ builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
 
 builder.Services.AddInfrastructure(builder.Configuration);
+builder.AddServerApi();
 builder.Services.AddApplication();
+
 
 
 builder.Services.AddScoped(sp => new HttpClient
@@ -31,7 +35,11 @@ builder.Services.AddScoped<UserApiService>();
 
 builder.Services.AddControllers();
 
+
+
 var app = builder.Build();
+
+app.UseMiddleware<ErrorHandlingMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

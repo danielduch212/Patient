@@ -1,11 +1,20 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace Patient.Server.Middlewares;
+namespace Patient.Api.Middlewares;
 
 public class ErrorHandlingMiddleware(ILogger<ErrorHandlingMiddleware> logger) : IMiddleware
 {
-    public Task InvokeAsync(HttpContext context, RequestDelegate next)
+    public async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
-        throw new NotImplementedException();
+        try
+        {
+            await next.Invoke(context);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, ex.Message);
+            context.Response.StatusCode = 500;
+            await context.Response.WriteAsync("Something went wrong");
+        }
     }
 }

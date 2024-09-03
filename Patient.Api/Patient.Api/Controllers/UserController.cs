@@ -17,13 +17,19 @@ public class UserController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> RegisterUser([FromBody] RegisterPatientCommand command)
     {
         var result = await mediator.Send(command);
-        IdentityOperationResult _operationResult = new IdentityOperationResult();
+        
         if (result!=null)
-        {            
-            _operationResult.IsSuccess = result.Succeeded;
-            _operationResult.Errors = result.Errors.Select(e => e.Description.ToString()).ToList();
+        {
+            if (result.IsSuccess)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+
         }
-        return Ok(_operationResult);
+        return BadRequest(result);
+
+
     }
     [HttpPost("login")]
     public async Task<IActionResult> LoginUser([FromBody] LoginPatientCommand command)
