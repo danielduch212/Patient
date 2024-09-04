@@ -1,11 +1,10 @@
-﻿@using Microsoft.AspNetCore.Components;
-@inject NavigationManager Navigation
-@rendermode InteractiveWebAssembly
+﻿@inject NavigationManager Navigation
+@rendermode InteractiveServer
 
 
 
 @layout Layout.LoggingLayout
-@page "/logowaniePacjent"
+@page "/logowanieLekarz"
 
 <div class="container d-flex justify-content-center align-items-center vh-100">
     <div class="card shadow-sm" style="width: 100%; max-width: 400px;">
@@ -32,12 +31,10 @@
     private string username { get; set; }
     private string password { get; set; }
 
-    //[Parameter]
-    //public EventCallback<(string Username, string Password)> OnLoginCallback { get; set; }
 
     private async Task OnLogin()
     {
-        Navigation.NavigateTo("/pacjent");
 
+       
     }
 }

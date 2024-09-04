@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Patient.Api.Middlewares;
 using Patient.Api.Extensions;
+using Serilog;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,6 +29,8 @@ builder.Services.AddScoped(sp => new HttpClient
     BaseAddress = new Uri(builder.Configuration.GetSection("BaseUri").Value)
 });
 
+
+
 builder.Services.AddScoped<UserApiService>();
 
 
@@ -40,6 +43,7 @@ builder.Services.AddControllers();
 var app = builder.Build();
 
 app.UseMiddleware<ErrorHandlingMiddleware>();
+app.UseSerilogRequestLogging();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

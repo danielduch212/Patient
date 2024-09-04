@@ -12,7 +12,6 @@ builder.Services.AddScoped<UserApiService>();
 
 
 
-
 await builder.Build().RunAsync();
 
 

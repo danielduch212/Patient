@@ -1,9 +1,33 @@
 ﻿@layout Layout.UserLayout
+@inject Microsoft.JSInterop.IJSRuntime _jsRuntime
+@inject NavigationManager NavigationManager
+
+@rendermode InteractiveWebAssembly
+
 @page "/pacjent"
 
 <h3> Panel Pacjenta </h3>
 
 
-@code {
 
+@code {
+    public string Token { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+
+
+
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            Token = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", "authToken");
+            
+        }
+    }
 }

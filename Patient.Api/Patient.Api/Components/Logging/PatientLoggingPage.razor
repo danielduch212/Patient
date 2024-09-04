@@ -1,0 +1,64 @@
+﻿@using Microsoft.AspNetCore.Components;
+@using Patient.Api.Client;
+@using Patient.Domain.Entities.Additional;
+@inject NavigationManager Navigation
+@inject HttpClient _httpClient
+@inject Microsoft.JSInterop.IJSRuntime _jsRuntime
+@rendermode InteractiveServer
+
+
+
+@layout Layout.LoggingLayout
+@page "/logowaniePacjent"
+
+<div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="card shadow-sm" style="width: 100%; max-width: 400px;">
+        <div class="card-body">
+            <h2 class="card-title text-center mb-4">Logowanie</h2>
+            <form>
+                <div class="mb-3">
+                    <label for="username" class="form-label">Użytkownik</label>
+                    <input type="text" id="username" @bind="logginData.Email" class="form-control" />
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Hasło</label>
+                    <input type="password" id="password" @bind="logginData.Password" class="form-control" />
+                </div>
+                <button type="button" @onclick="OnLogin" class="btn btn-primary w-100">Zaloguj</button>
+                @if (badRequest == true)
+                {
+                    <div class="alert alert-info" role="alert">
+                        Nieprawidlowy email lub haslo
+                    </div>
+                }
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+@code {
+    private string SecurityToken { get; set; }
+    private bool badRequest;
+    private UserLogginData logginData = new();
+
+
+    private async Task OnLogin()
+    {
+        var response = await _httpClient.PostAsJsonAsync("/api/Users/loginPatient", logginData);
+        if(response.IsSuccessStatusCode)
+        {
+            SecurityToken = await response.Content.ReadAsStringAsync();
+            await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "authToken", SecurityToken);
+            Navigation.NavigateTo("/pacjent");
+        }
+        else
+        {
+            badRequest = true;
+        }
+
+        
+        
+    }
+}

@@ -9,7 +9,7 @@ using Shared.Identity;
 namespace Patient.Application.Users.Commands.Patients.Register;
 
 internal class RegisterPatientCommandHandler(UserManager<Patient.Domain.Entities.Actors.Patient> userManager, ILogger<RegisterPatientCommandHandler> logger,
-    IMapper mapper, IUserAdditionalValidator userAdditionalValidator) : IRequestHandler<RegisterPatientCommand, IdentityOperationResult>
+    IMapper mapper, IUserAdditionalValidator userAdditionalValidator, IPasswordHasher<Patient.Domain.Entities.Actors.Patient> passwordHasher) : IRequestHandler<RegisterPatientCommand, IdentityOperationResult>
 {
     public async Task<IdentityOperationResult> Handle(RegisterPatientCommand request, CancellationToken cancellationToken)
     {
@@ -18,7 +18,10 @@ internal class RegisterPatientCommandHandler(UserManager<Patient.Domain.Entities
         (var isDataValidate, var message) = await userAdditionalValidator.ValidatePatientData(request.Pesel, request.Email);
         if (isDataValidate)
         {
+                        
             var user = mapper.Map<Patient.Domain.Entities.Actors.Patient>(request);
+            var hashedPassword = passwordHasher.HashPassword(user,request.Password);
+            user.PasswordHash = hashedPassword;
             var resultFromCreating = await userManager.CreateAsync(user);
             result.IsSuccess = resultFromCreating.Succeeded;
             result.Errors = resultFromCreating.Errors.Select(e => e.Description.ToString()).ToList();

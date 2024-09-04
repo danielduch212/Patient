@@ -104,6 +104,7 @@
             return;
         }
         waitingForResult = true;
+        registerData.Username = registerData.Email;
         registrationResult = await userApiService.SendRegisterRequest(registerData);
         isRequestSent = true;
         if (registrationResult.IsSuccess == true)
@@ -111,6 +112,8 @@
             waitingForResult = false;
             successfullRegistration =true;
             StateHasChanged();
+            await Task.Delay(3000);
+            Navigation.NavigateTo("/logowaniePacjent");
         }
         else
         {

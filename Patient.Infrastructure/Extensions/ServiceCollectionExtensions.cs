@@ -52,8 +52,10 @@ public static class ServiceCollectionExtensions
 
 
         services.AddScoped<IUserAdditionalValidator, UserAdditionalValidator>();
+        services.AddScoped<ITokenGenerator, TokenGenerator>();
 
         services.AddScoped<IReportRepository, ReportRepository>();
+
         
 
 

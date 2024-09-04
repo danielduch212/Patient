@@ -28,7 +28,7 @@ public class UserApiService
     public async Task<IdentityOperationResult> SendLoginRequest(string email, string password)
     {
         (string, string) data = (email, password);
-        var response = await _httpClient.PostAsJsonAsync("api/Users/login", data);
+        var response = await _httpClient.PostAsJsonAsync("api/Users/loginPatient", data);
         IdentityOperationResult operationResult = new IdentityOperationResult();
 
         operationResult = await response.Content.ReadFromJsonAsync<IdentityOperationResult>();
