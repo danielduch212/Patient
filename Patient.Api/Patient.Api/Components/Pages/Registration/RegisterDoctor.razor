@@ -1,0 +1,215 @@
+﻿@inject NavigationManager Navigation
+@using System.Diagnostics
+@using System.Timers
+@using AutoMapper
+@using Patient.Api.Client.AdditionalClasses
+@using Patient.Domain.Interfaces
+@using Patient.Domain.Constants
+@using Patient.Domain.Exceptions
+@using Patient.Domain.Entities.Additional
+@using Patient.Domain.Entities.Actors
+
+
+
+@inject NavigationManager Navigation
+@inject HttpClient _httpClient
+@inject UserManager<Doctor> userManager
+@inject ILogger<RegisterPatient> logger
+@inject IMapper mapper
+@inject IPasswordHasher<Doctor> passwordHasher
+@inject RoleManager<IdentityRole> roleManager
+@inject IUserAdditionalValidator userAdditionalValidator
+@inject IUserStore<Doctor> userStore
+@inject IUserEmailStore<Doctor> userEmailStore
+
+
+
+
+@rendermode InteractiveServer
+
+@layout Layout.LoggingLayout
+@page "/rejestracjaLekarz"
+
+
+<h3>RegisterDoctor</h3>
+
+<div class="container">
+    <div class="row justify-content-center pt-5">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">Rejestracja</div>
+                <div class="card-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="name">Imię</label>
+                            <input type="text" class="form-control" id="name" placeholder="Wprowadź imię" required @bind="registerData.Name">
+                        </div>
+                        <div class="form-group">
+                            <label for="surname">Nazwisko</label>
+                            <input type="text" class="form-control" id="surname" placeholder="Wprowadź nazwisko" required @bind="registerData.Surname">
+                        </div>
+                        <div class="form-group">
+                            <label for="pesel">Pesel</label>
+                            <input type="number" class="form-control" id="pesel" placeholder="Wprowadź numer pesel" required @bind="registerData.DoctorNumber">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Adres e-mail</label>
+                            <input type="email" class="form-control" id="email" placeholder="Wprowadź adres e-mail" required @bind="registerData.Email">
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Hasło</label>
+                            <input type="password" class="form-control" id="password" placeholder="Wprowadź hasło" required @bind="registerData.Password">
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmPassword">Potwierdź hasło</label>
+                            <input type="password" class="form-control" id="confirmPassword" placeholder="Potwierdź hasło" required @bind="confirmPassword">
+                        </div>
+                        <div class="text-center">
+                            <button @onclick="OnRegister" type="button" class="btn btn-primary mt-4">Zarejestruj się</button>
+                        </div>
+                        @if (waitingForResult != false)
+                        {
+                            <div class="spinner-border" role="status">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                        }
+
+
+                    </form>
+                </div>
+
+            </div>
+            @if (badRegistration == true)
+            {
+                <div class="alert alert-info" role="alert">
+                    Nieprawidlowa rejestracja
+                    @foreach (var error in registrationResult.Errors)
+                    {
+                        <div class="alert alert-info">
+                            @error
+                        </div>
+                    }
+
+                </div>
+            }
+            @if (successfullRegistration == true)
+            {
+                <div class="alert alert-success" role="alert">
+                    Rejestracja przebiegla pomyslnie!
+                </div>
+
+            }
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+@code {
+    private RegisterDoctorData registerData = new Domain.Entities.Additional.RegisterDoctorData();
+    private string confirmPassword;
+    private Domain.Entities.Additional.IdentityOperationResult registrationResult = new IdentityOperationResult();
+    private bool successfullRegistration;
+    private bool badRegistration;
+
+    private bool result;
+    private bool userBeingRegistered;
+    private bool waitingForResult;
+
+
+    private async Task OnRegister()
+    {
+        if (registerData.Password != confirmPassword)
+        {
+
+            return;
+        }
+        badRegistration = false;
+        successfullRegistration = false;
+
+        registerData.Username = registerData.Email;
+
+        logger.LogInformation("Trying register Doctor");
+        waitingForResult = true;
+        userBeingRegistered = true;
+
+
+        var user = CreateUser();
+
+        await userStore.SetUserNameAsync(user, registerData.Email, CancellationToken.None);
+        var emailStore = GetEmailStore();
+        await emailStore.SetEmailAsync(user, registerData.Email, CancellationToken.None);
+
+
+        (var isDataValidate, var message) = await userAdditionalValidator.ValidatePatientData(registerData.DoctorNumber, registerData.Email);
+        if (isDataValidate)
+        {
+            var mappedDoctor = mapper.Map<Doctor>(registerData);
+            var hashedPassword = passwordHasher.HashPassword(mappedDoctor, registerData.Password);
+            mappedDoctor.PasswordHash = hashedPassword;
+            var resultFromCreating = await userManager.CreateAsync(mappedDoctor);
+            result = resultFromCreating.Succeeded;
+            if (result)
+            {
+                logger.LogInformation("Doctor with given email created: {Email}", registerData.Email);
+                var role = await roleManager.FindByNameAsync(UserRoles.Doctor);
+                if (role == null) { throw new NotFoundException(nameof(IdentityRole), UserRoles.Doctor); }
+                await userManager.AddToRoleAsync(mappedDoctor, role.ToString());
+                logger.LogInformation($"Doctor with given email added to role Doctor: {registerData.Email}");
+            }
+            registrationResult.Errors = resultFromCreating.Errors.Select(e => e.Description.ToString()).ToList();
+
+
+        }
+        registrationResult.IsSuccess = isDataValidate;
+        List<string> messageError = new List<string>();
+        messageError.Add(message);
+        registrationResult.Errors = messageError;
+
+        waitingForResult = false;
+
+        if (registrationResult.IsSuccess == true)
+        {
+            successfullRegistration = true;
+            StateHasChanged();
+            await Task.Delay(3000);
+            Navigation.NavigateTo("/logowanieLekarz");
+        }
+        else
+        {
+            badRegistration = true;
+            successfullRegistration = false;
+            StateHasChanged();
+        }
+
+    }
+
+    private Doctor CreateUser()
+    {
+        try
+        {
+            return Activator.CreateInstance<Doctor>();
+        }
+        catch
+        {
+            throw new InvalidOperationException($"Can't create an instance of '{nameof(Doctor)}'. " +
+                $"Ensure that '{nameof(Doctor)}' is not an abstract class and has a parameterless constructor.");
+        }
+    }
+
+    private IUserEmailStore<Doctor> GetEmailStore()
+    {
+        if (!userManager.SupportsUserEmail)
+        {
+            throw new NotSupportedException("The default UI requires a user store with email support.");
+        }
+        return (IUserEmailStore<Doctor>)userStore;
+    }
+
+}

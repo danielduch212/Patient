@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Patient.Infrastructure.ValidationUser.Services;
 
 internal class UserAdditionalValidator(UserManager<Patient.Domain.Entities.Actors.Patient> patientManager,
-     PatientDbContext dbContext) : IUserAdditionalValidator
+     UserManager<Doctor> doctorManager ,PatientDbContext dbContext) : IUserAdditionalValidator
 {
     public async Task<(bool IsValid, string Message)> ValidatePatientData(string pesel, string email)
     {
@@ -28,7 +28,25 @@ internal class UserAdditionalValidator(UserManager<Patient.Domain.Entities.Actor
             return (true, "Prawidlowe");
         }
     }
-   // UserManager<Doctor> doctorManager,
-   //UserStore<Doctor> doctorStore, 
+    public async Task<(bool IsValid, string Message)> ValidateDoctorData(string doctorNumber, string email)
+    {
+        var doctor = await doctorManager.FindByEmailAsync(email);
+        var doctor1 = await dbContext.Doctors.FirstOrDefaultAsync(p => p.DoctorNumber == doctorNumber);
+
+        if (doctor != null)
+        {
+            return (false, "Podany email juz istnieje");
+        }
+        else if (doctor1 != null)
+        {
+            return (false, "Konto o podanym numeru lekarza juz istnieje");
+        }
+        else
+        {
+            return (true, "Prawidlowe");
+        }
+    }
+
+    
 
 }

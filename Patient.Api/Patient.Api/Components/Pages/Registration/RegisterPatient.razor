@@ -1,12 +1,27 @@
 ﻿@using System.Diagnostics
 @using System.Timers
+@using AutoMapper
 @using Patient.Api.Client.AdditionalClasses
-@using Shared.Identity
+@using Patient.Domain.Interfaces
+@using Patient.Domain.Constants
+@using Patient.Domain.Exceptions
+@using Patient.Domain.Entities.Additional
+
+
 
 @inject NavigationManager Navigation
-@inject Patient.Api.Client.Services.UserApiService userApiService 
-@* @rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false)) *@
-@rendermode InteractiveWebAssembly
+@inject HttpClient _httpClient
+@inject UserManager<Patient.Domain.Entities.Actors.Patient> userManager
+@inject ILogger<RegisterPatient> logger
+@inject IMapper mapper
+@inject IPasswordHasher<Patient.Domain.Entities.Actors.Patient> passwordHasher
+@inject RoleManager<IdentityRole> roleManager
+@inject IUserAdditionalValidator userAdditionalValidator
+@inject IUserStore<Patient.Domain.Entities.Actors.Patient> userStore
+@inject IUserEmailStore<Patient.Domain.Entities.Actors.Patient> userEmailStore
+
+
+@rendermode InteractiveServer
 
 @layout Layout.LoggingLayout
 @page "/rejestracjapacjent"
@@ -57,7 +72,7 @@
                 </div>
 
             </div>
-            @if (successfullRegistration == false && isRequestSent==true)
+            @if (badRegistration == true)
             {
                 <div class="alert alert-info" role="alert">
                     Nieprawidlowa rejestracja
@@ -70,7 +85,7 @@
                 
             </div>
             }
-            @if (successfullRegistration == true && isRequestSent==true)
+            @if (successfullRegistration == true)
             {
             <div class="alert alert-success" role="alert">
             Rejestracja przebiegla pomyslnie!
@@ -90,26 +105,70 @@
 
 
 @code {
-    private Shared.Identity.RegisterUserData registerData = new Shared.Identity.RegisterUserData();
+    private RegisterUserData registerData = new Patient.Domain.Entities.Additional.RegisterUserData();
     private string confirmPassword;
-    private IdentityOperationResult registrationResult = new IdentityOperationResult();
+    private Patient.Domain.Entities.Additional.IdentityOperationResult registrationResult = new IdentityOperationResult();
     private bool successfullRegistration;
-    private bool isRequestSent;
+    private bool badRegistration;
+
+    private bool result;
+    private bool userBeingRegistered;
     private bool waitingForResult;
+
 
     private async Task OnRegister()
     {
         if (registerData.Password   != confirmPassword)
         {
+
             return;
         }
-        waitingForResult = true;
+        badRegistration = false;
+        successfullRegistration = false;
+
         registerData.Username = registerData.Email;
-        registrationResult = await userApiService.SendRegisterRequest(registerData);
-        isRequestSent = true;
+
+        logger.LogInformation("Trying register user");
+        waitingForResult = true;
+        userBeingRegistered = true;
+
+
+        var user = CreateUser();
+
+        await userStore.SetUserNameAsync(user, registerData.Email, CancellationToken.None);
+        var emailStore = GetEmailStore();
+        await emailStore.SetEmailAsync(user, registerData.Email, CancellationToken.None);
+
+
+        (var isDataValidate, var message) = await userAdditionalValidator.ValidatePatientData(registerData.Pesel, registerData.Email);
+        if (isDataValidate)
+        {
+            var mappedUser = mapper.Map<Patient.Domain.Entities.Actors.Patient>(registerData);
+            var hashedPassword = passwordHasher.HashPassword(mappedUser, registerData.Password);
+            mappedUser.PasswordHash = hashedPassword;
+            var resultFromCreating = await userManager.CreateAsync(mappedUser);
+            result = resultFromCreating.Succeeded;
+            if (result)
+            {
+                logger.LogInformation("Patient with given email created: {Email}", registerData.Email);
+                var role = await roleManager.FindByNameAsync(UserRoles.Patient);
+                if (role == null) { throw new NotFoundException(nameof(IdentityRole), UserRoles.Patient); }
+                await userManager.AddToRoleAsync(mappedUser, role.ToString());
+                logger.LogInformation($"User with given email added to role Patient: {registerData.Email}");
+            }
+            registrationResult.Errors = resultFromCreating.Errors.Select(e => e.Description.ToString()).ToList();
+
+
+        }
+        registrationResult.IsSuccess = isDataValidate;
+        List<string> messageError = new List<string>();
+        messageError.Add(message);
+        registrationResult.Errors = messageError;
+
+        waitingForResult = false;
+
         if (registrationResult.IsSuccess == true)
         {
-            waitingForResult = false;
             successfullRegistration =true;
             StateHasChanged();
             await Task.Delay(3000);
@@ -117,12 +176,33 @@
         }
         else
         {
-            waitingForResult = false;
+            badRegistration = true;
             successfullRegistration = false;
             StateHasChanged();
         }
 
     }
 
-    
+    private Patient.Domain.Entities.Actors.Patient CreateUser()
+    {
+        try
+        {
+            return Activator.CreateInstance<Patient.Domain.Entities.Actors.Patient>();
+        }
+        catch
+        {
+            throw new InvalidOperationException($"Can't create an instance of '{nameof(Patient.Domain.Entities.Actors.Patient)}'. " +
+                $"Ensure that '{nameof(Patient.Domain.Entities.Actors.Patient)}' is not an abstract class and has a parameterless constructor.");
+        }
+    }
+
+    private IUserEmailStore<Patient.Domain.Entities.Actors.Patient> GetEmailStore()
+    {
+        if (!userManager.SupportsUserEmail)
+        {
+            throw new NotSupportedException("The default UI requires a user store with email support.");
+        }
+        return (IUserEmailStore<Patient.Domain.Entities.Actors.Patient>)userStore;
+    }
+
 }

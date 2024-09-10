@@ -4,11 +4,11 @@ using Patient.Domain.Entities.Additional;
 
 namespace Patient.Application.Users.Dto;
 
-public class UserProfile : Profile
+public class DoctorProfile : Profile
 {
-    public UserProfile()
+    public DoctorProfile()
     {
-        CreateMap<RegisterUserData, Patient.Domain.Entities.Actors.Patient>();
-        
+        CreateMap<RegisterDoctorData, Doctor>();
+
     }
 }

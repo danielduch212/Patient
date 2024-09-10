@@ -12,15 +12,15 @@ using Patient.Infrastructure.Persistence;
 namespace Patient.Infrastructure.Migrations
 {
     [DbContext(typeof(PatientDbContext))]
-    [Migration("20240807134903_initialDb")]
-    partial class initialDb
+    [Migration("20240905120519_newInitial")]
+    partial class newInitial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.7")
+                .HasAnnotation("ProductVersion", "8.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -188,11 +188,6 @@ namespace Patient.Infrastructure.Migrations
                     b.Property<DateOnly>("DateOfBirth")
                         .HasColumnType("date");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasMaxLength(8)
-                        .HasColumnType("nvarchar(8)");
-
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -253,9 +248,7 @@ namespace Patient.Infrastructure.Migrations
 
                     b.ToTable("AspNetUsers", (string)null);
 
-                    b.HasDiscriminator<string>("Discriminator").HasValue("User");
-
-                    b.UseTphMappingStrategy();
+                    b.UseTptMappingStrategy();
                 });
 
             modelBuilder.Entity("Patient.Domain.Entities.MedicalFile", b =>
@@ -442,7 +435,7 @@ namespace Patient.Infrastructure.Migrations
                 {
                     b.HasBaseType("Patient.Domain.Entities.Actors.User");
 
-                    b.HasDiscriminator().HasValue("Admin");
+                    b.ToTable("Admins", (string)null);
                 });
 
             modelBuilder.Entity("Patient.Domain.Entities.Actors.Doctor", b =>
@@ -458,7 +451,7 @@ namespace Patient.Infrastructure.Migrations
 
                     b.HasIndex("ReportId");
 
-                    b.HasDiscriminator().HasValue("Doctor");
+                    b.ToTable("Doctors", (string)null);
                 });
 
             modelBuilder.Entity("Patient.Domain.Entities.Actors.Patient", b =>
@@ -472,7 +465,7 @@ namespace Patient.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasDiscriminator().HasValue("Patient");
+                    b.ToTable("Patients", (string)null);
                 });
 
             modelBuilder.Entity("DoctorPatient", b =>
@@ -538,34 +531,6 @@ namespace Patient.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Patient.Domain.Entities.Actors.User", b =>
-                {
-                    b.OwnsOne("Patient.Domain.Entities.Additional.Address", "Address", b1 =>
-                        {
-                            b1.Property<string>("UserId")
-                                .HasColumnType("nvarchar(450)");
-
-                            b1.Property<string>("City")
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<string>("PostalCode")
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<string>("Street")
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.HasKey("UserId");
-
-                            b1.ToTable("AspNetUsers");
-
-                            b1.WithOwner()
-                                .HasForeignKey("UserId");
-                        });
-
-                    b.Navigation("Address")
                         .IsRequired();
                 });
 
@@ -635,11 +600,110 @@ namespace Patient.Infrastructure.Migrations
                     b.Navigation("Patient");
                 });
 
+            modelBuilder.Entity("Patient.Domain.Entities.Actors.Admin", b =>
+                {
+                    b.HasOne("Patient.Domain.Entities.Actors.User", null)
+                        .WithOne()
+                        .HasForeignKey("Patient.Domain.Entities.Actors.Admin", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("Patient.Domain.Entities.Additional.Address", "Address", b1 =>
+                        {
+                            b1.Property<string>("AdminId")
+                                .HasColumnType("nvarchar(450)");
+
+                            b1.Property<string>("City")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("PostalCode")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("Street")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("AdminId");
+
+                            b1.ToTable("Admins");
+
+                            b1.WithOwner()
+                                .HasForeignKey("AdminId");
+                        });
+
+                    b.Navigation("Address")
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Patient.Domain.Entities.Actors.Doctor", b =>
                 {
+                    b.HasOne("Patient.Domain.Entities.Actors.User", null)
+                        .WithOne()
+                        .HasForeignKey("Patient.Domain.Entities.Actors.Doctor", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Patient.Domain.Entities.Report", null)
                         .WithMany("DoctorsWhoChecked")
                         .HasForeignKey("ReportId");
+
+                    b.OwnsOne("Patient.Domain.Entities.Additional.Address", "Address", b1 =>
+                        {
+                            b1.Property<string>("DoctorId")
+                                .HasColumnType("nvarchar(450)");
+
+                            b1.Property<string>("City")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("PostalCode")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("Street")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("DoctorId");
+
+                            b1.ToTable("Doctors");
+
+                            b1.WithOwner()
+                                .HasForeignKey("DoctorId");
+                        });
+
+                    b.Navigation("Address")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Patient.Domain.Entities.Actors.Patient", b =>
+                {
+                    b.HasOne("Patient.Domain.Entities.Actors.User", null)
+                        .WithOne()
+                        .HasForeignKey("Patient.Domain.Entities.Actors.Patient", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("Patient.Domain.Entities.Additional.Address", "Address", b1 =>
+                        {
+                            b1.Property<string>("PatientId")
+                                .HasColumnType("nvarchar(450)");
+
+                            b1.Property<string>("City")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("PostalCode")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("Street")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("PatientId");
+
+                            b1.ToTable("Patients");
+
+                            b1.WithOwner()
+                                .HasForeignKey("PatientId");
+                        });
+
+                    b.Navigation("Address")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Patient.Domain.Entities.Report", b =>

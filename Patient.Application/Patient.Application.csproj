@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <Folder Include="Reports\Queries\" />
+    <Folder Include="Users\Commands\Patients\" />
     <Folder Include="Users\Queries\" />
   </ItemGroup>
 

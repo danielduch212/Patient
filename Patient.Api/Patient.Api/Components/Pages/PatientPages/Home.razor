@@ -1,8 +1,12 @@
-﻿@layout Layout.UserLayout
+﻿@layout Patient.Api.Client.Layout.UserLayout
+@using Patient.Domain.Constants;
+@using Patient.Api.Extensions;
 @inject Microsoft.JSInterop.IJSRuntime _jsRuntime
 @inject NavigationManager NavigationManager
 
-@rendermode InteractiveWebAssembly
+
+@attribute [Authorize]
+
 
 @page "/pacjent"
 

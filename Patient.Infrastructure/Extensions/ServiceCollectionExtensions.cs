@@ -11,6 +11,7 @@ using Patient.Domain.Entities.Actors;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Patient.Domain.Interfaces;
 using Patient.Infrastructure.ValidationUser.Services;
+using Patient.Infrastructure.Seeders;
 
 
 
@@ -25,36 +26,54 @@ public static class ServiceCollectionExtensions
         services.AddDbContext<PatientDbContext>(options =>
             options.UseSqlServer(connectionString));
 
-        services.AddIdentity<User, IdentityRole>(options =>
-         {
-             options.User.RequireUniqueEmail = true;
-         })
-         .AddEntityFrameworkStores<PatientDbContext>()
-         .AddDefaultTokenProviders();
+        services.AddIdentityCore<User>(options =>
+        {
+            options.User.RequireUniqueEmail = true;
+
+        })
+            .AddRoles<IdentityRole>()
+            .AddEntityFrameworkStores<PatientDbContext>()
+            .AddSignInManager()
+            .AddDefaultTokenProviders();
+
+        //services.AddIdentityApiEndpoints<User>(options =>
+        // {
+        //     options.User.RequireUniqueEmail = true;
+        // })
+        // .AddRoles<IdentityRole>()
+        // .AddEntityFrameworkStores<PatientDbContext>()
+        // .AddDefaultTokenProviders();
+
+
+
 
         //patient additional services Identity
         services.AddScoped<UserManager<Patient.Domain.Entities.Actors.Patient>>();
         services.AddScoped<IUserStore<Patient.Domain.Entities.Actors.Patient>, UserStore<Patient.Domain.Entities.Actors.Patient, IdentityRole, PatientDbContext, string>>();
         services.AddScoped<SignInManager<Patient.Domain.Entities.Actors.Patient>>();
+        services.AddScoped<IUserEmailStore<Patient.Domain.Entities.Actors.Patient>, UserStore<Patient.Domain.Entities.Actors.Patient, IdentityRole, PatientDbContext, string>>();
+
 
         services.AddScoped<IPasswordHasher<Patient.Domain.Entities.Actors.Patient>, PasswordHasher<Patient.Domain.Entities.Actors.Patient>>();
         services.AddScoped<IUserClaimsPrincipalFactory<Patient.Domain.Entities.Actors.Patient>, UserClaimsPrincipalFactory<Patient.Domain.Entities.Actors.Patient>>();
         services.AddScoped<IUserConfirmation<Patient.Domain.Entities.Actors.Patient>, DefaultUserConfirmation<Patient.Domain.Entities.Actors.Patient>>();
 
         //doctor additional services Identity
-        //services.AddScoped<UserManager<Doctor>>();
-        //services.AddScoped<IUserStore<Doctor>, UserStore<Doctor, IdentityRole, PatientDbContext, string>>();
-        //services.AddScoped<SignInManager<Doctor>>();
+        services.AddScoped<UserManager<Doctor>>();
+        services.AddScoped<IUserStore<Doctor>, UserStore<Doctor, IdentityRole, PatientDbContext, string>>();
+        services.AddScoped<SignInManager<Doctor>>();
+        services.AddScoped<IUserEmailStore<Doctor>, UserStore<Doctor, IdentityRole, PatientDbContext, string>>();
 
-        //services.AddScoped<IPasswordHasher<Doctor>, PasswordHasher<Doctor>>();
-        //services.AddScoped<IUserClaimsPrincipalFactory<Doctor>, UserClaimsPrincipalFactory<Doctor>>();
-        //services.AddScoped<IUserConfirmation<Doctor>, DefaultUserConfirmation<Doctor>>();
+
+        services.AddScoped<IPasswordHasher<Doctor>, PasswordHasher<Doctor>>();
+        services.AddScoped<IUserClaimsPrincipalFactory<Doctor>, UserClaimsPrincipalFactory<Doctor>>();
+        services.AddScoped<IUserConfirmation<Doctor>, DefaultUserConfirmation<Doctor>>();
 
 
         services.AddScoped<IUserAdditionalValidator, UserAdditionalValidator>();
         services.AddScoped<ITokenGenerator, TokenGenerator>();
-
         services.AddScoped<IReportRepository, ReportRepository>();
+        services.AddScoped<IPatientSeeder, PatientSeeder>();
 
         
 

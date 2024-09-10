@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Patient.Api.Client.Extensions;
 using Patient.Api.Client.Services;
 
 

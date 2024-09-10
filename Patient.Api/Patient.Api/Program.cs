@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Patient.Api.Middlewares;
 using Patient.Api.Extensions;
 using Serilog;
+using Patient.Infrastructure.Seeders;
+using Serilog.Configuration;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -30,10 +32,9 @@ builder.Services.AddScoped(sp => new HttpClient
 });
 
 
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddScoped<UserApiService>();
-
-
 
 
 builder.Services.AddControllers();
@@ -41,6 +42,12 @@ builder.Services.AddControllers();
 
 
 var app = builder.Build();
+
+var scope = app.Services.CreateScope();
+var seeder = scope.ServiceProvider.GetRequiredService<IPatientSeeder>();
+
+await seeder.SeedData();
+
 
 app.UseMiddleware<ErrorHandlingMiddleware>();
 app.UseSerilogRequestLogging();
@@ -58,12 +65,20 @@ else
 
 app.UseHttpsRedirection();
 
+app.UseCookiePolicy(new CookiePolicyOptions
+{
+    MinimumSameSitePolicy = SameSiteMode.None,
+});
+
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.MapControllers();
 
 app.UseStaticFiles();
 app.UseAntiforgery();
 
-   
+
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()

@@ -1,10 +1,23 @@
-﻿@using Microsoft.AspNetCore.Components;
+﻿@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Components;
+@using Microsoft.AspNetCore.Components.WebAssembly.Http
+@using Newtonsoft.Json
 @using Patient.Api.Client;
+@using Patient.Domain.Entities.Actors
 @using Patient.Domain.Entities.Additional;
+@using System.Text
+@using Patient.Api.Components.Account
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Identity
+
+
 @inject NavigationManager Navigation
 @inject HttpClient _httpClient
+@inject SignInManager<User> _signInManager
+@inject UserManager<User> _userManager
+@inject IdentityRedirectManager _redirectManager
+
 @inject Microsoft.JSInterop.IJSRuntime _jsRuntime
-@rendermode InteractiveServer
 
 
 
@@ -15,23 +28,34 @@
     <div class="card shadow-sm" style="width: 100%; max-width: 400px;">
         <div class="card-body">
             <h2 class="card-title text-center mb-4">Logowanie</h2>
-            <form>
-                <div class="mb-3">
-                    <label for="username" class="form-label">Użytkownik</label>
-                    <input type="text" id="username" @bind="logginData.Email" class="form-control" />
-                </div>
-                <div class="mb-3">
-                    <label for="password" class="form-label">Hasło</label>
-                    <input type="password" id="password" @bind="logginData.Password" class="form-control" />
-                </div>
-                <button type="button" @onclick="OnLogin" class="btn btn-primary w-100">Zaloguj</button>
-                @if (badRequest == true)
-                {
-                    <div class="alert alert-info" role="alert">
-                        Nieprawidlowy email lub haslo
-                    </div>
-                }
-            </form>
+            <section>
+                <StatusMessage Message="@errorMessage" />
+                    <EditForm Model="Input" method="post" OnValidSubmit="OnLogin" FormName="login">
+                        <DataAnnotationsValidator />
+                        <hr />
+                        <ValidationSummary class="text-danger" role="alert" />
+                        <div class="form-floating mb-3">
+                            <InputText @bind-Value="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                            <label for="email" class="form-label">Email</label>
+                            <ValidationMessage For="() => Input.Email" class="text-danger" />
+                        </div>
+                        <div class="form-floating mb-3">
+                            <InputText type="password" @bind-Value="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" />
+                            <label for="password" class="form-label">Hasło</label>
+                            <ValidationMessage For="() => Input.Password" class="text-danger" />
+                        </div>
+                        <div class="checkbox mb-3">
+                            <label class="form-label">
+                                <InputCheckbox @bind-Value="Input.RememberMe" class="darker-border-checkbox form-check-input" />
+                                Zapamiętaj mnie
+                            </label>
+                        </div>
+                        <div>
+                            <button type="submit" class="w-100 btn btn-lg btn-primary">Zaloguj się</button>
+                        </div>
+                        
+                    </EditForm>
+            </section>
         </div>
     </div>
 </div>
@@ -39,26 +63,61 @@
 
 
 @code {
+
+    private string? errorMessage;
+
     private string SecurityToken { get; set; }
     private bool badRequest;
-    private UserLogginData logginData = new();
+    private string email;
+    private string password;
+
+    [CascadingParameter]
+    private HttpContext httpContext { get; set; } = default!;
+
+    [SupplyParameterFromForm]
+    private InputModel Input { get; set; } = new();
+
+    protected async override void OnInitialized()
+    {
+        // if (HttpMethods.IsGet(httpContext.Request.Method))
+        // {
+        //     await httpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+        // }
+    }
 
 
     private async Task OnLogin()
     {
-        var response = await _httpClient.PostAsJsonAsync("/api/Users/loginPatient", logginData);
-        if(response.IsSuccessStatusCode)
+
+        var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+        if(result.Succeeded)
         {
-            SecurityToken = await response.Content.ReadAsStringAsync();
-            await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "authToken", SecurityToken);
-            Navigation.NavigateTo("/pacjent");
+            //await _jsRuntime.InvokeVoidAsync("localStorage.setItem", "authToken", SecurityToken); nie wiadomo jak z tokenem
+            //token = await tokenGenerator.GenerateToken(user);
+
+            _redirectManager.RedirectTo("/pacjent");
         }
         else
         {
             badRequest = true;
         }
 
-        
-        
+
+
     }
+
+    private sealed class InputModel
+    {
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; } = "";
+
+        [Required]
+        [DataType(DataType.Password)]
+        public string Password { get; set; } = "";
+
+        [Display(Name = "Remember me?")]
+        public bool RememberMe { get; set; }
+    }
+   
 }

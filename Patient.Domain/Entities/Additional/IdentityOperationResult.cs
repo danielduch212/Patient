@@ -1,4 +1,4 @@
-﻿namespace Shared.Identity;
+﻿namespace Patient.Domain.Entities.Additional;
 
 public class IdentityOperationResult
 {

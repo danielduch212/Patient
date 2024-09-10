@@ -1,10 +1,6 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Identity;
-using Shared.Identity;
+﻿namespace Patient.Domain.Entities.Additional;
 
-namespace Patient.Application.Users.Commands.Patients.Register;
-
-public class RegisterPatientCommand() : IRequest<IdentityOperationResult>
+public class RegisterUserData
 {
     public string Email { get; set; } = default!;
     public string Username { get; set; } = default!;
@@ -12,4 +8,5 @@ public class RegisterPatientCommand() : IRequest<IdentityOperationResult>
     public string Surname { get; set; } = default!;
     public string Pesel { get; set; } = default!;
     public string Password { get; set; } = default!;
+
 }
