@@ -9,8 +9,11 @@ using System.Security.Claims;
 using Patient.Domain.Entities.Actors;
 using Patient.Domain.Entities.Additional;
 using Patient.Api.Client;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Shared.AdditionalClasses;
 
-namespace Patient.Api.Components.Account
+namespace Patient.Application.Account
 {
 
     internal sealed class PersistingRevalidatingAuthenticationStateProvider : RevalidatingServerAuthenticationStateProvider

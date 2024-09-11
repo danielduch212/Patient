@@ -1,9 +1,12 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Http;
 using Patient.Domain.Entities.DTOs;
 
 namespace Patient.Application.Reports.Commands.CreateReport;
 
-public class CreateReportCommand(ReportDto report) : IRequest
+public class CreateReportCommand() : IRequest<int>
 {
-    private ReportDto GivenReport { get; } = report;
+    public string Description { get; set; } = default!;
+    public IEnumerable<IFormFile>? Files { get; set; } = new List<IFormFile>();
+    
 }

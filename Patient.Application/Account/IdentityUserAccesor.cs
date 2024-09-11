@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Patient.Api.Components.Account;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Patient.Domain.Entities.Actors;
 
-namespace Patient.Api.Components.Account
+namespace Patient.Application.Account
 {
     internal sealed class IdentityUserAccessor(UserManager<User> userManager, IdentityRedirectManager redirectManager)
     {

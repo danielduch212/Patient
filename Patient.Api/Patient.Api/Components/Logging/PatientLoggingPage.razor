@@ -6,9 +6,9 @@
 @using Patient.Domain.Entities.Actors
 @using Patient.Domain.Entities.Additional;
 @using System.Text
-@using Patient.Api.Components.Account
 @using System.ComponentModel.DataAnnotations
 @using Microsoft.AspNetCore.Identity
+@using Patient.Application.Account
 
 
 @inject NavigationManager Navigation
@@ -26,7 +26,7 @@
 <div class="container d-flex justify-content-center align-items-center vh-100">
     <div class="card shadow-sm" style="width: 100%; max-width: 400px;">
         <div class="card-body">
-            <h2 class="card-title text-center mb-4">Logowanie</h2>
+            <h2 class="card-title text-center mb-4">Logowanie - Pacjent</h2>
             <section>
                 <StatusMessage Message="@errorMessage" />
                     <EditForm Model="Input" method="post" OnValidSubmit="OnLogin" FormName="login">

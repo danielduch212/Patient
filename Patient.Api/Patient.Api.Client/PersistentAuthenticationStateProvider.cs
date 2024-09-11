@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using System.Security.Claims;
 using Patient.Api.Client;
+using Shared.AdditionalClasses;
 
 namespace IdentityAuthenticationMOCNYTEST.Client
 {

@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Http;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Patient.Api.Components.Account;
+namespace Patient.Application.Account;
 
 public class IdentityRedirectManager(NavigationManager navigationManager)
 {

@@ -6,6 +6,7 @@ public class ReportDto
 {
     public string Description { get; set; } = default!;
     public IEnumerable<Stream>? Files { get; set; } = new List<Stream>();
+    public IEnumerable<string>? FileNames { get; set; } = new List<string>();
     public bool IsChecked { get; set; } = false;
 
 

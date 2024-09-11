@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Patient.Domain.Interfaces;
 using Patient.Infrastructure.ValidationUser.Services;
 using Patient.Infrastructure.Seeders;
+using Patient.Infrastructure.Configuration;
+using Patient.Infrastructure.Storage;
 
 
 
@@ -36,16 +38,6 @@ public static class ServiceCollectionExtensions
             .AddSignInManager()
             .AddDefaultTokenProviders();
 
-        //services.AddIdentityApiEndpoints<User>(options =>
-        // {
-        //     options.User.RequireUniqueEmail = true;
-        // })
-        // .AddRoles<IdentityRole>()
-        // .AddEntityFrameworkStores<PatientDbContext>()
-        // .AddDefaultTokenProviders();
-
-
-
 
         //patient additional services Identity
         services.AddScoped<UserManager<Patient.Domain.Entities.Actors.Patient>>();
@@ -69,14 +61,15 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IUserClaimsPrincipalFactory<Doctor>, UserClaimsPrincipalFactory<Doctor>>();
         services.AddScoped<IUserConfirmation<Doctor>, DefaultUserConfirmation<Doctor>>();
 
-
+        //
         services.AddScoped<IUserAdditionalValidator, UserAdditionalValidator>();
         services.AddScoped<ITokenGenerator, TokenGenerator>();
         services.AddScoped<IReportRepository, ReportRepository>();
         services.AddScoped<IPatientSeeder, PatientSeeder>();
 
-        
 
-
+        //blob
+        services.Configure<BlobStorageSettings>(configuration.GetSection("BlobStorage"));
+        services.AddScoped<IBlobStorageService, BlobStorageService>();
     }
 }

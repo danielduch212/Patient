@@ -28,7 +28,6 @@ builder.Services.AddScoped(sp => new HttpClient
 });
 
 
-builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddScoped<UserApiService>();
 

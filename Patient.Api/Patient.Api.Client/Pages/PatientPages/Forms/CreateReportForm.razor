@@ -1,10 +1,15 @@
 ﻿@layout Patient.Api.Client.Layout.UserLayout
 
-@rendermode InteractiveServer
+@rendermode InteractiveWebAssembly
 
+
+@using Patient.Api.Client.Services
+@using Shared.AdditionalClasses
+
+@inject UserApiService _userApiService
 
 @page "/pacjent/dodaj-raport"
-@using Patient.Api.Client.AdditionalClasses
+
 
 
 <div class="page-background">
@@ -88,13 +93,25 @@
                 </div>
             </div>
             <div class="d-flex d-flex-column align-items-center justify-content-center pt-3">
-                @if (IsReportBeingAdded == true)
+                @if (isReportBeingAdded == true)
                 {
                     <div class="spinner-border" role="status">
                         <span class="visually-hidden">Loading...</span>
 
                     </div>
 
+                }
+                @if (reportAddedSuccesfully==true)
+                {
+                    <div class="alert alert-success" role="alert">
+                        Raport dodany pomyślnie
+                    </div>
+                }
+                @if (reportAddingFailed==true)
+                {
+                    <div class="alert alert-warning" role="alert">
+                        Nie udalo sie dodac raportu
+                    </div>
                 }
             </div>
         </EditForm>
@@ -109,11 +126,14 @@
     private List<Stream> files = new();
     private List<string> filePreviewUrls = new List<string>();
     private List<IBrowserFile> filesPreview = new ();
+    private List<string> fileNames = new();
 
-    private string filePreviewUrl;
+    //private string filePreviewUrl;
     private int maxAllowedSize = 10 * 1024 * 1024;
 
-    private bool IsReportBeingAdded = false;
+    private bool isReportBeingAdded = false;
+    private bool reportAddedSuccesfully;
+    private bool reportAddingFailed;
 
     private async void HandleFileSelected(InputFileChangeEventArgs e)
     {
@@ -122,49 +142,61 @@
 
         if (currentGivenFiles.Count > 0)
         {
-            foreach(var file in currentGivenFiles)
+            foreach (var file in currentGivenFiles)
             {
 
                 filesPreview.Add(file);
 
             }
-
         }
     }
-
     private async void HandleEraseFile(IBrowserFile file)
     {
         filesPreview.Remove(file);
     }
 
+    private async void HandleAddReport()
+    {
+
+        if (isReportBeingAdded)
+            return;
+
+        reportAddingFailed = false;
+        reportAddedSuccesfully = false;
+        isReportBeingAdded = true;
+        //
+        MakeFileStreams();
+        var response = await _userApiService.SendAddReportRequest(report);
+        if(response.IsSuccessStatusCode)
+        {
+            isReportBeingAdded = false;
+            reportAddedSuccesfully = true;
+            StateHasChanged();
+        }
+        else
+        {
+            isReportBeingAdded = false;
+            reportAddingFailed = true;
+            StateHasChanged();
+        }
+
+
+    }
+
     private async void MakeFileStreams()
     {
         files.Clear();
-
+        fileNames.Clear();
         foreach (var file in filesPreview)
         {
-            using (var stream = file.OpenReadStream(maxAllowedSize))
-            {
-
-                //var buffer = new byte[file.Size];
-                //await stream.ReadAsync(buffer);
-                //filePreviewUrl = $"data:image/{file.ContentType.Split('/')[1]};base64,{Convert.ToBase64String(buffer)}";
-                //filePreviewUrls.Add(filePreviewUrl);
-                files.Add(stream);
-
-            }
+            fileNames.Add(file.Name);
+            var stream = file.OpenReadStream(maxAllowedSize);
+            files.Add(stream);
 
 
         }
         report.Files = files;
-        //albo odpalac to za kazdym usunieciem - albo po prostu na koncu gdy zdjecia sa juz zaladowane to odpalic te streamy ;)
+        report.FileNames = fileNames;
     }
 
-    private async void HandleAddReport()
-    {
-        IsReportBeingAdded = true;
-        //
-        MakeFileStreams();
-
-    }
 }
