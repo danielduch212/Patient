@@ -1,0 +1,29 @@
+﻿@layout Patient.Api.Components.Layout.UserLayout
+
+@using Patient.Domain.Constants
+
+@attribute [Authorize(Roles = UserRoles.Doctor)]
+
+@page "/lekarz"
+
+
+
+<h3> Panel lekarza</h3>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+
+
+
+
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+
+        }
+    }
+}

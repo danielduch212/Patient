@@ -1,16 +1,12 @@
-using Microsoft.AspNetCore.Identity;
-using Patient.Api.Client.Pages;
+using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Patient.Api.Client.Services;
 using Patient.Api.Components;
+using Patient.Api.Extensions;
+using Patient.Api.Middlewares;
 using Patient.Application.Extensions;
 using Patient.Infrastructure.Extensions;
-using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Patient.Api.Middlewares;
-using Patient.Api.Extensions;
-using Serilog;
 using Patient.Infrastructure.Seeders;
-using Serilog.Configuration;
+using Serilog;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -65,10 +61,6 @@ else
 
 app.UseHttpsRedirection();
 
-app.UseCookiePolicy(new CookiePolicyOptions
-{
-    MinimumSameSitePolicy = SameSiteMode.None,
-});
 
 app.UseAuthentication();
 app.UseAuthorization();

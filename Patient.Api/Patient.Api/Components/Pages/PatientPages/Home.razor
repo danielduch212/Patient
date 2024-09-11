@@ -5,7 +5,7 @@
 @inject NavigationManager NavigationManager
 
 
-@attribute [Authorize]
+@attribute [Authorize(Roles = UserRoles.Patient)]
 
 
 @page "/pacjent"

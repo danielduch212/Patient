@@ -17,7 +17,6 @@
 @inject UserManager<User> _userManager
 @inject IdentityRedirectManager _redirectManager
 
-@inject Microsoft.JSInterop.IJSRuntime _jsRuntime
 
 
 
@@ -79,10 +78,10 @@
 
     protected async override void OnInitialized()
     {
-        // if (HttpMethods.IsGet(httpContext.Request.Method))
-        // {
-        //     await httpContext.SignOutAsync(IdentityConstants.ExternalScheme);
-        // }
+        if (HttpMethods.IsGet(httpContext.Request.Method))
+        {
+            await httpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+        }
     }
 
 

@@ -50,7 +50,7 @@
                         </div>
                         <div class="form-group">
                             <label for="pesel">Pesel</label>
-                            <input type="number" class="form-control" id="pesel" placeholder="Wprowadź numer pesel" required @bind="registerData.DoctorNumber">
+                            <input type="number" class="form-control" id="pesel" placeholder="Wprowadź numer lekarza" required @bind="registerData.DoctorNumber">
                         </div>
                         <div class="form-group">
                             <label for="email">Adres e-mail</label>
@@ -105,12 +105,6 @@
 </div>
 
 
-
-
-
-
-
-
 @code {
     private RegisterDoctorData registerData = new Domain.Entities.Additional.RegisterDoctorData();
     private string confirmPassword;
@@ -147,7 +141,7 @@
         await emailStore.SetEmailAsync(user, registerData.Email, CancellationToken.None);
 
 
-        (var isDataValidate, var message) = await userAdditionalValidator.ValidatePatientData(registerData.DoctorNumber, registerData.Email);
+        (var isDataValidate, var message) = await userAdditionalValidator.ValidateDoctorData(registerData.DoctorNumber, registerData.Email);
         if (isDataValidate)
         {
             var mappedDoctor = mapper.Map<Doctor>(registerData);
@@ -161,7 +155,9 @@
                 var role = await roleManager.FindByNameAsync(UserRoles.Doctor);
                 if (role == null) { throw new NotFoundException(nameof(IdentityRole), UserRoles.Doctor); }
                 await userManager.AddToRoleAsync(mappedDoctor, role.ToString());
-                logger.LogInformation($"Doctor with given email added to role Doctor: {registerData.Email}");
+                var isInRole = await userManager.IsInRoleAsync(mappedDoctor, UserRoles.Doctor);
+
+                logger.LogInformation($"Doctor with given email {isInRole} added to role Doctor: {registerData.Email}");
             }
             registrationResult.Errors = resultFromCreating.Errors.Select(e => e.Description.ToString()).ToList();
 
