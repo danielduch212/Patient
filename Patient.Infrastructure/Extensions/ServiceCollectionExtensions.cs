@@ -14,6 +14,7 @@ using Patient.Infrastructure.ValidationUser.Services;
 using Patient.Infrastructure.Seeders;
 using Patient.Infrastructure.Configuration;
 using Patient.Infrastructure.Storage;
+using Patient.Infrastructure.Services;
 
 
 
@@ -71,5 +72,10 @@ public static class ServiceCollectionExtensions
         //blob
         services.Configure<BlobStorageSettings>(configuration.GetSection("BlobStorage"));
         services.AddScoped<IBlobStorageService, BlobStorageService>();
+
+
+        services.AddScoped<IPatientApiService, PatientApiService>();
+        services.AddScoped<IDoctorApiService, DoctorApiService>();
+
     }
 }

@@ -1,6 +1,7 @@
 ﻿
 @inherits LayoutComponentBase
 
+
 <div class="page">
     <div class="sidebar">
         <Patient.Api.Client.Layout.PatientMenu />
@@ -10,6 +11,16 @@
         
         <article class="content justify-content-center">
             @Body
+            <div>
+                @ChildContent
+            </div>
         </article>
     </main>
 </div>
+
+
+
+@code{
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

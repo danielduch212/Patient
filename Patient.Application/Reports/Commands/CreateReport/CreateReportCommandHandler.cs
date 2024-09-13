@@ -29,7 +29,7 @@ internal class CreateReportCommandHandler(ILogger<CreateReportCommandHandler> lo
             foreach(var file in request.Files)
             {
                 var stream = file.OpenReadStream();
-                fileNames.Add(await blobStorageService.UploadReportsFilesToBob(stream, file.FileName));
+                fileNames.Add(await blobStorageService.UploadReportsFilesToBob(stream, file.FileName, user.Id));
             }
         }
 

@@ -14,15 +14,7 @@ public class UserApiService
         _httpClient = httpClient;
     }
    
-    //public async Task<IdentityOperationResult> SendRegisterRequest(RegisterUserData userData)
-    //{
-    //    var response = await _httpClient.PostAsJsonAsync("/api/Users/register", userData);
-    //    IdentityOperationResult operationResult = new IdentityOperationResult();
-    //    operationResult = await response.Content.ReadFromJsonAsync<IdentityOperationResult>();
-    //    return operationResult;
-
-
-    //}
+    
     public async Task<HttpResponseMessage> SendAddReportRequest(ReportDtoFront report)
     {
         var form = new MultipartFormDataContent();

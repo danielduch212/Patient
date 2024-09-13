@@ -1,0 +1,167 @@
+﻿@layout Patient.Api.Client.Layout.MyAccount.PatientAccountLayout
+@rendermode InteractiveServer
+
+@using Patient.Domain.Constants
+@using Patient.Domain.Entities.DTOs
+@using Patient.Api.Components.Pages.PatientPages.MedicalDocumentation.Additional
+@using Patient.Domain.Interfaces
+
+@inject IPatientApiService _patientApiService
+
+@page "/pacjent/dokumentacja-medyczna/dodaj"
+
+
+<div class="container">
+    <div class="row d-flex-row pt-5 align-items-center justify-content" >
+        <NavLink href="/pacjent/dokumentacja-medyczna">
+            <btn type="button" href ="/pacjent/dokumentacja-medyczna" class="back-icon bi-arrow-left"></btn>
+        </NavLink>
+        <h2 class="text-center pt-2">Dodaj dokumentacje medyczna</h2>
+        
+    </div>
+    <div class="row d-flex justify-content-center align-items-center pt-5">
+            <InputFile OnChange="HandleFileSelected" multiple id="File" class="form-control w-25"></InputFile>           
+    </div>
+    @if (addMedicalDocumentionDtos.Any())
+    {
+
+        foreach (var dto in addMedicalDocumentionDtos)
+        {
+            <div class="row mt-2 d-flex-row border border-primary align-items-center justify-content-start mt-5">
+                <div class="col  d-flex-column justify-content-center align-items-center text-center">
+                    <div class="file-block mx-2">
+                        <div @onclick="() => HandleEraseFile(dto)" class="bi-x-circle"></div>
+                        <div class="bi-file-icon"></div>
+                    </div>
+                </div>
+                
+                <div class="col d-flex-column">
+                    <p>Nazwa pliku</p>
+                    <p class="font-20px">@dto.FilePreview.Name</p>
+                </div>
+                <div class="col d-flex-column">
+                    <InputSelect class="form-select selectpicker w-10" @bind-Value="dto.MedicalDocumentationType">
+                        @foreach (var type in MedicalDocumentationType.GetAllTypes())
+                        {
+                            <option value="@type">@type</option>
+                        }
+                    </InputSelect>
+                </div>
+                <div class="col d-flex-column text-center justify-content-center align-items-center">
+                      <btn type="button" class="btn btn-outline-primary" @onclick="() => AddDescriptionHandle(dto)">Dodaj opis</btn>
+                    @if (dto.AddDescription)
+                    {
+                        <InputTextArea id="description" style="width: 80%; height: 200px; resize: none; direction: ltr;" @bind-Value="dto.Description" class="form-control mt-5 text-center"></InputTextArea>
+
+                    }
+                </div>
+
+                
+            </div>
+
+        }
+    }
+
+
+</div>
+
+
+
+
+@code {
+
+    private List<MedicalFileDto> medicalFileDtos = new();
+
+    private List<AddMedicalDocumentationDto> addMedicalDocumentionDtos = new();
+
+    private bool areFilesBeingAdded;
+    private bool filesAddedSuccesfully;
+    private bool filesAddingFailed;
+
+    private int maxAllowedSize = 10 * 1024 * 1024;
+
+
+
+    private async void HandleAddFiles()
+    {
+
+        if (areFilesBeingAdded)
+            return;
+
+        filesAddingFailed = false;
+        filesAddedSuccesfully = false;
+        areFilesBeingAdded = true;
+        //
+        MakeFileStreams();
+        var response = await _patientApiService.SendRequestAddMedicalFiles(medicalFileDtos);
+        if (response.IsSuccessStatusCode)
+        {
+            areFilesBeingAdded = false;
+            filesAddedSuccesfully = true;
+            StateHasChanged();
+        }
+        else
+        {
+            areFilesBeingAdded = false;
+            filesAddingFailed = true;
+            StateHasChanged();
+        }
+
+
+    }
+
+    private async void MakeFileStreams()
+    {
+        medicalFileDtos.Clear();
+
+        foreach (var medicalDocumentPreview in addMedicalDocumentionDtos)
+        {
+            MedicalFileDto medicalFileDto = new();
+            medicalFileDto.FileName = medicalDocumentPreview.FilePreview.Name;
+
+            medicalFileDto.MedicalDocumentationType = medicalDocumentPreview.MedicalDocumentationType;
+
+            var stream = medicalDocumentPreview.FilePreview.OpenReadStream(maxAllowedSize);
+            medicalFileDto.File = stream;
+
+            medicalFileDtos.Add(medicalFileDto);
+
+
+        }
+        
+    }
+
+
+    private void HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        var currentGivenFiles = e.GetMultipleFiles();
+
+
+        if (currentGivenFiles.Count > 0)
+        {
+            foreach (var file in currentGivenFiles)
+            {
+                AddMedicalDocumentationDto dto = new();
+                dto.FilePreview = file;
+                addMedicalDocumentionDtos.Add(dto);
+
+            }
+        }
+
+
+    }
+
+    private void HandleEraseFile(AddMedicalDocumentationDto dto)
+    {
+        addMedicalDocumentionDtos.Remove(dto);
+    }
+
+    private void AddDescriptionHandle(AddMedicalDocumentationDto dto)
+    {
+        dto.AddDescription = !dto.AddDescription;
+    }
+
+    
+    
+}
+

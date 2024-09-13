@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Patient.Api", "Patient.Api\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Patient.Api.Client", "Patient.Api\Patient.Api.Client\Patient.Api.Client.csproj", "{BCD96F77-258A-4332-9EE6-9B07693DD92F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "Shared\Shared.csproj", "{F6C11CA3-6637-49D4-BC0D-C9C7DD48EC2D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared", "Shared\Shared.csproj", "{F6C11CA3-6637-49D4-BC0D-C9C7DD48EC2D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

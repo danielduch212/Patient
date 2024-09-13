@@ -11,12 +11,15 @@ public class BlobStorageService(IOptions<BlobStorageSettings> blobStorageSetting
 {
     private readonly BlobStorageSettings _blobStorageSettings = blobStorageSettingsOption.Value;
 
-    public async Task<string> UploadMedicalDataToBlob(Stream data, string filename)
+    public async Task<string> UploadMedicalDataToBlob(Stream data, string filename, string userId)
     {
         var blobServiceClient = new BlobServiceClient(_blobStorageSettings.ConnectionString);
         var containerClient = blobServiceClient.GetBlobContainerClient(_blobStorageSettings.MedicalDataContainerName);
 
-        var blobClient = containerClient.GetBlobClient(filename);
+        var newFileName = userId + DateTime.Today.ToString() + filename;
+
+
+        var blobClient = containerClient.GetBlobClient(newFileName);
 
         await blobClient.UploadAsync(data);
 
@@ -24,11 +27,14 @@ public class BlobStorageService(IOptions<BlobStorageSettings> blobStorageSetting
         return blobUrl;
     }
 
-    public async Task<string> UploadReportsFilesToBob(Stream data, string filename)
+    public async Task<string> UploadReportsFilesToBob(Stream data, string filename, string userId)
     {
         var blobServiceClient = new BlobServiceClient(_blobStorageSettings.ConnectionString);
         var containerClient = blobServiceClient.GetBlobContainerClient(_blobStorageSettings.ReportsFilesContainerName);
-        var blobClient = containerClient.GetBlobClient(filename);
+
+        var newFileName = userId + DateTime.Today.ToString() + filename;
+
+        var blobClient = containerClient.GetBlobClient(newFileName);
 
         await blobClient.UploadAsync(data);
 

@@ -1,0 +1,31 @@
+﻿@layout Patient.Api.Client.Layout.MyAccount.PatientAccountLayout
+
+@inject NavigationManager navigationManager 
+
+
+@rendermode InteractiveServer
+
+
+@page "/pacjent/dokumentacja-medyczna"
+
+<h3 class="text-center">Dokumentacja medyczna</h3>
+<div class="container pt-5">
+    <div class="row d-flex justify-content-center align-items-center">
+        <NavLink class="btn btn-primary text-center w-25" href="/pacjent/dokumentacja-medyczna/dodaj">
+            Dodaj plik
+        </NavLink>
+    </div>
+    <div class="row pt-5 border-top-0 border-dark">
+        <h2>Twoje pliki</h2>
+    </div>
+
+</div>
+
+
+@code {
+    private int maxFiles = 5;
+
+    
+
+    
+}
