@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Patient.Domain.Entities.Actors;
+using Patient.Domain.Interfaces;
+using Microsoft.AspNetCore.Http;
 
 namespace Patient.Application.Account
 {
@@ -12,7 +13,7 @@ namespace Patient.Application.Account
 
             if (user is null)
             {
-                redirectManager.RedirectToWithStatus("Account/InvalidUser", $"Error: Unable to load user with ID '{userManager.GetUserId(context.User)}'.", context);
+                //redirectManager.RedirectToWithStatus("Account/InvalidUser", $"Error: Unable to load user with ID '{userManager.GetUserId(context.User)}'.", context);
             }
 
             return user;

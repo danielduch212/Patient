@@ -41,7 +41,7 @@
                 </div>
                 <div class="col d-flex-column">
                     <InputSelect class="form-select selectpicker w-10" @bind-Value="dto.MedicalDocumentationType">
-                        @foreach (var type in MedicalDocumentationType.GetAllTypes())
+                        @foreach (var type in medicalDataTypes)
                         {
                             <option value="@type">@type</option>
                         }
@@ -52,7 +52,6 @@
                     @if (dto.AddDescription)
                     {
                         <InputTextArea id="description" style="width: 80%; height: 200px; resize: none; direction: ltr;" @bind-Value="dto.Description" class="form-control mt-5 text-center"></InputTextArea>
-
                     }
                 </div>
 
@@ -60,6 +59,29 @@
             </div>
 
         }
+        <btn type="button" class="btn btn-primary" @onclick="HandleAddFiles">Dodaj pliki</btn>
+    }
+
+
+
+    @if (areFilesBeingAdded)
+    {
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading</span>
+
+        </div>
+    }
+    @if (filesAddedSuccesfully)
+    {
+        <div class="alert alert-success" role="alert">
+            Pomyslnie dodano pliki
+        </div>
+    }
+    @if (filesAddingFailed)
+    {
+        <div class="alert alert-warning" role="alert">
+            Nie udalo sie dodac plikow
+        </div>
     }
 
 
@@ -80,7 +102,13 @@
 
     private int maxAllowedSize = 10 * 1024 * 1024;
 
+    private List<string> medicalDataTypes = new List<string>();
 
+
+    protected override void OnInitialized()
+    {
+        medicalDataTypes = MedicalDocumentationType.GetAllTypes();
+    }
 
     private async void HandleAddFiles()
     {
@@ -91,6 +119,7 @@
         filesAddingFailed = false;
         filesAddedSuccesfully = false;
         areFilesBeingAdded = true;
+
         //
         MakeFileStreams();
         var response = await _patientApiService.SendRequestAddMedicalFiles(medicalFileDtos);
@@ -120,6 +149,16 @@
             medicalFileDto.FileName = medicalDocumentPreview.FilePreview.Name;
 
             medicalFileDto.MedicalDocumentationType = medicalDocumentPreview.MedicalDocumentationType;
+
+            if (medicalDocumentPreview.Description!=null && medicalDocumentPreview.Description.Length > 0)
+            {
+                medicalFileDto.Description = medicalDocumentPreview.Description;
+            }
+            else
+            {
+                medicalFileDto.Description = "";
+            }
+
 
             var stream = medicalDocumentPreview.FilePreview.OpenReadStream(maxAllowedSize);
             medicalFileDto.File = stream;

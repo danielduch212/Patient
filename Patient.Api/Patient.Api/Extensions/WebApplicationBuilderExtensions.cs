@@ -7,6 +7,8 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Components.Authorization;
+using Patient.Application.Account;
+using Patient.Domain.Interfaces;
 
 
 namespace Patient.Api.Extensions;
@@ -53,6 +55,7 @@ public static class WebApplicationBuilderExtensions
 
         );
 
+        
 
     }
 

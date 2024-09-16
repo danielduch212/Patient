@@ -1,6 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Patient.Application.Reports.Commands.CreateReport;
+using Patient.Api.Components.Pages.PatientPages.MedicalDocumentation.Additional;
+using Patient.Application.MedicalData.Commands.AddMedicalFiles;
+using Patient.Domain.Entities.DTOs;
 
 namespace Patient.Api.Controllers;
 
@@ -9,11 +11,46 @@ namespace Patient.Api.Controllers;
 public class MedicalDataController(IMediator mediator, ILogger<MedicalDataController> logger) : ControllerBase
 {
 
+    
     [HttpPost("addMedicalData")]
-
-    public async Task<IActionResult> AddMedicalData([FromForm] CreateReportCommand command)
+    public async Task<IActionResult> AddMedicalData()
     {
 
+        var medicalFileDtos = new List<MedicalFileDto>();
+        var files = Request.Form.Files;
+        var form = Request.Form;
+
+
+        foreach (var file in files)
+        {
+            var description = form["Description"];
+            var medicalDocType = form["MedicalDocumentationType"];
+
+
+            var stream = file.OpenReadStream();
+                        
+            //await file.CopyToAsync(stream);
+            var medicalFileDto = new MedicalFileDto()
+            {
+                Description = description,
+                MedicalDocumentationType = medicalDocType,
+                File = stream,
+                FileName = file.FileName,
+            };
+            medicalFileDtos.Add(medicalFileDto);
+            
+        }
+
+        var command = new AddMedicalFilesCommand()
+        {
+            medicalFileDtos = medicalFileDtos,
+        };
+
+
+        var response = await mediator.Send(command);
+        if (response)
+            Ok(response);
+        return BadRequest();    
     }
 
 

@@ -77,5 +77,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IPatientApiService, PatientApiService>();
         services.AddScoped<IDoctorApiService, DoctorApiService>();
 
+        services.AddScoped<IMedicalDataRepository, MedicalDataRepository>();
+
     }
 }

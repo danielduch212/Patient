@@ -1,4 +1,5 @@
-﻿using Patient.Domain.Entities.DTOs;
+﻿using Microsoft.AspNetCore.Http;
+using Patient.Domain.Entities.DTOs;
 using Patient.Domain.Interfaces;
 using Shared.AdditionalClasses;
 
@@ -7,10 +8,12 @@ namespace Patient.Infrastructure.Services;
 internal class PatientApiService : IPatientApiService
 {
     private readonly HttpClient _httpClient;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public PatientApiService(HttpClient httpClient)
+    public PatientApiService(HttpClient httpClient, IHttpContextAccessor httpContextAccessor)
     {
         _httpClient = httpClient;
+        _httpContextAccessor = httpContextAccessor;
     }
 
 
@@ -34,6 +37,9 @@ internal class PatientApiService : IPatientApiService
             }
         }
 
+        var cookies = _httpContextAccessor.HttpContext.Request.Headers["Cookie"].ToString();
+
+        _httpClient.DefaultRequestHeaders.Add("Cookie", cookies);
 
         var response = await _httpClient.PostAsync("/api/MedicalDataController/addMedicalData", form);
         return response;

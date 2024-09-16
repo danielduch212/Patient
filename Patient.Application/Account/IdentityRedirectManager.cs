@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Http;
+using Patient.Domain.Interfaces;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Patient.Application.Account;
 
-public class IdentityRedirectManager(NavigationManager navigationManager)
+public class IdentityRedirectManager(NavigationManager navigationManager)  
 {
     public const string StatusCookieName = "Identity.StatusMessage";
 
