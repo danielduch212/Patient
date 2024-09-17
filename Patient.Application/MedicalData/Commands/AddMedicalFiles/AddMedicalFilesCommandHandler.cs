@@ -33,18 +33,24 @@ internal class AddMedicalFilesCommandHandler(ILogger<AddMedicalFilesCommandHandl
 
 
         //zakladam ze nie ma sensu wysylac w ogole requesta, ktory nie zawiera plikow - sprawdzenie w api
+        List<MedicalFile> medicalFilesToAdd = new();
+
         foreach (var file in request.medicalFileDtos)
         {
             var fileUrl = await blobStorageService.UploadMedicalDataToBlob(file.File, file.FileName, patient.Id);
             MedicalFile medicalDataFile = new MedicalFile()
             {
                 Description = file.Description,
-                FileName = fileUrl,
+                FileUrl = fileUrl,
                 MedicalDocumentationType = file.MedicalDocumentationType,
-                PatientId = patient.Id,                       
+                FileName = file.FileName,
+                                      
             };
-            await medicalDataRepository.AddMedicalFile(medicalDataFile);
+            medicalFilesToAdd.Add(medicalDataFile);
+            
         }
+        patient.MedicalFiles = medicalFilesToAdd;
+        await medicalDataRepository.SaveChanges();
 
         if(previousUserMedicalFilesNumber < patient.MedicalFiles.Count())
         {

@@ -1,31 +1,155 @@
 ﻿@layout Patient.Api.Client.Layout.MyAccount.PatientAccountLayout
 
+@using Patient.Domain.Interfaces
+@using Patient.Domain.Entities.DTOs
+@using System.Net.Http 
+
 @inject NavigationManager navigationManager 
+@inject IPatientApiService _patientApiService
+@inject HttpClient _httpClient
 
 
-@rendermode InteractiveServer
-
+@rendermode @(new InteractiveServerRenderMode(false))
 
 @page "/pacjent/dokumentacja-medyczna"
 
-<h3 class="text-center">Dokumentacja medyczna</h3>
-<div class="container pt-5">
+
+<div class="container pt-5 w-100 position-relative">
+    <h3 class="text-center">Dokumentacja medyczna</h3>
     <div class="row d-flex justify-content-center align-items-center">
         <NavLink class="btn btn-primary text-center w-25" href="/pacjent/dokumentacja-medyczna/dodaj">
             Dodaj plik
         </NavLink>
     </div>
-    <div class="row pt-5 border-top-0 border-dark">
-        <h2>Twoje pliki</h2>
+    <div class="row d-flex d-flex-row pt-5 border-top-0 border-dark">
+        <h2 class="pt-5">Twoje pliki</h2>
+        @if (readingFiles)
+        {
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading</span>
+            </div>
+        }
+        
+        <div class="col d-flex d-flex-row pt-2" style="height: 100px;">
+            @if (filesGet)
+            {                
+                @foreach (var file in medicalFilesToShow)
+                {
+                    <div class="file-block mx-2" @onclick="() => HandleShowFile(file)">
+                        <div class="bi-x-circle"></div>
+                        <div class="bi-file-icon"></div>
+                    </div>
+                }                                
+            }
+        </div>
     </div>
+
+    @if (showPreviewModal)
+    {
+        <div class="d-flex">
+            <div class="modal" tabindex="-1" style="display:block;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Podglad</h5>
+                        <button type="button" class="btn-close" @onclick="CloseModal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-4">
+                                    <p>Nazwa pliku</p>
+                                    <p>@medicalFileToShowPreview.FileName</p>
+                                </div>
+                                <div class="col-8">
+                                    <p>Typ pliku</p>
+                                    <p>@medicalFileToShowPreview.MedicalDocumentationType</p>
+                                </div>
+                            </div>
+
+                            <div class="row">
+
+                                <div class="col">
+                                    @if (loadingDocument)
+                                    {
+                                        <div class="spinner-border" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <img src=@medicalFileToShowPreview.FileBase64 />
+                                        <p>Opis</p>
+                                    }
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" @onclick="CloseModal">Zamknij</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
 
 </div>
 
 
 @code {
     private int maxFiles = 5;
+    private List<MedicalFileToShowDto> medicalFilesToShow = new();
+    private bool filesGet;
+    private bool readingFiles;
 
-    
+    private bool showPreviewModal;
+    private MedicalFileToShowDto medicalFileToShowPreview = new();
 
-    
+    private bool loadingDocument;
+
+    protected async override Task OnInitializedAsync()
+    {
+        readingFiles = true;
+        var response = await _patientApiService.SendRequestGetMedicalFiles();
+        if(response.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            medicalFilesToShow = await response.Content.ReadFromJsonAsync<List<MedicalFileToShowDto>>();
+            if(medicalFilesToShow.Count > 0){ filesGet = true; }
+            StateHasChanged();
+        }
+        readingFiles = false;
+
+    }
+
+    private async void HandleShowFile(MedicalFileToShowDto file)
+    {
+        medicalFileToShowPreview = file;
+        showPreviewModal = true;
+        loadingDocument = true;
+        medicalFileToShowPreview.FileBase64 = await LoadImageBase64(medicalFileToShowPreview.FileUrl);
+        loadingDocument = false;
+        StateHasChanged();
+    }
+
+    private async Task CloseModal()
+    {
+        showPreviewModal = false;
+    }
+
+    private async Task<string> LoadImageBase64(string url)
+    {
+        using(var _httpClient = new HttpClient())
+        {
+            var response = await _httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                var imageBytes = await response.Content.ReadAsByteArrayAsync();
+                return $"data:image/jpeg;base64,{Convert.ToBase64String(imageBytes)}";
+
+            };
+            return null;
+        }
+        
+    }
 }

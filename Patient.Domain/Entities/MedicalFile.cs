@@ -7,7 +7,8 @@ public class MedicalFile
     public int  Id { get; set; }
     public string MedicalDocumentationType { get; set; } = default!;
     public string Description { get; set; } = default!;
-    public string FileName {  get; set; }
+    public string FileUrl { get; set; } = default!;
+    public string FileName { get; set; } = default!;
 
 
     //

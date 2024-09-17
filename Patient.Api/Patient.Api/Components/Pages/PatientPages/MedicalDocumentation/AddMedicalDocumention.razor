@@ -41,6 +41,7 @@
                 </div>
                 <div class="col d-flex-column">
                     <InputSelect class="form-select selectpicker w-10" @bind-Value="dto.MedicalDocumentationType">
+                        <option>Wybierz</option>
                         @foreach (var type in medicalDataTypes)
                         {
                             <option value="@type">@type</option>
@@ -122,7 +123,7 @@
 
         //
         MakeFileStreams();
-        var response = await _patientApiService.SendRequestAddMedicalFiles(medicalFileDtos);
+       var response = await _patientApiService.SendRequestAddMedicalFiles(medicalFileDtos);
         if (response.IsSuccessStatusCode)
         {
             areFilesBeingAdded = false;

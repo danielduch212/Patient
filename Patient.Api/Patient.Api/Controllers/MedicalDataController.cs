@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Patient.Api.Components.Pages.PatientPages.MedicalDocumentation.Additional;
 using Patient.Application.MedicalData.Commands.AddMedicalFiles;
+using Patient.Application.MedicalData.Queries.GetMedicalFiles;
 using Patient.Domain.Entities.DTOs;
 
 namespace Patient.Api.Controllers;
@@ -49,10 +50,20 @@ public class MedicalDataController(IMediator mediator, ILogger<MedicalDataContro
 
         var response = await mediator.Send(command);
         if (response)
-            Ok(response);
+            return Ok(response);
         return BadRequest();    
     }
 
+    [HttpGet("getUserMedicalData")]
+    public async Task<IActionResult> GetUserMedicalData()
+    {
+        var result = await mediator.Send(new GetMedicalFilesQuery());
+        if (result.Count > 0)
+        {
+            return Ok(result);
+        }
+        return NoContent();
+    }
 
 
 }

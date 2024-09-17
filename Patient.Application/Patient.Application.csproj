@@ -12,7 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="MedicalData\Queries\" />
     <Folder Include="Reports\Queries\" />
     <Folder Include="Users\Commands\" />
     <Folder Include="Users\Queries\" />

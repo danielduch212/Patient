@@ -4,6 +4,8 @@ namespace Patient.Domain.Repositories;
 
 public interface IMedicalDataRepository
 {
-    public Task AddMedicalFile(MedicalFile medicalFile);
+    public Task SaveChanges();
+    public Task<List<MedicalFile>> GetPatientFiles(Patient.Domain.Entities.Actors.Patient patient);
+
 
 }

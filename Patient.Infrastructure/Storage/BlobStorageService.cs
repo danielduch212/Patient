@@ -16,10 +16,12 @@ public class BlobStorageService(IOptions<BlobStorageSettings> blobStorageSetting
         var blobServiceClient = new BlobServiceClient(_blobStorageSettings.ConnectionString);
         var containerClient = blobServiceClient.GetBlobContainerClient(_blobStorageSettings.MedicalDataContainerName);
 
-        var newFileName = userId + DateTime.Today.ToString() + filename;
+        var newFileName = userId + DateTime.Today.ToString("yyyy-MM-dd") + filename;
+
+        var fileNameWithoutSpaces = newFileName.Replace(" ", "");
 
 
-        var blobClient = containerClient.GetBlobClient(newFileName);
+        var blobClient = containerClient.GetBlobClient(fileNameWithoutSpaces);
 
         await blobClient.UploadAsync(data);
 
@@ -53,7 +55,7 @@ public class BlobStorageService(IOptions<BlobStorageSettings> blobStorageSetting
             StartsOn = DateTime.UtcNow,
             ExpiresOn = DateTime.UtcNow.AddMinutes(30),
             BlobName = GetBlobNameFromUrl(blobUrl),
-
+                
         };
         sasBuilder.SetPermissions(BlobSasPermissions.Read);
         //tutaj mozna to potem dopracowac dla usera i dla pacjenta - pacjent moze usuwac, lekarz nie

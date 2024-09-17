@@ -52,6 +52,10 @@ main {
         flex-direction: row;
     }
 
+    .sidebar{
+        position: sticky;
+    }
+
     .sidebar-top {
         width: 100vw;
         height: 100px;
