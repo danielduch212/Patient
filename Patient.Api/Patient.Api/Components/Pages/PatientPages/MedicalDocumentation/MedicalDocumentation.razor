@@ -14,7 +14,7 @@
 @page "/pacjent/dokumentacja-medyczna"
 
 
-<div class="container pt-5 w-100 position-relative">
+<div class="container pt-5 w-100">
     <h3 class="text-center">Dokumentacja medyczna</h3>
     <div class="row d-flex justify-content-center align-items-center">
         <NavLink class="btn btn-primary text-center w-25" href="/pacjent/dokumentacja-medyczna/dodaj">
@@ -30,7 +30,7 @@
             </div>
         }
         
-        <div class="col d-flex d-flex-row pt-2" style="height: 100px;">
+        <div class="col d-flex d-flex-row pt-2 position-relative" style="height: 100px;">
             @if (filesGet)
             {                
                 @foreach (var file in medicalFilesToShow)
@@ -41,57 +41,60 @@
                     </div>
                 }                                
             }
-        </div>
-    </div>
+            @if (showPreviewModal)
+            {
+                <div class="modal-backdrop">
+                    <div class="modal" tabindex="-1" style="display:block;">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Podglad</h5>
+                                <button type="button" class="btn-close" @onclick="CloseModal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <p>Nazwa pliku</p>
+                                            <p>@medicalFileToShowPreview.FileName</p>
+                                        </div>
+                                        <div class="col-8">
+                                            <p>Typ pliku</p>
+                                            <p>@medicalFileToShowPreview.MedicalDocumentationType</p>
+                                        </div>
+                                    </div>
 
-    @if (showPreviewModal)
-    {
-        <div class="d-flex">
-            <div class="modal" tabindex="-1" style="display:block;">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Podglad</h5>
-                        <button type="button" class="btn-close" @onclick="CloseModal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="container">
-                            <div class="row">
-                                <div class="col-4">
-                                    <p>Nazwa pliku</p>
-                                    <p>@medicalFileToShowPreview.FileName</p>
-                                </div>
-                                <div class="col-8">
-                                    <p>Typ pliku</p>
-                                    <p>@medicalFileToShowPreview.MedicalDocumentationType</p>
+                                    <div class="row">
+
+                                        <div class="col">
+                                            @if (loadingDocument)
+                                            {
+                                                <div class="spinner-border" role="status">
+                                                    <span class="visually-hidden">Loading...</span>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <img src=@medicalFileToShowPreview.FileBase64 />
+                                                <p>Opis</p>
+                                                <p>@medicalFileToShowPreview.Description</p>
+                                            }
+
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-
-                            <div class="row">
-
-                                <div class="col">
-                                    @if (loadingDocument)
-                                    {
-                                        <div class="spinner-border" role="status">
-                                            <span class="visually-hidden">Loading...</span>
-                                        </div>
-                                    }
-                                    else
-                                    {
-                                        <img src=@medicalFileToShowPreview.FileBase64 />
-                                        <p>Opis</p>
-                                    }
-
-                                </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-secondary" @onclick="CloseModal">Zamknij</button>
                             </div>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button class="btn btn-secondary" @onclick="CloseModal">Zamknij</button>
-                    </div>
                 </div>
-            </div>
+            }
         </div>
-    }
+
+    </div>
+
+   
 
 
 </div>

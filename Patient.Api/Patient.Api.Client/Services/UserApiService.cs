@@ -34,9 +34,10 @@ public class UserApiService
         }
 
 
-        var response = await _httpClient.PostAsync("/api/Reports/createReport", form);
+        var response = await _httpClient.PostAsync("/api/ReportsController/createReport", form);
         return response;
     }
 
-    
+   
+
 }

@@ -8,7 +8,12 @@ public class Patient : User
     public PatientType PatientType { get; set; }
 
 
+
+
     //
+    //public IEnumerable<> CurrentlyTreatedDiseases
+    //public IEnumerable<> TreatedDiseasesInThePast
+
     public IEnumerable<Report>? Reports { get; set; } = new List<Report>();
     public IEnumerable<Doctor>? Doctors { get; set; } = new List<Doctor>();
     public IEnumerable<MedicalFile>? MedicalFiles { get; set; } = new List<MedicalFile>();

@@ -56,6 +56,7 @@ main {
         width: 100vw;
         height: 100px;
         position: sticky;
+        z-index: 1;
         top: 0;
     }
 

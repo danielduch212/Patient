@@ -55,7 +55,7 @@ main {
     .sidebar {
         width: 100vw;
         height: 100px;
-        position: sticky;
+        position: static;
         top: 0;
     }
 

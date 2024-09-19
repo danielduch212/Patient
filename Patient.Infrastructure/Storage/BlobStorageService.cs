@@ -34,9 +34,12 @@ public class BlobStorageService(IOptions<BlobStorageSettings> blobStorageSetting
         var blobServiceClient = new BlobServiceClient(_blobStorageSettings.ConnectionString);
         var containerClient = blobServiceClient.GetBlobContainerClient(_blobStorageSettings.ReportsFilesContainerName);
 
-        var newFileName = userId + DateTime.Today.ToString() + filename;
+        var newFileName = userId + DateTime.Today.ToString("yyyy-MM-dd") + filename;
 
-        var blobClient = containerClient.GetBlobClient(newFileName);
+        var fileNameWithoutSpaces = newFileName.Replace(" ", "");
+
+
+        var blobClient = containerClient.GetBlobClient(fileNameWithoutSpaces);
 
         await blobClient.UploadAsync(data);
 

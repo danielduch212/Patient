@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Patient.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using Patient.Infrastructure.Persistence;
 namespace Patient.Infrastructure.Migrations
 {
     [DbContext(typeof(PatientDbContext))]
-    partial class PatientDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240918145822_changedPropertiesReport")]
+    partial class changedPropertiesReport
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -431,14 +434,9 @@ namespace Patient.Infrastructure.Migrations
                     b.Property<int?>("Urgency")
                         .HasColumnType("int");
 
-                    b.Property<int?>("medicalRecommandationId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("PatientId");
-
-                    b.HasIndex("medicalRecommandationId");
 
                     b.ToTable("Reports");
                 });
@@ -609,13 +607,7 @@ namespace Patient.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Patient.Domain.Entities.MedicalRecommandation", "medicalRecommandation")
-                        .WithMany()
-                        .HasForeignKey("medicalRecommandationId");
-
                     b.Navigation("Patient");
-
-                    b.Navigation("medicalRecommandation");
                 });
 
             modelBuilder.Entity("Patient.Domain.Entities.Actors.Admin", b =>

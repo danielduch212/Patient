@@ -1,0 +1,93 @@
+﻿@layout Patient.Api.Client.Layout.UserLayout
+
+@page "/pacjent/raporty"
+
+@rendermode @(new InteractiveServerRenderMode(false))
+
+
+@using Patient.Domain.Interfaces
+@using Patient.Domain.Entities.DTOs
+@using Patient.Domain.Entities
+
+
+@inject IPatientApiService _patientApiService
+@inject NavigationManager _navigationManager
+
+<div class="page-background">
+
+    <div class="container px-4">
+        <div class="row pt-5">
+            <div class="col d-flex justify-content-center align-items-center">
+                <NavLink class="btn btn-primary" href="/pacjent/dodaj-raport">
+                    Zloz raport tutaj
+                </NavLink>
+            </div>
+            <div class="col-4 d-flex d-flex-column justify-content-center align-items-center">
+            </div>
+        </div>
+        <div class="list-group pt-5">
+            @if (readingReports)
+            {
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            }
+
+            @if (filesGet)
+            {
+                foreach (var report in reportsToShow)
+                {
+                    <button type="button" @onclick="() => HandleShowReportPreview(report)" class="list-group-item list-group-item-action">
+                        Raport
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">@report.DateOfCreating</h5>
+                            <small class="text-muted">Data utworzenia</small>
+                        </div>                        
+                        <small class="text-muted">Status: @report.IsChecked</small>
+                    </button>
+                }
+            }
+            else
+            {
+                <div>
+                    Brak raportow do wyswietlenia
+                </div>
+            }
+            
+        </div>
+
+    </div>
+
+</div>
+
+@code {
+
+
+    private int maxFiles = 5;
+    private List<ReportToShowDto> reportsToShow = new();
+    private bool filesGet;
+    private bool readingReports;
+
+    private bool showPreviewModal;
+
+
+    protected async override Task OnInitializedAsync()
+    {
+        readingReports = true;
+        var response = await _patientApiService.SendRequestGetReports();
+        if (response.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            reportsToShow = await response.Content.ReadFromJsonAsync<List<ReportToShowDto>>();
+            if (reportsToShow.Count > 0) { filesGet = true; }
+            StateHasChanged();
+        }
+        readingReports = false;
+
+    }
+
+    private async void HandleShowReportPreview(ReportToShowDto report)
+    {
+        _navigationManager.NavigateTo($"/pacjent/raporty/{report.Id}");
+    }
+
+}

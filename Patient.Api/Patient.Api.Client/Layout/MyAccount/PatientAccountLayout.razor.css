@@ -1,16 +1,15 @@
 .page {
-    position: static;
+    position: relative;
     display: flex;
     flex-direction: column;
 }
 
 main {
     flex: 1;
-    
 }
 
 .sidebar {
-    background: gray;
+    background-image: linear-gradient(45deg, rgb(144, 238, 144) 0%, rgb(0,123,255)70%);
 }
 
 .top-row {
@@ -28,23 +27,23 @@ main {
         text-decoration: none;
     }
 
-    .top-row ::deep a:hover, .top-row ::deep .btn-link:hover {
-        text-decoration: underline;
-    }
+        .top-row ::deep a:hover, .top-row ::deep .btn-link:hover {
+            text-decoration: underline;
+        }
 
-    .top-row ::deep a:first-child {
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
+        .top-row ::deep a:first-child {
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
 
 @media (max-width: 640.98px) {
     .top-row {
         justify-content: space-between;
     }
 
-    .top-row ::deep a, .top-row ::deep .btn-link {
-        margin-left: 0;
-    }
+        .top-row ::deep a, .top-row ::deep .btn-link {
+            margin-left: 0;
+        }
 }
 
 @media (min-width: 641px) {
@@ -52,28 +51,14 @@ main {
         flex-direction: row;
     }
 
-    .sidebar{
-        position: sticky;
-    }
-
-    .sidebar-top {
-        width: 100vw;
-        height: 100px;
+    .sidebar {
+        width: 10rem;
+        height: 40rem;
         position: sticky;
         top: 0;
     }
 
-    .sidebar-side {
-        width: 250px;
-        height: 100vh;
-        position: sticky;
-        top: 0;
-    }
-
-    .page-body{
-        flex-direction: row;
-    }
-
+    
 
     .top-row {
         position: sticky;
@@ -81,11 +66,11 @@ main {
         z-index: 1;
     }
 
-    .top-row.auth ::deep a:first-child {
-        flex: 1;
-        text-align: right;
-        width: 0;
-    }
+        .top-row.auth ::deep a:first-child {
+            flex: 1;
+            text-align: right;
+            width: 0;
+        }
 
     .top-row, article {
         padding-left: 2rem !important;

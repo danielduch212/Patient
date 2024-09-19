@@ -4,5 +4,8 @@ namespace Patient.Domain.Repositories;
 
 public interface IReportRepository
 {
-    Task CreateReport(Report entity);
+    public Task CreateReport(Report entity);
+    public Task<List<Report>> GetPatientReports(Patient.Domain.Entities.Actors.Patient patient);
+    public Task<Report> GetReport(int id);
+
 }

@@ -38,6 +38,7 @@ internal class CreateReportCommandHandler(ILogger<CreateReportCommandHandler> lo
             Description = request.Description,
             FileNames = fileNames,
             PatientId = user.Id,
+            DateOfCreating = DateTime.Today.ToString("yyyy-MM-dd"),
         };
 
         await reportRepository.CreateReport(report);

@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Patient.Domain.Entities;
 using Patient.Domain.Entities.DTOs;
 using Patient.Domain.Interfaces;
 using Shared.AdditionalClasses;
 using System.Net.Http.Json;
+using System.Text.Json.Serialization;
+using System.Text;
 
 namespace Patient.Infrastructure.Services;
 
@@ -49,6 +52,21 @@ internal class PatientApiService : IPatientApiService
     {
         AddCookiesToRequest(); 
         var response = await _httpClient.GetAsync("/api/MedicalDataController/getUserMedicalData");
+        return response;
+    }
+
+    public async Task<HttpResponseMessage> SendRequestGetReports()
+    {
+        AddCookiesToRequest();
+        var response = await _httpClient.GetAsync("/api/ReportsController/getReports");
+        return response;
+    }
+
+    public async Task<HttpResponseMessage> SendRequestGetReport(string id)
+    {
+        AddCookiesToRequest();
+        var url = $"/api/ReportsController/getReport?Id={id}";
+        var response = await _httpClient.GetAsync(url);
         return response;
     }
 
