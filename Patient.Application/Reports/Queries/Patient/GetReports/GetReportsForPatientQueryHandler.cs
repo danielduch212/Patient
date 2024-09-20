@@ -7,15 +7,16 @@ using Patient.Application.Account;
 using Patient.Domain.Entities.DTOs;
 using Patient.Domain.Interfaces;
 using Patient.Domain.Repositories;
+using Patient.Domain;
 
-namespace Patient.Application.Reports.Queries.GetReports;
+namespace Patient.Application.Reports.Queries.Patient.GetReports;
 
-internal class GetReportsQueryHandler(ILogger<GetReportsQueryHandler> logger,
-    IdentityUserAccessor userAccessor, UserManager<Patient.Domain.Entities.Actors.Patient> patientManager,
+internal class GetReportsForDoctorQueryHandler(ILogger<GetReportsForDoctorQueryHandler> logger,
+    IdentityUserAccessor userAccessor, UserManager<Domain.Entities.Actors.Patient> patientManager,
     IHttpContextAccessor httpContextAccesor, HttpClient _httpClient, IBlobStorageService blobStorageService,
-    IReportRepository reportsRepository, IMapper mapper) : IRequestHandler<GetReportsQuery, List<ReportToShowDto>>
+    IReportRepository reportsRepository, IMapper mapper) : IRequestHandler<GetReportsForDoctorQuery, List<ReportToShowToPatientDto>>
 {
-    public async Task<List<ReportToShowDto>> Handle(GetReportsQuery request, CancellationToken cancellationToken)
+    public async Task<List<ReportToShowToPatientDto>> Handle(GetReportsForDoctorQuery request, CancellationToken cancellationToken)
     {
         var user = await userAccessor.GetRequiredUserAsync(httpContextAccesor.HttpContext);
         var patient = await patientManager.FindByEmailAsync(user.Email);
@@ -23,16 +24,16 @@ internal class GetReportsQueryHandler(ILogger<GetReportsQueryHandler> logger,
 
         var reports = await reportsRepository.GetPatientReports(patient);
 
-        List<ReportToShowDto> reportsDto = new List<ReportToShowDto>();
+        List<ReportToShowToPatientDto> reportsDto = new List<ReportToShowToPatientDto>();
 
-        foreach(var report in reports)
+        foreach (var report in reports)
         {
-            var dto = mapper.Map<ReportToShowDto>(report);
+            var dto = mapper.Map<ReportToShowToPatientDto>(report);
             reportsDto.Add(dto);
         }
-      
+
         logger.LogInformation($"Returning to user: {patient.Email}  : {reportsDto.Count} files");
         return reportsDto;
-        
+
     }
 }

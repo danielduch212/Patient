@@ -1,4 +1,4 @@
-﻿@layout Patient.Api.Client.Layout.UserLayout
+﻿@layout Patient.Api.Components.Layout.Doctor.DoctorLayout
 
 @rendermode @(new InteractiveServerRenderMode(false))
 
@@ -10,7 +10,7 @@
 @inject IPatientApiService _patientApiService
 @inject IBlobStorageService _blobStorageService
 
-@page "/pacjent/raporty/{Id}"
+@page "/lekarz/raporty/{Id}"
 
 
 <div class="container px-4">
@@ -73,7 +73,7 @@
     [Parameter]
     public string Id { get; set; }
 
-    private ReportToShowToPatientDto reportToShow = new();
+    private ReportToShowToDoctorDto reportToShow = new();
     private bool fileGet;
     private bool readingReport;
 
@@ -86,7 +86,7 @@
         var response = await _patientApiService.SendRequestGetReport(Id);
         if (response.StatusCode == System.Net.HttpStatusCode.OK)
         {
-            reportToShow = await response.Content.ReadFromJsonAsync<ReportToShowToPatientDto>();
+            reportToShow = await response.Content.ReadFromJsonAsync<ReportToShowToDoctorDto>();
             if (reportToShow.FileNames.Any())
             {
                 foreach (var filename in reportToShow.FileNames)

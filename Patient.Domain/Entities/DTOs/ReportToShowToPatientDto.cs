@@ -3,7 +3,7 @@ using Patient.Domain.Entities.Actors;
 
 namespace Patient.Domain.Entities.DTOs;
 
-public class ReportToShowDto
+public class ReportToShowToPatientDto
 {
     public int Id { get; set; }
     public string Description { get; set; } = default!;
@@ -14,6 +14,7 @@ public class ReportToShowDto
     public List<string>? FilesBase64 { get; set; } = new List<string>();
 
     public IEnumerable<Doctor>? DoctorsWhoChecked { get; set; } = new List<Doctor>();
+    public MedicalRecommandation? medicalRecommandation { get; set; }
 
 
 }

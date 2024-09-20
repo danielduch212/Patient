@@ -15,6 +15,7 @@ using Patient.Infrastructure.Seeders;
 using Patient.Infrastructure.Configuration;
 using Patient.Infrastructure.Storage;
 using Patient.Infrastructure.Services;
+using Patient.Infrastructure.Seeders.MedicineSeeder;
 
 
 
@@ -78,6 +79,10 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IDoctorApiService, DoctorApiService>();
 
         services.AddScoped<IMedicalDataRepository, MedicalDataRepository>();
+
+        services.AddScoped<IMedicineSeeder, MedicineSeeder>();
+
+        services.AddScoped<IDoctorsRepository, DoctorsRepository>();
 
     }
 }

@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Patient.Domain.Entities.DTOs;
 
-namespace Patient.Application.MedicalData.Commands.AddMedicalFiles;
+namespace Patient.Application.MedicalData.Commands.Patient.AddMedicalFiles;
 
 public class AddMedicalFilesCommand : IRequest<bool>
 {

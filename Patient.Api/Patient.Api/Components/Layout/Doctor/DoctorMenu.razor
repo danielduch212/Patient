@@ -1,8 +1,4 @@
-﻿@layout Patient.Api.Client.Layout.UserLayout
-
-@inject IJSRuntime _jsRunTIme
-
-@rendermode InteractiveWebAssembly
+﻿@rendermode InteractiveServer
 
 
 
@@ -11,51 +7,44 @@
         <div class="col">
             <div class="menu-item">
                 
-                <NavLink class="nav-link  d-flex d-flex-row" href="/pacjent">
+                <NavLink class="nav-link  d-flex d-flex-row" href="/lekarz">
                     <span class="bi bi-house-door-fill-nav-menu"></span>
-                    <span class="" aria-hidden="true"></span> Panel
+                    <span class="" aria-hidden="true">Panel</span> 
                 </NavLink>
             </div>
         </div>
         <div class="col">
             <div class="menu-item">
-                <NavLink class="nav-link" href="/pacjent/raporty">
-                    <span aria-hidden="true"></span> Raporty
+                <NavLink class="nav-link" href="/lekarz/raporty">
+                    <span aria-hidden="true">Raporty</span> 
                 </NavLink>
             </div>
         </div>
         <div class="col">
             <div class="menu-item">
-                <NavLink class="nav-link" href="/pacjent/recepty">
-                    <span  aria-hidden="true"></span> Recepty
+                <NavLink class="nav-link" href="/lekarz/recepty">
+                    <span  aria-hidden="true"></span> 
                 </NavLink>
             </div>
         </div>
         <div class="col">
             <div class="menu-item">
-                <NavLink class="nav-link" href="/pacjent/wizyty">
-                    <span  aria-hidden="true"></span> Umow wizyte
+                <NavLink class="nav-link" href="/lekarz/wizyty">
+                    <span  aria-hidden="true"></span> 
                 </NavLink>
             </div>
         </div>
         <div class="col">
             <div class="menu-item">
-                <NavLink class="nav-link" href="/pacjent/zdrowie">
-                    <span aria-hidden="true"></span> Zdrowie
-                </NavLink>
-            </div>
-        </div>
-        <div class="col">
-            <div class="menu-item">
-                <NavLink class="nav-link" href="/pacjent/czat">
-                    <span aria-hidden="true"></span> Czat
+                <NavLink class="nav-link" href="/lekarz/czat">
+                    <span aria-hidden="true"></span> 
                 </NavLink>
             </div>
         </div>
         <div class="col">
             
         </div>
-        <div class="col d-flex d-flex-column justify-content-center align-items-center" >
+        <div class="col d-flex d-flex-column justify-content-center align-items-center">
             <div class="dropdown">
                 <a class="dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
                     <div class="myaccount-icon">
@@ -67,13 +56,20 @@
                 </a>
 
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                    <li><a class="Moje Konto" href="/pacjent/konto">Moje konto</a></li>
-                    <li><a class="Dokumentacja medyczna" href="/pacjent/dokumentacja-medyczna">Dokumentacja</a></li>
+                    <li><a class="Moje Konto" href="/lekarz/konto">Moje konto</a></li>
                     <li><a class="Wyloguj się" href="#">Wyloguj sie</a></li>
                 </ul>
             </div>
         </div>
-   
+
+
+
+
+        
+        
+        
+                
+        
         
         
 
@@ -82,10 +78,10 @@
 
 
 @code{
+    private bool isAccountMenuVisible = false;
 
-    
-
-    
-
-    
+    private void OnMyAccount()
+    {
+        isAccountMenuVisible = !isAccountMenuVisible;
+    }
 }

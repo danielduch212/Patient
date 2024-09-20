@@ -8,16 +8,16 @@ using Patient.Domain.Interfaces;
 using Patient.Domain.Repositories;
 
 
-namespace Patient.Application.MedicalData.Commands.AddMedicalFiles;
+namespace Patient.Application.MedicalData.Commands.Patient.AddMedicalFiles;
 
 internal class AddMedicalFilesCommandHandler(ILogger<AddMedicalFilesCommandHandler> logger,
-    IdentityUserAccessor userAccessor, UserManager<Patient.Domain.Entities.Actors.Patient> patientManager,
+    IdentityUserAccessor userAccessor, UserManager<Domain.Entities.Actors.Patient> patientManager,
     IHttpContextAccessor httpContextAccesor, HttpClient _httpClient, IBlobStorageService blobStorageService,
     IMedicalDataRepository medicalDataRepository) : IRequestHandler<AddMedicalFilesCommand, bool>
 {
     public async Task<bool> Handle(AddMedicalFilesCommand request, CancellationToken cancellationToken)
     {
-        
+
         var user = await userAccessor.GetRequiredUserAsync(httpContextAccesor.HttpContext);
         var patient = await patientManager.FindByEmailAsync(user.Email);
 
@@ -27,7 +27,7 @@ internal class AddMedicalFilesCommandHandler(ILogger<AddMedicalFilesCommandHandl
         {
             previousUserMedicalFilesNumber = patient.MedicalFiles.Count();
         }
-        
+
 
         logger.LogInformation($"Adding medical file(s) to user: {patient.Email}");
 
@@ -44,15 +44,15 @@ internal class AddMedicalFilesCommandHandler(ILogger<AddMedicalFilesCommandHandl
                 FileUrl = fileUrl,
                 MedicalDocumentationType = file.MedicalDocumentationType,
                 FileName = file.FileName,
-                                      
+
             };
             medicalFilesToAdd.Add(medicalDataFile);
-            
+
         }
         patient.MedicalFiles = medicalFilesToAdd;
         await medicalDataRepository.SaveChanges();
 
-        if(previousUserMedicalFilesNumber < patient.MedicalFiles.Count())
+        if (previousUserMedicalFilesNumber < patient.MedicalFiles.Count())
         {
             logger.LogInformation($"Added files: {request.medicalFileDtos.Count()} to user: {patient.Email}");
             return true;
@@ -60,7 +60,7 @@ internal class AddMedicalFilesCommandHandler(ILogger<AddMedicalFilesCommandHandl
 
         logger.LogInformation($"Adding files to user :  {patient.Email} failed.");
         return false;
-        
-        
+
+
     }
 }

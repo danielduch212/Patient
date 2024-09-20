@@ -8,10 +8,10 @@ using Patient.Domain.Interfaces;
 using Patient.Domain.Repositories;
 using Patient.Domain.Constants;
 
-namespace Patient.Application.MedicalData.Queries.GetMedicalFiles;
+namespace Patient.Application.MedicalData.Queries.Patient.GetMedicalFiles;
 
 internal class GetMedicalFilesQueryHandler(ILogger<GetMedicalFilesQueryHandler> logger,
-    IdentityUserAccessor userAccessor, UserManager<Patient.Domain.Entities.Actors.Patient> patientManager,
+    IdentityUserAccessor userAccessor, UserManager<Domain.Entities.Actors.Patient> patientManager,
     IHttpContextAccessor httpContextAccesor, HttpClient _httpClient, IBlobStorageService blobStorageService,
     IMedicalDataRepository medicalDataRepository) : IRequestHandler<GetMedicalFilesQuery, List<MedicalFileToShowDto>>
 {
@@ -26,8 +26,8 @@ internal class GetMedicalFilesQueryHandler(ILogger<GetMedicalFilesQueryHandler> 
         List<MedicalFileToShowDto> medicalFilesToShowDto = new List<MedicalFileToShowDto>();
         if (medicalFiles.Any())
         {
-            
-            foreach(var file in medicalFiles)
+
+            foreach (var file in medicalFiles)
             {
                 var sasUrl = await blobStorageService.GetBlobSasUrl(file.FileUrl, BlobContainerNames.MedicalData);
 

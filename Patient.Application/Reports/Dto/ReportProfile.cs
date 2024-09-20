@@ -10,7 +10,9 @@ public class ReportProfile : Profile
 {
     public ReportProfile()
     {
-        CreateMap<Report, ReportToShowDto>();
+        CreateMap<Report, ReportToShowToPatientDto>();
+        CreateMap<Report, ReportToShowToDoctorDto>();
+
     }
 
 }

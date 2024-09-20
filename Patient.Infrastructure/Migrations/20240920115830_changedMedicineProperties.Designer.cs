@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Patient.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using Patient.Infrastructure.Persistence;
 namespace Patient.Infrastructure.Migrations
 {
     [DbContext(typeof(PatientDbContext))]
-    partial class PatientDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240920115830_changedMedicineProperties")]
+    partial class changedMedicineProperties
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,36 +38,6 @@ namespace Patient.Infrastructure.Migrations
                     b.HasIndex("PatientsId");
 
                     b.ToTable("DoctorPatient");
-                });
-
-            modelBuilder.Entity("DoctorReport", b =>
-                {
-                    b.Property<string>("DoctorsToCheckId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("ReportsToCheckId")
-                        .HasColumnType("int");
-
-                    b.HasKey("DoctorsToCheckId", "ReportsToCheckId");
-
-                    b.HasIndex("ReportsToCheckId");
-
-                    b.ToTable("DoctorReport");
-                });
-
-            modelBuilder.Entity("DoctorReport1", b =>
-                {
-                    b.Property<string>("DoctorsWhoCheckedId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("ReportsCheckedId")
-                        .HasColumnType("int");
-
-                    b.HasKey("DoctorsWhoCheckedId", "ReportsCheckedId");
-
-                    b.HasIndex("ReportsCheckedId");
-
-                    b.ToTable("DoctorReport1");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -487,6 +460,11 @@ namespace Patient.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("ReportId")
+                        .HasColumnType("int");
+
+                    b.HasIndex("ReportId");
+
                     b.ToTable("Doctors", (string)null);
                 });
 
@@ -515,36 +493,6 @@ namespace Patient.Infrastructure.Migrations
                     b.HasOne("Patient.Domain.Entities.Actors.Patient", null)
                         .WithMany()
                         .HasForeignKey("PatientsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("DoctorReport", b =>
-                {
-                    b.HasOne("Patient.Domain.Entities.Actors.Doctor", null)
-                        .WithMany()
-                        .HasForeignKey("DoctorsToCheckId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Patient.Domain.Entities.Report", null)
-                        .WithMany()
-                        .HasForeignKey("ReportsToCheckId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("DoctorReport1", b =>
-                {
-                    b.HasOne("Patient.Domain.Entities.Actors.Doctor", null)
-                        .WithMany()
-                        .HasForeignKey("DoctorsWhoCheckedId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Patient.Domain.Entities.Report", null)
-                        .WithMany()
-                        .HasForeignKey("ReportsCheckedId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -714,6 +662,10 @@ namespace Patient.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Patient.Domain.Entities.Report", null)
+                        .WithMany("DoctorsWhoChecked")
+                        .HasForeignKey("ReportId");
+
                     b.OwnsOne("Patient.Domain.Entities.Additional.Address", "Address", b1 =>
                         {
                             b1.Property<string>("DoctorId")
@@ -772,6 +724,11 @@ namespace Patient.Infrastructure.Migrations
 
                     b.Navigation("Address")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Patient.Domain.Entities.Report", b =>
+                {
+                    b.Navigation("DoctorsWhoChecked");
                 });
 
             modelBuilder.Entity("Patient.Domain.Entities.Actors.Doctor", b =>

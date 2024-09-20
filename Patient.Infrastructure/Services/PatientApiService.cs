@@ -58,14 +58,14 @@ internal class PatientApiService : IPatientApiService
     public async Task<HttpResponseMessage> SendRequestGetReports()
     {
         AddCookiesToRequest();
-        var response = await _httpClient.GetAsync("/api/ReportsController/getReports");
+        var response = await _httpClient.GetAsync("/api/ReportsController/getReportsForPatient");
         return response;
     }
 
     public async Task<HttpResponseMessage> SendRequestGetReport(string id)
     {
         AddCookiesToRequest();
-        var url = $"/api/ReportsController/getReport?Id={id}";
+        var url = $"/api/ReportsController/getReportForPatient?Id={id}";
         var response = await _httpClient.GetAsync(url);
         return response;
     }

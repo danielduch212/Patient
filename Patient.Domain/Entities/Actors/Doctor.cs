@@ -15,7 +15,8 @@ public class Doctor : User
     public IEnumerable<Patient> Patients { get; set; } = new List<Patient>();
     public IEnumerable<Prescription> PrescriptionsIssued { get; set; } = new List<Prescription>();
     public IEnumerable<MedicalRecommandation> MedicalRecommandations { get; set; } = new List<MedicalRecommandation>();
-
+    public IEnumerable<Report>? ReportsToCheck { get; set; } = new List<Report>();
+    public IEnumerable<Report>? ReportsChecked { get; set; } = new List<Report>();
 
 
 }

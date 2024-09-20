@@ -1,10 +1,10 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Patient.Application.MedicalData.Queries.GetMedicalFiles;
-using Patient.Application.Reports.Commands.CreateReport;
-using Patient.Application.Reports.Queries.GetReport;
-using Patient.Application.Reports.Queries.GetReports;
+using Patient.Application.Reports.Commands.Patient.CreateReport;
+using Patient.Application.Reports.Queries.Doctor.GetReport;
+using Patient.Application.Reports.Queries.Patient.GetReport;
+using Patient.Application.Reports.Queries.Patient.GetReports;
 using Patient.Domain.Constants;
 
 namespace Patient.Server.Controllers;
@@ -28,10 +28,10 @@ public class ReportsController(IMediator mediator, ILogger<ReportsController> lo
     }
 
     [Authorize(Roles = UserRoles.Patient)]
-    [HttpGet("getReports")]
-    public async Task<IActionResult> GetReports()
+    [HttpGet("getReportsForPatient")]
+    public async Task<IActionResult> GetReportsForPatient()
     {
-        var result = await mediator.Send(new GetReportsQuery());
+        var result = await mediator.Send(new GetReportsForDoctorQuery());
         if (result.Count > 0)
         {
             return Ok(result);
@@ -40,10 +40,30 @@ public class ReportsController(IMediator mediator, ILogger<ReportsController> lo
     }
 
     [Authorize(Roles = UserRoles.Patient)]
-    [HttpGet("getReport")]
-    public async Task<IActionResult> GetReport([FromQuery] GetReportQuery query)
+    [HttpGet("getReportForPatient")]
+    public async Task<IActionResult> GetReportForPatient([FromQuery] GetReportForPatientQuery query)
     { 
         var result = await mediator.Send(query);
+        return Ok(result);
+    }
+
+    
+    [HttpGet("getReportsForDoctor")]
+    public async Task<IActionResult> GetReportsForDoctor()
+    {
+        var result = await mediator.Send(new GetReportsForDoctorQuery());//
+        if (result.Count > 0)
+        {
+            return Ok(result);
+        }
+        return NoContent();
+    }
+
+    [Authorize(Roles = UserRoles.Doctor)]
+    [HttpGet("getReportForDoctor")]
+    public async Task<IActionResult> GetReportForDoctor([FromQuery] GetReportForDoctorQuery query)
+    {
+        var result = await mediator.Send(query);//
         return Ok(result);
     }
 

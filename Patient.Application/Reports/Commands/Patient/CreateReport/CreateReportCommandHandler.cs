@@ -9,36 +9,40 @@ using Patient.Domain.Entities;
 using Patient.Domain.Constants;
 using Patient.Domain.Entities.Actors;
 
-namespace Patient.Application.Reports.Commands.CreateReport;
+namespace Patient.Application.Reports.Commands.Patient.CreateReport;
 
 internal class CreateReportCommandHandler(ILogger<CreateReportCommandHandler> logger,
     IdentityUserAccessor userAccessor, IHttpContextAccessor httpContextAccesor, HttpClient _httpClient, IBlobStorageService blobStorageService,
-    IReportRepository reportRepository) : IRequestHandler<CreateReportCommand, int>
+    IReportRepository reportRepository, IDoctorsRepository doctorsRepository) : IRequestHandler<CreateReportCommand, int>
 {
     public async Task<int> Handle(CreateReportCommand request, CancellationToken cancellationToken)
     {
         var user = await userAccessor.GetRequiredUserAsync(httpContextAccesor.HttpContext);
         logger.LogInformation($"Trying to add report from user(email): {user.Email}");
-        
+
 
         List<string> fileNames = new();
-        
-        
+
+
         if (request.Files.Any())
         {
-            foreach(var file in request.Files)
+            foreach (var file in request.Files)
             {
                 var stream = file.OpenReadStream();
                 fileNames.Add(await blobStorageService.UploadReportsFilesToBob(stream, file.FileName, user.Id));
             }
         }
 
+        List<Doctor> doctorsToCheck = new List<Doctor>();
+        var doctor = await doctorsRepository.AssignAvailibleDoctor();
+        doctorsToCheck.Add(doctor);
         Report report = new()
         {
             Description = request.Description,
             FileNames = fileNames,
             PatientId = user.Id,
             DateOfCreating = DateTime.Today.ToString("yyyy-MM-dd"),
+            DoctorsToCheck = doctorsToCheck,
         };
 
         await reportRepository.CreateReport(report);
@@ -50,5 +54,5 @@ internal class CreateReportCommandHandler(ILogger<CreateReportCommandHandler> lo
 
     }
 
-    
+
 }

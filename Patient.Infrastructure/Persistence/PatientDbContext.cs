@@ -22,8 +22,6 @@ internal class PatientDbContext(DbContextOptions<PatientDbContext> options) : Id
     {
         base.OnModelCreating(modelBuilder);
 
-        //modelBuilder.Entity<User>()
-        //  .OwnsOne(u => u.Address);
 
         
         modelBuilder.Entity<Admin>()
@@ -84,8 +82,14 @@ internal class PatientDbContext(DbContextOptions<PatientDbContext> options) : Id
         modelBuilder.Entity<MedicalRecommandation>()
             .HasOne(mr => mr.Prescription);
 
+        //report ;/
+        modelBuilder.Entity<Report>()
+            .HasMany(r => r.DoctorsToCheck)
+            .WithMany(d=>d.ReportsToCheck);
 
-
+        modelBuilder.Entity<Report>()
+            .HasMany(r => r.DoctorsWhoChecked)
+            .WithMany(d => d.ReportsChecked);
 
     }
 

@@ -4,5 +4,5 @@ public class Medicine
 {
     public int Id { get; set; }
     public string Name { get; set; }
-    public IEnumerable<Decimal> Doses { get; set; } = default!;
+    public IEnumerable<Decimal>? Doses { get; set; } = default!;
 }
