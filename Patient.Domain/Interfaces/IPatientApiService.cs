@@ -1,4 +1,4 @@
-﻿using Patient.Domain.Entities.DTOs;
+﻿using Patient.Domain.Entities.DTOs.MedicalFiles;
 
 namespace Patient.Domain.Interfaces;
 

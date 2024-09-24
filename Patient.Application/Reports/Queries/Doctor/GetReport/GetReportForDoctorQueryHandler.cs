@@ -4,20 +4,21 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Patient.Application.Account;
-using Patient.Domain.Entities.DTOs;
 using Patient.Domain.Interfaces;
 using Patient.Domain.Repositories;
 using Patient.Domain.Exceptions;
 using Patient.Domain.Entities;
+using Patient.Domain.Entities.DTOs.Reports;
+using Patient.Domain.Constants;
 
 namespace Patient.Application.Reports.Queries.Doctor.GetReport;
 
 internal class GetReportForDoctorQueryHandler(ILogger<GetReportForDoctorQueryHandler> logger,
     IdentityUserAccessor userAccessor, UserManager<Domain.Entities.Actors.Doctor> doctorManager,
     IHttpContextAccessor httpContextAccesor, HttpClient _httpClient, IBlobStorageService blobStorageService,
-    IReportRepository reportsRepository, IMapper mapper) : IRequestHandler<GetReportForDoctorQuery, ReportToShowToDoctorDto>
+    IReportRepository reportsRepository, IMapper mapper) : IRequestHandler<GetReportForDoctorQuery, ReportForDoctorToShowDto>
 {
-    public async Task<ReportToShowToDoctorDto> Handle(GetReportForDoctorQuery request, CancellationToken cancellationToken)
+    public async Task<ReportForDoctorToShowDto> Handle(GetReportForDoctorQuery request, CancellationToken cancellationToken)
     {
         var user = await userAccessor.GetRequiredUserAsync(httpContextAccesor.HttpContext);
         logger.LogInformation($"Getting report for user: {user.Email}");
@@ -29,10 +30,31 @@ internal class GetReportForDoctorQueryHandler(ILogger<GetReportForDoctorQueryHan
 
         if (report == null) throw new NotFoundException(nameof(Report), request.Id.ToString());
 
+        List<string> idDoctorsToCheck = new();
+        foreach (var doctorToCheck in report.DoctorsToCheck)
+        {
+            idDoctorsToCheck.Add(doctorToCheck.Id);
+        }
 
-        var result = mapper.Map<ReportToShowToDoctorDto>(report);
+        var result = new ReportForDoctorToShowDto()
+        {
+            Id = report.Id,
+            Description = report.Description,
+            FileNames = report.FileNames,
+            IsChecked = report.IsChecked,
+            DateOfCreating = report.DateOfCreating,
+            Urgency = report.Urgency,
+
+            PatientId = report.PatientId,
+            PatientName = report.Patient.Name,
+            PatientSurname = report.Patient.Surname,
+            PatientPesel = report.Patient.Pesel,
+            DoctorsId = idDoctorsToCheck,
+            MedicalRecommandation = report.MedicalRecommandation,
+        };
 
         return result;
 
     }
+   
 }

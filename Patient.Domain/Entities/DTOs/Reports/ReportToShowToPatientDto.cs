@@ -1,7 +1,7 @@
 ﻿using Patient.Domain.Constants;
 using Patient.Domain.Entities.Actors;
 
-namespace Patient.Domain.Entities.DTOs;
+namespace Patient.Domain.Entities.DTOs.Reports;
 
 public class ReportToShowToPatientDto
 {
@@ -14,7 +14,7 @@ public class ReportToShowToPatientDto
     public List<string>? FilesBase64 { get; set; } = new List<string>();
 
     public IEnumerable<Doctor>? DoctorsWhoChecked { get; set; } = new List<Doctor>();
-    public MedicalRecommandation? medicalRecommandation { get; set; }
+    public MedicalRecommandation? MedicalRecommandation { get; set; }
 
 
 }

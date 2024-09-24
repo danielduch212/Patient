@@ -2,100 +2,211 @@
 
 @rendermode @(new InteractiveServerRenderMode(false))
 
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
 @using Patient.Domain.Interfaces
 @using Patient.Domain.Entities.DTOs
 @using Patient.Domain.Entities
 @using Patient.Domain.Constants
+@using Patient.Domain.Entities.DTOs.Reports
+@using Patient.Domain.Repositories
 
-@inject IPatientApiService _patientApiService
+
+@inject IDoctorApiService _doctorApiService
 @inject IBlobStorageService _blobStorageService
+@inject IDoctorsRepository _doctorsRepository
+@inject UserManager<Patient.Domain.Entities.Actors.Patient> _patientManager
+@inject NavigationManager _navigationManager
+@inject ProtectedSessionStorage sessionStorage
 
-@page "/lekarz/raporty/{Id}"
+@page "/lekarz/raporty/{ReportId}"
 
 
-<div class="container px-4">
-    <div class="row pt-5">
+<div class="container px-4  ">
+        
+    <div class="row pt-5 position-relative">
         <div class="justify-content-start align-content-start">
-            <NavLink href="/pacjent/raporty">
-                <btn type="button" class="back-icon bi-arrow-left"></btn>
+            <NavLink href="/lekarz/raporty">
+                <btn type="button" class="btn back-icon bi-arrow-left"></btn>
             </NavLink>
         </div>
-        <div class="col">
-        </div>
-        <div class="col-8 report text-center ">
-            <div class="row  text-center border-1 border-bottom border-dark text-center">
-                <h2>Raport</h2>
-                <p>Data: @reportToShow.DateOfCreating</p>
+        @if (readingReport)
+        {
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
             </div>
-            <div class="row text-center min-height-10 border-1 border-bottom border-dark">
-                <h4>Opis:</h4>
-                <p>@reportToShow.Description</p>
+        }
+        else
+        {
+            <div class="col">
             </div>
-            <div class="row  text-center min-height-7">
-                <div class="col border-right">
-                    <h4>Pliki:</h4>
-                    @if(reportToShow.FileNames.Count() > 0)
-                    {
-                        for(int i=0;i<reportToShow.FileNames.Count();i++)
-                        {
-                            <div class="file-block mx-2" @onclick="() => HandleShowFile(i)">
-                                <div class="bi-x-circle"></div>
-                                <div class="bi-file-icon"></div>
-                                @* <p>@reportToShow.FileNames.ElementAt(i)</p> *@
-                            </div>
-                        }
-                    }
+            <div class="col-8">
+                <div class="row d-flex align-items-center">
+                    <div class="col d-flex ms-3 me-3">
+                        <div class="me-3 col">
+                            <btn type="button" class="bi-patient-icon" @onclick="()=>HandleShowPatient()"></btn>
+                        </div>
+                        <div class="me-3 col">
+                            <strong>@reportToShow.PatientName</strong>                        
+                            <strong>@reportToShow.PatientSurname</strong>
+                        </div>
+                        <div class="me-3 col">
+                            <strong>@reportToShow.PatientPesel</strong>
+                        </div>
+                        <div class="me-3 col">
+                            <strong>Leczone dolegliwości</strong>
+                        </div>
+                    </div>
                 </div>
-                <div class="col">
-                    <div class="row d-flex-column border-1 border-bottom border-dark">
-                        <p>Lekarze sprawdzajacy:</p>
-                        <p>Lekarz</p>
+                <div class="report text-center">
 
+                    <div class="row  text-center border-1 border-bottom border-dark text-center">
+                        <h2>Raport</h2>
+                        <p>Data: @reportToShow.DateOfCreating</p>
                     </div>
-                    <div class="row">
-                        <div class="col">
-                            @reportToShow.IsChecked
+                    <div class="row text-center min-height-10 border-1 border-bottom border-dark">
+                        <h4>Opis:</h4>
+                        <p>@reportToShow.Description</p>
+                    </div>
+                    <div class="row  text-center min-height-7">
+                        <div class="col border-right">
+                            <h4>Pliki:</h4>
+                            @if (reportToShow.FileNames.Count() > 0)
+                            {
+                                for (int i = 0; i < reportToShow.FileNames.Count(); i++)
+                                {
+                                    <btn type="button" class="btn file-block mx-2" @onclick="() => HandleShowFile(i-1)">
+                                        <div class="bi-x-circle"></div>
+                                        <div class="bi-file-icon"></div>
+                                        @* <p>@reportToShow.FileNames.ElementAt(i)</p> *@
+                                    </btn>
+                                }
+                            }
                         </div>
                         <div class="col">
-                            Rekomendacja
+                            <div class="row d-flex-column border-1 border-bottom border-dark">
+                                <p>Lekarze sprawdzajacy:</p>
+                                @foreach (var doctor in doctors)
+                                {
+                                    <p>@doctor.Name @doctor.Surname</p>
+                                }
+
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    @reportToShow.IsChecked
+                                </div>
+                                <div class="col">
+                                    Rekomendacja
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col d-flex justify-content-center align-items-center mt-3">
+                        <btn type="button" class="btn btn-primary me-3">Dodaj rekomendacje</btn>
+                        <btn type="button" class="btn btn-primary me-3">Poproś o konsultacje</btn>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="col">
+            </div>
+
+            
+
+        }
+
+        @if (showPreviewFileModal)
+        {
+            <div class="modal-backdrop">
+                <div class="modal" tabindex="-1" style="display:block;">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Podglad</h5>
+                            <button type="button" class="btn-close" @onclick="CloseModalFilePreview"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <p>Nazwa pliku</p>
+                                        <p>@currentFileName</p>
+                                    </div>
+                                    <div class="col-8">
+                                        <p>Typ pliku</p>
+                                        <p></p>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+
+                                    <div class="col">
+                                        <img src=@currentFileBase64 />
+                                        <p>Opis</p>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" @onclick="CloseModalFilePreview">Zamknij</button>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col">
-        </div>
+        }
+        
     </div>
 </div>
+
 
 @code {
 
     [Parameter]
-    public string Id { get; set; }
+    public string ReportId { get; set; }
 
-    private ReportToShowToDoctorDto reportToShow = new();
+    private ReportForDoctorToShowDto reportToShow = new();
+
     private bool fileGet;
     private bool readingReport;
 
-    private bool showPreviewModal;
+    private bool showPreviewFileModal;
 
+
+    private List<Patient.Domain.Entities.Actors.Doctor> doctors = new();
+
+    private string currentFileBase64;
+    private string currentFileName;
+
+    private Patient.Domain.Entities.Actors.Patient currentPatient = new();
+
+    private bool loading;
 
     protected async override Task OnInitializedAsync()
     {
         readingReport = true;
-        var response = await _patientApiService.SendRequestGetReport(Id);
+        
+        var response = await _doctorApiService.SendRequestGetReport(ReportId);
         if (response.StatusCode == System.Net.HttpStatusCode.OK)
         {
-            reportToShow = await response.Content.ReadFromJsonAsync<ReportToShowToDoctorDto>();
+            reportToShow = await response.Content.ReadFromJsonAsync<ReportForDoctorToShowDto>();
             if (reportToShow.FileNames.Any())
             {
                 foreach (var filename in reportToShow.FileNames)
                 {
                     var url = await _blobStorageService.GetBlobSasUrl(filename, BlobContainerNames.ReportsFiles);
-                    reportToShow.FilesBase64.Add(await LoadImageBase64(url));
+                    var fileBase64 = await LoadImageBase64(url);
+                    reportToShow.FilesBase64.Add(fileBase64);
                 }
             }
-            
+            foreach (var doctorId in reportToShow.DoctorsId)
+            {
+                var doctor = await _doctorsRepository.GetDoctorByIdAsync(doctorId);
+                doctors.Add(doctor);
+            }
+
         }
         
         StateHasChanged();
@@ -103,14 +214,25 @@
 
     }
 
-    private async void HandleShowFile(int positionOnTheList)
+    private void HandleShowFile(int positionOnTheList)
     {
-        // medicalFileToShowPreview = file;
-        // showPreviewModal = true;
-        // loadingDocument = true;
-        // medicalFileToShowPreview.FileBase64 = await LoadImageBase64(medicalFileToShowPreview.FileUrl);
-        // loadingDocument = false;
-        // StateHasChanged();
+        currentFileBase64 = reportToShow.FilesBase64.ElementAt(positionOnTheList);
+        currentFileName = reportToShow.FileNames.ElementAt(positionOnTheList);
+
+        showPreviewFileModal = true;      
+
+        StateHasChanged();
+    }
+
+    private async void HandleShowPatient()
+    {
+        _navigationManager.NavigateTo($"/lekarz/pacjenci?PatientId={currentPatient.Id}&ReportId={reportToShow.Id}");
+
+    }
+
+    private void CloseModalFilePreview()
+    {
+        showPreviewFileModal = false;
     }
 
     private async Task<string> LoadImageBase64(string url)

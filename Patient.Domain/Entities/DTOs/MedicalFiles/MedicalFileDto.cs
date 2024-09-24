@@ -1,4 +1,4 @@
-﻿namespace Patient.Domain.Entities.DTOs;
+﻿namespace Patient.Domain.Entities.DTOs.MedicalFiles;
 
 public class MedicalFileDto
 {
@@ -8,5 +8,5 @@ public class MedicalFileDto
     public string? FileName { get; set; }
 
 
-    
+
 }

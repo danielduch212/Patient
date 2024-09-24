@@ -1,0 +1,51 @@
+﻿@layout Patient.Api.Components.Layout.Doctor.DoctorLayout
+
+
+@page "/lekarz/pacjenci"
+
+@rendermode InteractiveServer
+
+@using Patient.Domain.Entities
+@using Patient.Application.Account
+
+
+@inject UserManager<Patient.Domain.Entities.Actors.Patient> _patientManager
+@inject NavigationManager _navigationManager
+
+
+<h3>PatientPreview</h3>
+
+
+<div class="container px-4 ms-5 me-5">
+
+    Pacjent
+    <div class="row pt-5 position-relative">
+        <div class="justify-content-start align-content-start">            
+            <btn type="button" class="btn back-icon bi-arrow-left" @onclick="HandleBack"></btn>            
+        </div>
+    </div>
+
+</div>
+
+
+@code {
+
+    [SupplyParameterFromQuery]
+    private string? ReportId { get; set; }
+
+    [SupplyParameterFromQuery]
+    private string? PatientId { get; set; }
+
+    private Patient.Domain.Entities.Actors.Patient currentPatient = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        currentPatient = await _patientManager.FindByIdAsync(PatientId);
+
+    }
+
+    private void HandleBack()
+    {
+        _navigationManager.NavigateTo($"/lekarz/raporty/{ReportId}");
+    }
+}

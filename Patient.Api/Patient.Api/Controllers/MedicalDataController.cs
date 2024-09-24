@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Patient.Api.Components.Pages.PatientPages.MedicalDocumentation.Additional;
 using Patient.Application.MedicalData.Queries.Patient.GetMedicalFiles;
-using Patient.Application.MedicalData.Commands.Patient.AddMedicalFiles; 
-using Patient.Domain.Entities.DTOs;
+using Patient.Application.MedicalData.Commands.Patient.AddMedicalFiles;
+using Patient.Domain.Entities.DTOs.MedicalFiles;
 
 namespace Patient.Api.Controllers;
 

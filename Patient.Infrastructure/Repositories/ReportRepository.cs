@@ -36,6 +36,7 @@ internal class ReportRepository(PatientDbContext dbContext) : IReportRepository
     {
         var results = await dbContext.Reports
                     .Include(r => r.DoctorsToCheck)
+                    .Include(r=>r.Patient)
                     .Where(r => r.DoctorsToCheck.Any(d => d.Id == doctor.Id))
                     .ToListAsync();
         return results;
@@ -46,8 +47,12 @@ internal class ReportRepository(PatientDbContext dbContext) : IReportRepository
 
         var result = await dbContext.Doctors
             .Include(d => d.ReportsToCheck)
+            .Include(d=>d.ReportsChecked)
             .Where(r => r.ReportsToCheck.Any(r => r.Id == id))
             .SelectMany(r=>r.ReportsToCheck)
+            .Include(r=>r.Patient)
+            .Include(r=>r.DoctorsToCheck)
+            .Include(r=>r.DoctorsWhoChecked)
             .FirstOrDefaultAsync();
 
         return result;

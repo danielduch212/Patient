@@ -1,4 +1,4 @@
-﻿namespace Patient.Domain.Entities.DTOs;
+﻿namespace Patient.Domain.Entities.DTOs.MedicalFiles;
 
 public class MedicalFileToShowDto
 {
@@ -6,5 +6,5 @@ public class MedicalFileToShowDto
     public string Description { get; set; } = default!;
     public string FileUrl { get; set; } = default!;
     public string FileName { get; set; } = default!;
-    public string? FileBase64 {get;set;} = default!;
+    public string? FileBase64 { get; set; } = default!;
 }

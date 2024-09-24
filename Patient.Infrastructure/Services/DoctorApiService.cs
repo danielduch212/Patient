@@ -38,6 +38,6 @@ public class DoctorApiService : IDoctorApiService
     private void AddCookiesToRequest()
     {
         var cookies = _httpContextAccessor.HttpContext.Request.Headers["Cookie"].ToString();
-        _httpClient.DefaultRequestHeaders.Add("Cookie", cookies);
+          _httpClient.DefaultRequestHeaders.Add("Cookie", cookies);
     }
 }

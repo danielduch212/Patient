@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Patient.Application.Reports.Commands.Patient.CreateReport;
 using Patient.Application.Reports.Queries.Doctor.GetReport;
+using Patient.Application.Reports.Queries.Doctor.GetReports;
 using Patient.Application.Reports.Queries.Patient.GetReport;
 using Patient.Application.Reports.Queries.Patient.GetReports;
 using Patient.Domain.Constants;
@@ -31,7 +32,7 @@ public class ReportsController(IMediator mediator, ILogger<ReportsController> lo
     [HttpGet("getReportsForPatient")]
     public async Task<IActionResult> GetReportsForPatient()
     {
-        var result = await mediator.Send(new GetReportsForDoctorQuery());
+        var result = await mediator.Send(new GetReportsForPatientQuery());
         if (result.Count > 0)
         {
             return Ok(result);

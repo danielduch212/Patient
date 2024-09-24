@@ -1,6 +1,6 @@
 ﻿using MediatR;
-using Patient.Domain.Entities.DTOs;
 using Patient.Domain.Entities;
+using Patient.Domain.Entities.DTOs.Reports;
 
 namespace Patient.Application.Reports.Queries.Patient.GetReport;
 

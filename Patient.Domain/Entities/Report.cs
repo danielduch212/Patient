@@ -19,7 +19,7 @@ public class Report
     public Patient.Domain.Entities.Actors.Patient Patient { get; set; } = default!;
     public IEnumerable<Doctor>? DoctorsWhoChecked { get; set; } = new List<Doctor>();
     public IEnumerable<Doctor>? DoctorsToCheck { get; set; } = new List<Doctor>();
-    public MedicalRecommandation? medicalRecommandation { get; set; } 
+    public MedicalRecommandation? MedicalRecommandation { get; set; } 
 
 
 

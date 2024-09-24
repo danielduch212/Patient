@@ -4,23 +4,23 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Patient.Application.Account;
-using Patient.Domain.Entities.DTOs;
 using Patient.Domain.Interfaces;
 using Patient.Domain.Repositories;
 using Patient.Domain;
+using Patient.Domain.Entities.DTOs.Reports;
 
 namespace Patient.Application.Reports.Queries.Patient.GetReports;
 
-internal class GetReportsForDoctorQueryHandler(ILogger<GetReportsForDoctorQueryHandler> logger,
+internal class GetReportsForPatientQueryHandler(ILogger<GetReportsForPatientQueryHandler> logger,
     IdentityUserAccessor userAccessor, UserManager<Domain.Entities.Actors.Patient> patientManager,
     IHttpContextAccessor httpContextAccesor, HttpClient _httpClient, IBlobStorageService blobStorageService,
-    IReportRepository reportsRepository, IMapper mapper) : IRequestHandler<GetReportsForDoctorQuery, List<ReportToShowToPatientDto>>
+    IReportRepository reportsRepository, IMapper mapper) : IRequestHandler<GetReportsForPatientQuery, List<ReportToShowToPatientDto>>
 {
-    public async Task<List<ReportToShowToPatientDto>> Handle(GetReportsForDoctorQuery request, CancellationToken cancellationToken)
+    public async Task<List<ReportToShowToPatientDto>> Handle(GetReportsForPatientQuery request, CancellationToken cancellationToken)
     {
         var user = await userAccessor.GetRequiredUserAsync(httpContextAccesor.HttpContext);
         var patient = await patientManager.FindByEmailAsync(user.Email);
-        logger.LogInformation($"Getting reports for user: {user.Email}");
+        logger.LogInformation($"Getting reports for doctor: {user.Email}");
 
         var reports = await reportsRepository.GetPatientReports(patient);
 

@@ -4,19 +4,18 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Patient.Application.Account;
-using Patient.Domain.Entities.DTOs;
+using Patient.Domain.Entities.DTOs.Reports;
 using Patient.Domain.Interfaces;
 using Patient.Domain.Repositories;
-using Patient.Domain;
 
 namespace Patient.Application.Reports.Queries.Doctor.GetReports;
 
 internal class GetReportsForDoctorQueryHandler(ILogger<GetReportsForDoctorQueryHandler> logger,
     IdentityUserAccessor userAccessor, UserManager<Domain.Entities.Actors.Doctor> doctorManager,
     IHttpContextAccessor httpContextAccesor, HttpClient _httpClient, IBlobStorageService blobStorageService,
-    IReportRepository reportsRepository, IMapper mapper) : IRequestHandler<GetReportsForDoctorQuery, List<ReportToShowToDoctorDto>>
+    IReportRepository reportsRepository, IMapper mapper) : IRequestHandler<GetReportsForDoctorQuery, List<ReportForDoctorDto>>
 {
-    public async Task<List<ReportToShowToDoctorDto>> Handle(GetReportsForDoctorQuery request, CancellationToken cancellationToken)
+    public async Task<List<ReportForDoctorDto>> Handle(GetReportsForDoctorQuery request, CancellationToken cancellationToken)
     {
         var user = await userAccessor.GetRequiredUserAsync(httpContextAccesor.HttpContext);
         var doctor = await doctorManager.FindByEmailAsync(user.Email);
@@ -24,16 +23,32 @@ internal class GetReportsForDoctorQueryHandler(ILogger<GetReportsForDoctorQueryH
 
         var reports = await reportsRepository.GetDoctorReports(doctor);
 
-        List<ReportToShowToDoctorDto> reportsDto = new List<ReportToShowToDoctorDto>();
+        List<ReportForDoctorDto> reportsDto = new List<ReportForDoctorDto>();
+
 
         foreach (var report in reports)
         {
-            var dto = mapper.Map<ReportToShowToDoctorDto>(report);
+            
+            var dto = new ReportForDoctorDto()
+            {
+                Id = report.Id,
+                IsChecked = report.IsChecked,
+                DateOfCreating = report.DateOfCreating,
+                Urgency = report.Urgency,
+                
+                PatientName = report.Patient.Name,
+                PatientSurname = report.Patient.Surname,
+                PatientEmail = report.Patient.Email,
+
+            };
+
             reportsDto.Add(dto);
         }
 
         logger.LogInformation($"Returning to user: {doctor.Email}  : {reportsDto.Count} files");
         return reportsDto;
 
+
     }
+
 }

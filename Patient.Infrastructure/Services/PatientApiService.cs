@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Patient.Domain.Entities;
-using Patient.Domain.Entities.DTOs;
 using Patient.Domain.Interfaces;
 using Shared.AdditionalClasses;
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 using System.Text;
+using Patient.Domain.Entities.DTOs.MedicalFiles;
 
 namespace Patient.Infrastructure.Services;
 

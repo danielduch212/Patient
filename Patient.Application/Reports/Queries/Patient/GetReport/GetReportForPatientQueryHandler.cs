@@ -4,15 +4,15 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Patient.Application.Account;
-using Patient.Domain.Entities.DTOs;
 using Patient.Domain.Interfaces;
 using Patient.Domain.Repositories;
 using Patient.Domain.Exceptions;
 using Patient.Domain.Entities;
+using Patient.Domain.Entities.DTOs.Reports;
 
 namespace Patient.Application.Reports.Queries.Patient.GetReport;
 
-internal class GetReportForDoctorQueryHandler(ILogger<GetReportForDoctorQueryHandler> logger,
+internal class GetReportForPatientQueryHandler(ILogger<GetReportForPatientQueryHandler> logger,
     IdentityUserAccessor userAccessor, UserManager<Domain.Entities.Actors.Patient> patientManager,
     IHttpContextAccessor httpContextAccesor, HttpClient _httpClient, IBlobStorageService blobStorageService,
     IReportRepository reportsRepository, IMapper mapper) : IRequestHandler<GetReportForPatientQuery, ReportToShowToPatientDto>

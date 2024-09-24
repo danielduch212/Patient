@@ -7,7 +7,9 @@
 
 @using Patient.Domain.Interfaces
 @using Patient.Domain.Entities.DTOs
-@using Patient.Domain.Entities
+@using Patient.Domain.Entities;
+@using Patient.Domain.Entities.DTOs.Reports
+
 
 
 @inject IPatientApiService _patientApiService
@@ -39,11 +41,22 @@
                 {
                     <button type="button" @onclick="() => HandleShowReportPreview(report)" class="list-group-item list-group-item-action">
                         Raport
-                        <div class="d-flex w-100 justify-content-between">
-                            <h5 class="mb-1">@report.DateOfCreating</h5>
-                            <small class="text-muted">Data utworzenia</small>
-                        </div>                        
-                        <small class="text-muted">Status: @report.IsChecked</small>
+                        <div class="d-flex-row justify-content-between align-items-center">
+                            <div>
+                                <small class="text-muted">Data utworzenia</small>
+                                <h5 class="mb-1">@report.DateOfCreating</h5>
+
+                            </div>
+                            <div>
+                                <small class="text-muted"></small>
+                                <h5 class="mb-1">@report.</h5>
+                            </div>
+                            <div>
+                                <small class="text-muted">Status: @(report.IsChecked ? "Sprawdzony" : "Nie sprawdzony")</small>
+                            </div>
+
+                        </div>
+
                     </button>
                 }
             }

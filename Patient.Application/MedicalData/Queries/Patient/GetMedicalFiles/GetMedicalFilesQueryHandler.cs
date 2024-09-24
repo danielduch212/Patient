@@ -3,10 +3,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Patient.Application.Account;
-using Patient.Domain.Entities.DTOs;
 using Patient.Domain.Interfaces;
 using Patient.Domain.Repositories;
 using Patient.Domain.Constants;
+using Patient.Domain.Entities.DTOs.MedicalFiles;
 
 namespace Patient.Application.MedicalData.Queries.Patient.GetMedicalFiles;
 

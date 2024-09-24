@@ -7,7 +7,8 @@
 
 @using Patient.Domain.Interfaces
 @using Patient.Domain.Entities.DTOs
-@using Patient.Domain.Entities
+@using Patient.Domain.Entities;
+@using Patient.Domain.Entities.DTOs.Reports
 
 
 @inject IDoctorApiService _doctorApiService
@@ -37,11 +38,22 @@
                 {
                     <button type="button" @onclick="() => HandleShowReportPreview(report)" class="list-group-item list-group-item-action">
                         Raport
-                        <div class="d-flex w-100 justify-content-between">
-                            <h5 class="mb-1">@report.DateOfCreating</h5>
-                            <small class="text-muted">Data utworzenia</small>
-                        </div>                        
-                        <small class="text-muted">Status: @report.IsChecked</small>
+                        <div class="d-flex-row justify-content-between align-items-center">
+                            <div>
+                                <small class="text-muted">Data utworzenia</small>
+                                <h5 class="mb-1">@report.DateOfCreating</h5>
+
+                            </div>
+                            <div>
+                                <small class="text-muted">Pacjent: </small>
+                                <h5 class="mb-1">@report.PatientName  @report.PatientSurname</h5>
+                            </div>
+                            <div>
+                                <small class="text-muted">Status: @(report.IsChecked ? "Sprawdzony" : "Nie sprawdzony")</small>
+                            </div>
+
+                        </div>
+
                     </button>
                 }
             }
@@ -61,7 +73,7 @@
 @code {
 
     private int maxFiles = 5;
-    private List<ReportToShowToDoctorDto> reportsToShow = new();
+    private List<ReportForDoctorDto> reportsToShow = new();
     private bool filesGet;
     private bool readingReports;
 
@@ -74,15 +86,14 @@
         var response = await _doctorApiService.SendRequestGetReports();
         if (response.StatusCode == System.Net.HttpStatusCode.OK)
         {
-            reportsToShow = await response.Content.ReadFromJsonAsync<List<ReportToShowToDoctorDto>>();
+            reportsToShow = await response.Content.ReadFromJsonAsync<List<ReportForDoctorDto>>();
             if (reportsToShow.Count > 0) { filesGet = true; }
             StateHasChanged();
         }
         readingReports = false;
-
     }
 
-    private async void HandleShowReportPreview(ReportToShowToDoctorDto report)
+    private async void HandleShowReportPreview(ReportForDoctorDto report)
     {
         _navigationManager.NavigateTo($"/lekarz/raporty/{report.Id}");
     }

@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using Patient.Domain.Entities.DTOs;
+using Patient.Domain.Entities.DTOs.MedicalFiles;
 
 namespace Patient.Application.MedicalData.Commands.Patient.AddMedicalFiles;
 
