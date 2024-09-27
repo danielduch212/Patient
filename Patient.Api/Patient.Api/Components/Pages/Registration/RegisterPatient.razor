@@ -1,4 +1,11 @@
-﻿@using System.Diagnostics
+﻿@rendermode InteractiveServer
+
+@layout Layout.Main.LoggingLayout
+@page "/rejestracjapacjent"
+
+
+
+@using System.Diagnostics
 @using System.Timers
 @using AutoMapper
 @using Patient.Domain.Interfaces
@@ -20,10 +27,7 @@
 @inject IUserEmailStore<Patient.Domain.Entities.Actors.Patient> userEmailStore
 
 
-@rendermode InteractiveServer
 
-@layout Layout.LoggingLayout
-@page "/rejestracjapacjent"
 
 <div class="container">
     <div class="row justify-content-center pt-5">

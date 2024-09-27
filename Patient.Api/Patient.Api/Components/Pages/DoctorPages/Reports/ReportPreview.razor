@@ -9,6 +9,18 @@
 @using Patient.Domain.Constants
 @using Patient.Domain.Entities.DTOs.Reports
 @using Patient.Domain.Repositories
+@using Patient.Domain.Entities.DTOs.Recommandation
+@using Patient.Domain.Entities.DTOs.Prescription
+@using System.ComponentModel.DataAnnotations
+@using Blazored.Typeahead
+@using MudBlazor
+@using MudBlazor.Components
+@using Patient.Api.Components.Pages.DoctorPages.Reports.AdditionalComponents
+
+
+
+
+
 
 
 @inject IDoctorApiService _doctorApiService
@@ -17,6 +29,10 @@
 @inject UserManager<Patient.Domain.Entities.Actors.Patient> _patientManager
 @inject NavigationManager _navigationManager
 @inject ProtectedSessionStorage sessionStorage
+@inject IMedicineRepository _medicineRepository
+@inject IDialogService DialogService
+
+
 
 @page "/lekarz/raporty/{ReportId}"
 
@@ -31,9 +47,7 @@
         </div>
         @if (readingReport)
         {
-            <div class="spinner-border" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
+            <MudProgressCircular Color="Color.Success" Indeterminate="true" />
         }
         else
         {
@@ -104,7 +118,7 @@
                 </div>
                 <div class="row">
                     <div class="col d-flex justify-content-center align-items-center mt-3">
-                        <btn type="button" class="btn btn-primary me-3">Dodaj rekomendacje</btn>
+                        <btn type="button" class="btn btn-primary me-3 " @onclick="HandleShowRecommandationModal">Dodaj rekomendacje</btn>
                         <btn type="button" class="btn btn-primary me-3">Poproś o konsultacje</btn>
                     </div>
                 </div>
@@ -117,47 +131,19 @@
 
         }
 
-        @if (showPreviewFileModal)
+        @if (previewFileModalData.ShowPreviewFileModal)
         {
-            <div class="modal-backdrop">
-                <div class="modal" tabindex="-1" style="display:block;">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Podglad</h5>
-                            <button type="button" class="btn-close" @onclick="CloseModalFilePreview"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="container">
-                                <div class="row">
-                                    <div class="col-4">
-                                        <p>Nazwa pliku</p>
-                                        <p>@currentFileName</p>
-                                    </div>
-                                    <div class="col-8">
-                                        <p>Typ pliku</p>
-                                        <p></p>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-
-                                    <div class="col">
-                                        <img src=@currentFileBase64 />
-                                        <p>Opis</p>
-
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button class="btn btn-secondary" @onclick="CloseModalFilePreview">Zamknij</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <CascadingValue Value="previewFileModalData">
+                <PreviewFileModal OnClose="CloseModalFilePreview" />
+            </CascadingValue>
         }
-        
+        @if (showAddRecommandationModal)
+        {
+            <CascadingValue Value="addRecommandationModalData">
+                <AddRecommandationModal OnClose="CloseModalAddRecommandation" />
+            </CascadingValue>
+        }
+
     </div>
 </div>
 
@@ -172,22 +158,32 @@
     private bool fileGet;
     private bool readingReport;
 
-    private bool showPreviewFileModal;
+    private bool showAddRecommandationModal;
+    private bool loading;
 
 
     private List<Patient.Domain.Entities.Actors.Doctor> doctors = new();
 
-    private string currentFileBase64;
-    private string currentFileName;
+    //PreviewFileModal
+
+    private PreviewFileModalData previewFileModalData = new();
+
+    ///
+
 
     private Patient.Domain.Entities.Actors.Patient currentPatient = new();
 
-    private bool loading;
+    //Recommendation
+    AddRecommandationModalData addRecommandationModalData = new();
+
+
+    PrescriptionDto prescriptionDto = new();
+
 
     protected async override Task OnInitializedAsync()
     {
         readingReport = true;
-        
+
         var response = await _doctorApiService.SendRequestGetReport(ReportId);
         if (response.StatusCode == System.Net.HttpStatusCode.OK)
         {
@@ -208,18 +204,18 @@
             }
 
         }
-        
         StateHasChanged();
         readingReport = false;
 
     }
 
+
+
     private void HandleShowFile(int positionOnTheList)
     {
-        currentFileBase64 = reportToShow.FilesBase64.ElementAt(positionOnTheList);
-        currentFileName = reportToShow.FileNames.ElementAt(positionOnTheList);
-
-        showPreviewFileModal = true;      
+        previewFileModalData.CurrentFileBase64 = reportToShow.FilesBase64.ElementAt(positionOnTheList);
+        previewFileModalData.CurrentFileName = reportToShow.FileNames.ElementAt(positionOnTheList);
+        previewFileModalData.ShowPreviewFileModal = true;      
 
         StateHasChanged();
     }
@@ -230,9 +226,18 @@
 
     }
 
-    private void CloseModalFilePreview()
+    private void HandleShowRecommandationModal()
     {
-        showPreviewFileModal = false;
+        addRecommandationModalData.CurrentPatient = currentPatient;
+        addRecommandationModalData.ReportId = ReportId;
+        showAddRecommandationModal = true;
+
+        StateHasChanged();
+    }
+
+    private void CloseModalAddRecommandation()
+    {
+        showAddRecommandationModal = false;
     }
 
     private async Task<string> LoadImageBase64(string url)
@@ -251,4 +256,29 @@
 
     }
 
+    private void CloseModalFilePreview()
+    {
+        previewFileModalData.ShowPreviewFileModal = false;
+        StateHasChanged();
+    }
+
+    public sealed class MedicineToPrescription()
+    {
+        public Medicine ChosenMedicine { get; set; } = new();
+        public string MedicineDosingDescription { get; set; } = "";
+    }
+
+    //Modal klasy pomocnicze
+    public class PreviewFileModalData()
+    {
+        public string CurrentFileBase64 { get; set; }
+        public string CurrentFileName { get; set; }
+        public bool ShowPreviewFileModal { get; set; }
+    }
+    public class AddRecommandationModalData()
+    {      
+        public Patient.Domain.Entities.Actors.Patient CurrentPatient = new();
+        public string ReportId { get; set; }
+                
+    }
 }

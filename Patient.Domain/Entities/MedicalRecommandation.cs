@@ -8,7 +8,8 @@ public class MedicalRecommandation
     public string Description { get; set; } = default!;
     public DateOnly DateOfIssue { get; set; }
     public Prescription? Prescription { get; set; }
-    
+    public bool AskForVisit { get; set; }
+
 
     //
     public string PatientId { get; set; } = default!;

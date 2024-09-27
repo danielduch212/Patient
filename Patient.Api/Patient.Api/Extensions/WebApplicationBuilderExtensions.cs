@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Patient.Application.Account;
 using Patient.Domain.Interfaces;
 
+using MudBlazor.Services;
 
 namespace Patient.Api.Extensions;
 
@@ -55,7 +56,7 @@ public static class WebApplicationBuilderExtensions
 
         );
 
-        
+        builder.Services.AddMudServices();
 
     }
 

@@ -65,7 +65,6 @@ public static class ServiceCollectionExtensions
 
         //
         services.AddScoped<IUserAdditionalValidator, UserAdditionalValidator>();
-        services.AddScoped<ITokenGenerator, TokenGenerator>();
         services.AddScoped<IReportRepository, ReportRepository>();
         services.AddScoped<IPatientSeeder, PatientSeeder>();
 
@@ -84,5 +83,6 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<IDoctorsRepository, DoctorsRepository>();
 
+        services.AddScoped<IMedicineRepository, MedicineRepository>();
     }
 }

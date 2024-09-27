@@ -3,6 +3,6 @@
 public class Medicine
 {
     public int Id { get; set; }
-    public string Name { get; set; }
-    public IEnumerable<Decimal>? Doses { get; set; } = default!;
+    public string Name { get; set; } = default!;
+    public IList<Decimal>? Doses { get; set; } = new List<Decimal>();
 }

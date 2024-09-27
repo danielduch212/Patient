@@ -1,23 +1,24 @@
 ﻿using Patient.Domain.Entities.Actors;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Patient.Domain.Entities;
+namespace Patient.Domain.Entities.DTOs.Prescription;
 
-public class Prescription
+public class PrescriptionDto
 {
-    public int Id { get; set; }
     public string MedicineName { get; set; } = default!;
-    public Decimal DoseOfMedicine { get; set; }
+    //public Decimal DoseOfMedicine { get; set; }
     public string Description { get; set; } = default!;
     public DateOnly DateOfIssue { get; set; }
     public DateOnly DateOfExpiration { get; set; }
-
+    public bool AskForVisit { get; set; }
 
 
     //
     public string PatientId { get; set; } = default!;
-    public Patient.Domain.Entities.Actors.Patient Patient { get; set; } = default!;
     public string DoctorId { get; set; } = default!;
-    public Doctor Doctor { get; set; } = default!;
 
-    
 }

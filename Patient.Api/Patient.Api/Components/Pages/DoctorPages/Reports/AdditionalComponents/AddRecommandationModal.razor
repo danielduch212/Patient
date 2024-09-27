@@ -1,0 +1,156 @@
+﻿@using static Patient.Api.Components.Pages.DoctorPages.Reports.ReportPreview
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@using Patient.Domain.Interfaces
+@using Patient.Domain.Entities.DTOs
+@using Patient.Domain.Entities
+@using Patient.Domain.Constants
+@using Patient.Domain.Entities.DTOs.Reports
+@using Patient.Domain.Repositories
+@using Patient.Domain.Entities.DTOs.Recommandation
+@using Patient.Domain.Entities.DTOs.Prescription
+@using System.ComponentModel.DataAnnotations
+@using Blazored.Typeahead
+@using MudBlazor
+@using MudBlazor.Components
+@using Patient.Api.Components.Pages.DoctorPages.Reports.AdditionalComponents
+
+
+
+@inject IDoctorApiService _doctorApiService
+@inject IBlobStorageService _blobStorageService
+@inject IDoctorsRepository _doctorsRepository
+@inject UserManager<Patient.Domain.Entities.Actors.Patient> _patientManager
+@inject NavigationManager _navigationManager
+@inject ProtectedSessionStorage sessionStorage
+@inject IMedicineRepository _medicineRepository
+
+
+
+<div class="modal-backdrop">
+    <div class="modal" tabindex="-1" style="display:block;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Podglad</h5>
+                <button type="button" class="btn-close" @onclick="CloseModalAddRecommandation"></button>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <h3>Dodaj Rekomendację</h3>
+                    <h4>Pacjent: </h4>
+                    <h4>@addRecommandationModalData.CurrentPatient.Pesel</h4>
+                    <h5 class="pt-2">Opis:</h5>
+                    <InputTextArea id="description" style="width: 100%; height: 200px; resize: none;" @bind-Value="medicalRecommandation.Description" class="form-control"></InputTextArea>
+                    <div class="row pt-5">
+                        <div class="col d-flex justify-content-center align-items-center">
+                            <div class="form-check">
+                                <InputCheckbox id="askForVisit" @bind-Value="askForVisit"></InputCheckbox>
+                                <label for="askForVisit" class="form-check-label">Zapros na wizyte</label>
+                            </div>
+                            <div class="form-check">
+                                <InputCheckbox id="askForVisitOnline" @bind-Value="askForVisitOnline">Zapros na wizyte online</InputCheckbox>
+                                <label for="askForVisitOnline" class="form-check-label">Zapros na wizyte online</label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <btn type="button" class="btn btn-primary" @onclick="ToggleAddPrescription">Dodaj Receptę</btn>
+                        </div>
+
+                    </div>
+                    @if (addPrescription)
+                    {
+                        <div class="row pt-5 p-2">
+                            <div class="col-2">
+                                <p>Wybierz Lek</p>
+                            </div>
+                            <div class="col-8">
+                                <BlazoredTypeahead SearchMethod="GetMedicinesBySearchPhrase"
+                                                    @bind-Value="medicine">
+                                    <SelectedTemplate>@context.Name</SelectedTemplate>
+                                    <ResultTemplate>@context.Name</ResultTemplate>
+                                </BlazoredTypeahead>
+                            </div>
+                            <div class="col-2">
+                                <MudBlazor.MudButton @onclick="AddMedicine">
+                                    Dodaj lek
+                                </MudBlazor.MudButton>
+                            </div>
+                        </div>
+
+
+                        @for (int i = 0; i < medicinesToPrescript.Count(); i++)
+                        {
+
+                            <div class="row border-1 border-dark pt-5">
+                                <div class="col text-center justify-content-center align-items-center">
+                                    <p>Nazwa leku</p>
+                                    <p>@medicinesToPrescript[i].ChosenMedicine.Name</p>
+                                </div>
+                                <div class="col text-center justify-content-center align-items-center align-content-center">
+                                    <p>Dawkowanie</p>
+                                    <MudTextField @bind-Value="medicinesToPrescript[i].MedicineDosingDescription" Label="Opisz dawkowanie" class="form-control"></MudTextField>
+                                </div>
+                            </div>
+                        }
+                    }
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <btn type="button" class="btn btn-primary">Dodaj rekomendację</btn>
+                <button class="btn btn-secondary" @onclick="CloseModalAddRecommandation">Zamknij</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    [CascadingParameter]
+    public AddRecommandationModalData addRecommandationModalData { get; set; }
+
+    [Parameter]
+    public EventCallback OnClose { get; set; }
+
+    private MedicineToPrescription medicineToPrescription = new();
+    private MedicalRecommandationDto medicalRecommandation = new();
+    private PrescriptionDto prescription = new();
+    private Medicine medicine = new();
+    private List<MedicineToPrescription> medicinesToPrescript = new();
+
+    private bool askForVisit;
+    private bool askForVisitOnline;
+    private bool addPrescription;
+
+
+    private async Task<IEnumerable<Medicine>> GetMedicinesBySearchPhrase(string searchTerm)
+    {
+        if (string.IsNullOrWhiteSpace(searchTerm))
+        {
+            return new List<Medicine>();
+        }
+        return await _medicineRepository.SearchMedicines(searchTerm);
+
+
+    }
+
+    private void AddMedicine()
+    {
+        MedicineToPrescription medicineToPrescription = new()
+            {
+                ChosenMedicine = medicine,
+            };
+
+        medicinesToPrescript.Add(medicineToPrescription);
+    }
+
+    private void ToggleAddPrescription()
+    {
+        addPrescription = !addPrescription;
+    }
+
+    private void CloseModalAddRecommandation()
+    {
+        OnClose.InvokeAsync();
+    }
+}
