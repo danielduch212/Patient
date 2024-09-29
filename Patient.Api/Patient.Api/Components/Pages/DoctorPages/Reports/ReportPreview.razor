@@ -170,14 +170,11 @@
 
     ///
 
+    private Patient.Domain.Entities.Actors.Patient currentPatient;
 
-    private Patient.Domain.Entities.Actors.Patient currentPatient = new();
-
-    //Recommendation
+    //RecommendationModal
     AddRecommandationModalData addRecommandationModalData = new();
 
-
-    PrescriptionDto prescriptionDto = new();
 
 
     protected async override Task OnInitializedAsync()
@@ -202,14 +199,12 @@
                 var doctor = await _doctorsRepository.GetDoctorByIdAsync(doctorId);
                 doctors.Add(doctor);
             }
-
+            currentPatient = await _patientManager.FindByIdAsync(reportToShow.PatientId);
         }
         StateHasChanged();
         readingReport = false;
 
     }
-
-
 
     private void HandleShowFile(int positionOnTheList)
     {
@@ -264,6 +259,7 @@
 
     public sealed class MedicineToPrescription()
     {
+        public int Id;
         public Medicine ChosenMedicine { get; set; } = new();
         public string MedicineDosingDescription { get; set; } = "";
     }
@@ -271,13 +267,13 @@
     //Modal klasy pomocnicze
     public class PreviewFileModalData()
     {
-        public string CurrentFileBase64 { get; set; }
-        public string CurrentFileName { get; set; }
+        public string CurrentFileBase64 { get; set; } = "";
+        public string CurrentFileName { get; set; } = "";
         public bool ShowPreviewFileModal { get; set; }
     }
     public class AddRecommandationModalData()
     {      
-        public Patient.Domain.Entities.Actors.Patient CurrentPatient = new();
+        public Patient.Domain.Entities.Actors.Patient CurrentPatient { get; set; }
         public string ReportId { get; set; }
                 
     }

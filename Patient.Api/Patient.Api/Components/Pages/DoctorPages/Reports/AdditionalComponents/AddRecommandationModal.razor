@@ -76,27 +76,34 @@
                             </div>
                         </div>
 
-
-                        @for (int i = 0; i < medicinesToPrescript.Count(); i++)
-                        {
-
-                            <div class="row border-1 border-dark pt-5">
-                                <div class="col text-center justify-content-center align-items-center">
-                                    <p>Nazwa leku</p>
-                                    <p>@medicinesToPrescript[i].ChosenMedicine.Name</p>
-                                </div>
-                                <div class="col text-center justify-content-center align-items-center align-content-center">
-                                    <p>Dawkowanie</p>
-                                    <MudTextField @bind-Value="medicinesToPrescript[i].MedicineDosingDescription" Label="Opisz dawkowanie" class="form-control"></MudTextField>
-                                </div>
-                            </div>
-                        }
+                        <MudList T="MedicineToPrescription" Class="pt-5">
+                            @foreach (var item in medicinesToPrescript)
+                            {
+                                <MudListItem @key="item.Id">
+                                    <div class="row p-2">
+                                        <div class="col text-center justify-content-center align-items-center">
+                                            <p>Nazwa leku</p>
+                                            <p>@item.ChosenMedicine.Name</p>
+                                        </div>
+                                        <div class="col-6 text-center justify-content-center align-items-center align-content-center">
+                                            <p>Dawkowanie</p>
+                                            <MudTextField @bind-Value="@item.MedicineDosingDescription" Immediate="false" Label="Opisz dawkowanie" class="form-control" DebounceInterval="200"></MudTextField>
+                                        </div>
+                                        <div class="col-2 justify-content-center align-items-center align-content-center">
+                                            <MudBlazor.MudButton @onclick="(()=>RemoveMedicine(item))" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error">Usuń</MudBlazor.MudButton>
+                                        </div>
+                                    </div>
+                                    
+                                </MudListItem>
+                            }
+                        </MudList>
+                        
                     }
 
                 </div>
             </div>
             <div class="modal-footer">
-                <btn type="button" class="btn btn-primary">Dodaj rekomendację</btn>
+                <btn type="button" class="btn btn-primary" @onclick="AddRecommandationAsync">Dodaj rekomendację</btn>
                 <button class="btn btn-secondary" @onclick="CloseModalAddRecommandation">Zamknij</button>
 
             </div>
@@ -114,7 +121,6 @@
 
     private MedicineToPrescription medicineToPrescription = new();
     private MedicalRecommandationDto medicalRecommandation = new();
-    private PrescriptionDto prescription = new();
     private Medicine medicine = new();
     private List<MedicineToPrescription> medicinesToPrescript = new();
 
@@ -134,14 +140,36 @@
 
     }
 
+    private async Task AddRecommandationAsync()
+    {
+        PrescriptionDto prescription = new()
+        {
+                MedicineNames = GetPrescriptionMedicinesNames(),
+                Description = GetPrescriptionDescription(),
+                PatientId = addRecommandationModalData.CurrentPatient.Id,               
+
+        };
+
+        medicalRecommandation.Prescription = prescription;
+        medicalRecommandation.AskForVisit = askForVisit;
+        medicalRecommandation.AskForVisitOnline = askForVisitOnline;
+        medicalRecommandation.PatientId = addRecommandationModalData.CurrentPatient.Id;
+        medicalRecommandation.ReportId = int.Parse(addRecommandationModalData.ReportId);
+
+        var result = await _doctorApiService.SendRequestAddRecommandation(medicalRecommandation);
+
+    }
+
     private void AddMedicine()
     {
         MedicineToPrescription medicineToPrescription = new()
             {
                 ChosenMedicine = medicine,
+                Id = medicinesToPrescript.Count() +1
             };
 
         medicinesToPrescript.Add(medicineToPrescription);
+        StateHasChanged();
     }
 
     private void ToggleAddPrescription()
@@ -153,4 +181,40 @@
     {
         OnClose.InvokeAsync();
     }
+
+    private void RemoveMedicine(MedicineToPrescription item)
+    {
+        medicinesToPrescript.Remove(item);
+        //StateHasChanged();
+    }
+
+    private List<string> GetPrescriptionMedicinesNames()
+    {
+        List<string> medicineNamesList = new();
+        foreach (var item in medicinesToPrescript)
+        {
+            medicineNamesList.Add(item.ChosenMedicine.Name);
+        }
+        return medicineNamesList;
+    }
+
+    private string GetPrescriptionDescription()
+    {
+        string medicinePrescriptionDescription = "";
+
+        foreach (var item in medicinesToPrescript)
+        {
+            medicinePrescriptionDescription = medicinePrescriptionDescription + item.ChosenMedicine.Name + item.MedicineDosingDescription + "\n";
+        }
+        return medicinePrescriptionDescription;
+    }
+
+    public string Description { get; set; } = default!;
+    public DateOnly DateOfIssue { get; set; }
+    public Patient.Domain.Entities.DTOs.Prescription.PrescriptionDto? Prescription { get; set; }
+    public bool AskForVisit { get; set; }
+    public bool AskForVisitOnline { get; set; }
+
+    //
+    public string PatientId { get; set; } = default!;
 }

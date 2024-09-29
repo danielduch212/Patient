@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Patient.Domain.Entities.DTOs.Recommandation;
 using Patient.Domain.Interfaces;
+using System.Net.Http.Json;
 
 namespace Patient.Infrastructure.Services;
 
@@ -34,10 +36,17 @@ public class DoctorApiService : IDoctorApiService
         var response = await _httpClient.GetAsync("/api/MedicalDataController/getUserMedicalData");
         return response;
     }
+    
+    public async Task<HttpResponseMessage> SendRequestAddRecommandation(MedicalRecommandationDto dto)
+    {
+        AddCookiesToRequest();
+        var response = await _httpClient.PostAsJsonAsync("/api/RecommandationController/createRecommandation", dto);
+        return response;
+    }
 
     private void AddCookiesToRequest()
     {
         var cookies = _httpContextAccessor.HttpContext.Request.Headers["Cookie"].ToString();
-          _httpClient.DefaultRequestHeaders.Add("Cookie", cookies);
+        _httpClient.DefaultRequestHeaders.Add("Cookie", cookies);
     }
 }

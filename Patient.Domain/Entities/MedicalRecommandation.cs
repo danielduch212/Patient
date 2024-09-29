@@ -9,9 +9,11 @@ public class MedicalRecommandation
     public DateOnly DateOfIssue { get; set; }
     public Prescription? Prescription { get; set; }
     public bool AskForVisit { get; set; }
+    public bool AskForVisitOnline { get; set; }
 
 
     //
+    public int? ReportId { get; set; }
     public string PatientId { get; set; } = default!;
     public Patient.Domain.Entities.Actors.Patient Patient { get; set; } = default!;
     public string DoctorId { get; set; } = default!;

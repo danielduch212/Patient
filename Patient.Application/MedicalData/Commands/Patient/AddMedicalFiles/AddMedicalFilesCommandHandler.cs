@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
@@ -12,8 +13,8 @@ namespace Patient.Application.MedicalData.Commands.Patient.AddMedicalFiles;
 
 internal class AddMedicalFilesCommandHandler(ILogger<AddMedicalFilesCommandHandler> logger,
     IdentityUserAccessor userAccessor, UserManager<Domain.Entities.Actors.Patient> patientManager,
-    IHttpContextAccessor httpContextAccesor, HttpClient _httpClient, IBlobStorageService blobStorageService,
-    IMedicalDataRepository medicalDataRepository) : IRequestHandler<AddMedicalFilesCommand, bool>
+    IHttpContextAccessor httpContextAccesor, IBlobStorageService blobStorageService,
+    IMedicalDataRepository medicalDataRepository, IMapper mapper, HttpClient _httpClient) : IRequestHandler<AddMedicalFilesCommand, bool>
 {
     public async Task<bool> Handle(AddMedicalFilesCommand request, CancellationToken cancellationToken)
     {

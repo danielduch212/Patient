@@ -78,11 +78,10 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IDoctorApiService, DoctorApiService>();
 
         services.AddScoped<IMedicalDataRepository, MedicalDataRepository>();
-
         services.AddScoped<IMedicineSeeder, MedicineSeeder>();
-
         services.AddScoped<IDoctorsRepository, DoctorsRepository>();
-
         services.AddScoped<IMedicineRepository, MedicineRepository>();
+        services.AddScoped<IRecommandationRepository, RecommandationRepository>();
+
     }
 }

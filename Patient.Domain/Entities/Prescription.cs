@@ -5,8 +5,8 @@ namespace Patient.Domain.Entities;
 public class Prescription
 {
     public int Id { get; set; }
-    public string MedicineName { get; set; } = default!;
-    public Decimal DoseOfMedicine { get; set; }
+    public List<string> MedicineNames { get; set; } = new();
+    public Decimal? DoseOfMedicine { get; set; }
     public string Description { get; set; } = default!;
     public DateOnly DateOfIssue { get; set; }
     public DateOnly DateOfExpiration { get; set; }

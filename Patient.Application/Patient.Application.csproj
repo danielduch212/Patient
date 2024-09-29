@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Recommandation\Queries\" />
     <Folder Include="Users\Commands\" />
     <Folder Include="Users\Queries\" />
   </ItemGroup>
