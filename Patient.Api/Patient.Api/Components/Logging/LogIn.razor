@@ -1,8 +1,7 @@
-﻿@inject NavigationManager Navigation
-@rendermode InteractiveServer
+﻿@layout Patient.Api.Components.Layout.Main.LoggingLayout
 
-@layout Layout.Main.LoggingLayout
-@page "/rejestracja"
+@page "/logowanie"
+
 
 <div class="container">
     <div class="row">
@@ -14,8 +13,8 @@
             <div class="card shadow-sm" style="width: 100%; max-width: 400px;">
                 <div class="card-body">
                     <h2 class="card-title text-center mb-4">Pacjent</h2>
-                    <NavLink href="/rejestracjaPacjent">
-                        <btn type="button" class="btn btn-primary"> Rejestracja</btn>
+                    <NavLink href="/logowaniePacjent">
+                        <btn type="button" class="btn btn-primary"> Logowanie</btn>
                     </NavLink>
                 </div>
             </div>
@@ -26,8 +25,8 @@
             <div class="card shadow-sm" style="width: 100%; max-width: 400px;">
                 <div class="card-body">
                     <h2 class="card-title text-center mb-4">Lekarz</h2>
-                    <NavLink href="/rejestracjaLekarz">
-                        <btn type="button" class="btn btn-primary"> Rejestracja</btn>
+                    <NavLink href="/logowanieLekarz">
+                        <btn type="button" class="btn btn-primary"> Logowanie</btn>
                     </NavLink>
                 </div>
             </div>
@@ -35,6 +34,8 @@
     </div>
 
 </div>
+
+
 
 @code {
 

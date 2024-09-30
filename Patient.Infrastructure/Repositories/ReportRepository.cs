@@ -15,6 +15,12 @@ internal class ReportRepository(PatientDbContext dbContext) : IReportRepository
         await dbContext.SaveChangesAsync();
     }
 
+    public async Task<Report> GetReport(int reportId)
+    {
+        return await dbContext.Reports
+            .Include(r=>r.MedicalRecommandation)
+            .Where(r => r.Id == reportId).FirstOrDefaultAsync();
+    }
     public async Task<List<Report>> GetPatientReports(Patient patient)
     {
         var results = await dbContext.Reports.Where(r => r.PatientId == patient.Id).ToListAsync();
@@ -32,7 +38,7 @@ internal class ReportRepository(PatientDbContext dbContext) : IReportRepository
         return result;
     }
 
-        public async Task<List<Report>> GetDoctorReports(Doctor doctor)
+    public async Task<List<Report>> GetDoctorReports(Doctor doctor)
     {
         var results = await dbContext.Reports
                     .Include(r => r.DoctorsToCheck)

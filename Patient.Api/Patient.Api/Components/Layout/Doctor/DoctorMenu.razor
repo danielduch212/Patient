@@ -1,4 +1,7 @@
-﻿@rendermode InteractiveServer
+﻿@layout Patient.Api.Components.Layout.Doctor.DoctorLayout
+
+
+@rendermode InteractiveServer
 
 
 
@@ -56,32 +59,17 @@
                 </a>
 
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                    <li><a class="Moje Konto" href="/lekarz/konto">Moje konto</a></li>
+                    <li><a class="Moje Konto" href="/lekarz">Moje konto</a></li>
+                    <li><a class="Dokumentacja medyczna" href="/pacjent/dokumentacja-medyczna">Dokumentacja</a></li>
                     <li><a class="Wyloguj się" href="#">Wyloguj sie</a></li>
                 </ul>
             </div>
         </div>
-
-
-
-
-        
-        
-        
-                
-        
-        
-        
-
     </div>
 </div>
 
 
-@code{
-    private bool isAccountMenuVisible = false;
 
-    private void OnMyAccount()
-    {
-        isAccountMenuVisible = !isAccountMenuVisible;
-    }
+@code{
+    
 }

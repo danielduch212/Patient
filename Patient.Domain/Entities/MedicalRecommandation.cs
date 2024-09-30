@@ -13,7 +13,7 @@ public class MedicalRecommandation
 
 
     //
-    public int? ReportId { get; set; }
+    public Report? Report { get; set; }
     public string PatientId { get; set; } = default!;
     public Patient.Domain.Entities.Actors.Patient Patient { get; set; } = default!;
     public string DoctorId { get; set; } = default!;

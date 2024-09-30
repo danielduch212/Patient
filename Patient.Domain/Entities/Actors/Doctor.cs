@@ -6,7 +6,7 @@ namespace Patient.Domain.Entities.Actors;
 public class Doctor : User
 {
     public string DoctorNumber { get; set; } = default!;
-    
+    public string? DoctorSpecialization { get; set; } = default!;
 
 
     //specjalizacje obsluze przez userroles z identity user

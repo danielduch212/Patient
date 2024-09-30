@@ -13,17 +13,13 @@ public class Report
     public UrgencyType? Urgency { get; set; }
 
 
-
     //
     public string PatientId { get; set; } = default!;
     public Patient.Domain.Entities.Actors.Patient Patient { get; set; } = default!;
+    public int? MedicalRecommandationId { get; set; } = default!;
+    public MedicalRecommandation? MedicalRecommandation { get; set; }
     public IEnumerable<Doctor>? DoctorsWhoChecked { get; set; } = new List<Doctor>();
     public IEnumerable<Doctor>? DoctorsToCheck { get; set; } = new List<Doctor>();
-    public MedicalRecommandation? MedicalRecommandation { get; set; } 
-
-
-
-
-
+    
 
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Patient.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using Patient.Infrastructure.Persistence;
 namespace Patient.Infrastructure.Migrations
 {
     [DbContext(typeof(PatientDbContext))]
-    partial class PatientDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240930080615_doctorAddedSpecialization")]
+    partial class doctorAddedSpecialization
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -345,6 +348,9 @@ namespace Patient.Infrastructure.Migrations
                     b.Property<int?>("PrescriptionId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("ReportId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("DoctorId");
@@ -352,6 +358,10 @@ namespace Patient.Infrastructure.Migrations
                     b.HasIndex("PatientId");
 
                     b.HasIndex("PrescriptionId");
+
+                    b.HasIndex("ReportId")
+                        .IsUnique()
+                        .HasFilter("[ReportId] IS NOT NULL");
 
                     b.ToTable("MedicalRecommandations");
                 });
@@ -459,9 +469,6 @@ namespace Patient.Infrastructure.Migrations
                     b.Property<bool>("IsChecked")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("MedicalRecommandationId")
-                        .HasColumnType("int");
-
                     b.Property<string>("PatientId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -470,10 +477,6 @@ namespace Patient.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("MedicalRecommandationId")
-                        .IsUnique()
-                        .HasFilter("[MedicalRecommandationId] IS NOT NULL");
 
                     b.HasIndex("PatientId");
 
@@ -640,6 +643,10 @@ namespace Patient.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("PrescriptionId");
 
+                    b.HasOne("Patient.Domain.Entities.Report", null)
+                        .WithOne("MedicalRecommandation")
+                        .HasForeignKey("Patient.Domain.Entities.MedicalRecommandation", "ReportId");
+
                     b.Navigation("Doctor");
 
                     b.Navigation("Patient");
@@ -668,18 +675,11 @@ namespace Patient.Infrastructure.Migrations
 
             modelBuilder.Entity("Patient.Domain.Entities.Report", b =>
                 {
-                    b.HasOne("Patient.Domain.Entities.MedicalRecommandation", "MedicalRecommandation")
-                        .WithOne("Report")
-                        .HasForeignKey("Patient.Domain.Entities.Report", "MedicalRecommandationId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("Patient.Domain.Entities.Actors.Patient", "Patient")
                         .WithMany("Reports")
                         .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("MedicalRecommandation");
 
                     b.Navigation("Patient");
                 });
@@ -786,9 +786,9 @@ namespace Patient.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Patient.Domain.Entities.MedicalRecommandation", b =>
+            modelBuilder.Entity("Patient.Domain.Entities.Report", b =>
                 {
-                    b.Navigation("Report");
+                    b.Navigation("MedicalRecommandation");
                 });
 
             modelBuilder.Entity("Patient.Domain.Entities.Actors.Doctor", b =>

@@ -1,0 +1,116 @@
+﻿@using static Patient.Api.Components.Pages.DoctorPages.Reports.ReportPreview
+@using Patient.Domain.Constants
+@using Blazored.Typeahead
+@using MudBlazor
+@using MudBlazor.Components
+@using System.ComponentModel.DataAnnotations
+@using Patient.Domain.Interfaces
+@using Patient.Domain.Entities.DTOs
+@using Patient.Domain.Entities
+@using Patient.Domain.Entities.DTOs.Reports
+@using Patient.Domain.Repositories
+@using Patient.Domain.Entities.DTOs.Recommandation
+@using Patient.Domain.Entities.DTOs.Prescription
+@using Patient.Api.Components.Pages.DoctorPages.Reports.AdditionalComponents
+
+
+<div class="container-dropdown-body">
+    <div class="row">
+        <div class="col-4">
+            Wybierz lekarza
+        </div>
+        <div class="col-8">
+            <BlazoredTypeahead SearchMethod="SearchDoctorTypes"
+                                @bind-Value="doctorSpecialization">
+                <SelectedTemplate>@context</SelectedTemplate>
+                <ResultTemplate>@context</ResultTemplate>
+            </BlazoredTypeahead>
+        </div>
+        <div class="col-2">
+            <MudBlazor.MudButton @onclick="AddDoctor">
+                Dodaj lekarza
+            </MudBlazor.MudButton>
+        </div>
+    </div>
+
+    <MudList T="string" Class="pt-5">
+        @foreach (var item in chosenDoctorTypes)
+        {
+            <MudListItem>
+                <div class="row p-2">
+                    <div class="col text-center justify-content-center align-items-center">
+                        <p>Konsultacja: </p>
+                    </div>
+                    <div class="col text-center justify-content-center align-items-center">
+                        <p>@item</p>
+                    </div>
+                    <div class="col-2 justify-content-center align-items-center align-content-center">
+                        <MudBlazor.MudButton @onclick="(()=>RemoveDoctorType(item))" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error">Usuń</MudBlazor.MudButton>
+                    </div>
+                </div>
+
+            </MudListItem>
+        }
+    </MudList>
+    <MudBlazor.MudButton @onclick="HandleAddConsult">
+        Dodaj
+    </MudBlazor.MudButton>
+    <button class="btn btn-secondary" @onclick="HandleCloseModal">Zamknij</button>
+
+</div>
+
+
+@code {
+
+    [CascadingParameter]
+    public int ReportId { get; set; }
+
+    [Parameter]
+    public EventCallback<List<string>> OnClose { get; set; }
+
+
+
+    private string doctorSpecialization = "";
+    private List<string> chosenDoctorTypes = new();
+    private List<string> doctorTypes = new();
+
+    protected override Task OnInitializedAsync()
+    {
+        doctorTypes = Patient.Domain.Constants.DoctorSpecialization.GetAllTypes();
+        return Task.CompletedTask;
+    }
+
+    private async Task<IEnumerable<string>> SearchDoctorTypes(string searchPhrase)
+    {
+        if (string.IsNullOrWhiteSpace(searchPhrase))
+        {
+            return new List<string>();
+        }
+        var result = doctorTypes
+            .Where(specialization => specialization.Contains(searchPhrase, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+
+        return await Task.FromResult(result);
+    }
+    private void AddDoctor()
+    {
+        chosenDoctorTypes.Add(doctorSpecialization);
+        StateHasChanged();
+    }
+
+    private async void RemoveDoctorType(string item)
+    {
+        chosenDoctorTypes.Remove(item);
+    }
+
+    private async void HandleAddConsult()
+    {
+        await OnClose.InvokeAsync(chosenDoctorTypes);
+    }
+
+    private async void HandleCloseModal()
+    {
+        chosenDoctorTypes = new();
+        await OnClose.InvokeAsync(chosenDoctorTypes);
+    }
+}

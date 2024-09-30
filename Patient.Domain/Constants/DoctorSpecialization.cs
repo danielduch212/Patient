@@ -22,4 +22,33 @@ public static class DoctorSpecialization
     public const string GYNECOLOGIST = "Ginekolog";
     public const string DIABETOLOGIST = "Diabetolog";
     public const string SURGEON = "Chirurg";
+
+
+    public static List<string> GetAllTypes()
+    {
+        return new List<string>
+            {
+                CARDIOLOGIST,
+                DERMATOLOGIST,
+                ENDOCRINOLOGIST,
+                GASTROENTEROLOGIST,
+                NEUROLOGIST,
+                ORTHOPEDIST,
+                PSYCHIATRIST,
+                PSYCHOTHERAPIST,
+                PULMONOLOGIST,
+                RADIOLOGIST,
+                ONCOLOGIST,
+                OPHTHALMOLOGIST,
+                OTOLARYNGOLOGIST,
+                PEDIATRICIAN,
+                UROLOGIST,
+                RHEUMATOLOGIST,
+                GENERAL_PRACTITIONER,
+                GYNECOLOGIST,
+                DIABETOLOGIST,
+                SURGEON
+
+            };
+    }
 }

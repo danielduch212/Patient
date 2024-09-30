@@ -21,22 +21,18 @@ internal class PatientDbContext(DbContextOptions<PatientDbContext> options) : Id
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-
-
-        
+   
         modelBuilder.Entity<Admin>()
             .ToTable("Admins")
             .OwnsOne(a => a.Address);
 
-
-
         modelBuilder.Entity<Domain.Entities.Actors.Patient>()
-        .ToTable("Patients")
-        .OwnsOne(p => p.Address);
+            .ToTable("Patients")
+            .OwnsOne(p => p.Address);
 
         modelBuilder.Entity<Doctor>()
-        .ToTable("Doctors")
-        .OwnsOne(d => d.Address);
+            .ToTable("Doctors")
+            .OwnsOne(d => d.Address);
 
         //patient
         modelBuilder.Entity<Domain.Entities.Actors.Patient>()
@@ -82,6 +78,12 @@ internal class PatientDbContext(DbContextOptions<PatientDbContext> options) : Id
         modelBuilder.Entity<MedicalRecommandation>()
             .HasOne(mr => mr.Prescription);
 
+        modelBuilder.Entity<MedicalRecommandation>()
+            .HasOne(mr => mr.Report)
+            .WithOne(r => r.MedicalRecommandation)
+            .HasForeignKey<Report>(r => r.MedicalRecommandationId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         //report ;/
         modelBuilder.Entity<Report>()
             .HasMany(r => r.DoctorsToCheck)
@@ -90,6 +92,9 @@ internal class PatientDbContext(DbContextOptions<PatientDbContext> options) : Id
         modelBuilder.Entity<Report>()
             .HasMany(r => r.DoctorsWhoChecked)
             .WithMany(d => d.ReportsChecked);
+
+
+            
 
     }
 
