@@ -49,9 +49,6 @@ internal class CreateReportCommandHandler(ILogger<CreateReportCommandHandler> lo
         logger.LogInformation($"Created report with given id: {report.Id}");
         return report.Id;
 
-
-
-
     }
 
 
