@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Patient.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using Patient.Infrastructure.Persistence;
 namespace Patient.Infrastructure.Migrations
 {
     [DbContext(typeof(PatientDbContext))]
-    partial class PatientDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241002092644_diseases")]
+    partial class diseases
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -528,18 +531,12 @@ namespace Patient.Infrastructure.Migrations
                     b.Property<string>("DoctorSpecialization")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ImageAvatarFileName")
-                        .HasColumnType("nvarchar(max)");
-
                     b.ToTable("Doctors", (string)null);
                 });
 
             modelBuilder.Entity("Patient.Domain.Entities.Actors.Patient", b =>
                 {
                     b.HasBaseType("Patient.Domain.Entities.Actors.User");
-
-                    b.Property<string>("ImageAvatarFileName")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool?>("OnlyPreventionPatient")
                         .HasColumnType("bit");

@@ -7,6 +7,7 @@ using Patient.Application.Extensions;
 using Patient.Domain.Repositories;
 using Patient.Infrastructure.Extensions;
 using Patient.Infrastructure.Seeders;
+using Patient.Infrastructure.Seeders.DiseaseSeeder;
 using Patient.Infrastructure.Seeders.MedicineSeeder;
 using Serilog;
 
@@ -44,10 +45,13 @@ var app = builder.Build();
 var scope = app.Services.CreateScope();
 var seeder = scope.ServiceProvider.GetRequiredService<IPatientSeeder>();
 var medicineSeeder = scope.ServiceProvider.GetRequiredService<IMedicineSeeder>();
+var diseaseSeeder = scope.ServiceProvider.GetRequiredService<IDiseaseSeeder>();
 
 
 await seeder.SeedData();
 await medicineSeeder.SeedMedicines();
+await diseaseSeeder.SeedData();
+
 
 
 app.UseMiddleware<ErrorHandlingMiddleware>();

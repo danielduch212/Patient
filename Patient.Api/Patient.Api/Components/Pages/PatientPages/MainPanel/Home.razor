@@ -13,6 +13,11 @@
 <h3> Panel Pacjenta </h3>
 <h2> Na prawo - Rekomendacje: Otrzymano nową rekomendacje </h2>
 
+<h3> Jezeli user nie ma jeszcze przypisanych leczonych chorob jakie chcialby tu leczyc </h3>
+
+<h2>
+    <Patient.Api.Components.Pages.PatientPages.MainPanel.AdditionalComponents.SummaryComponent></Patient.Api.Components.Pages.PatientPages.MainPanel.AdditionalComponents.SummaryComponent>
+</h2>
 
 
 
@@ -22,7 +27,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-
+        //sprawdzic czy pacjent ma jakies choroby przypisane i jak nie to wyswietlac przejscie do stronki /pacjent/konto/wywiad/zmien 
+        // zeby ktos mogl dodac se choroby ;)
 
 
     }

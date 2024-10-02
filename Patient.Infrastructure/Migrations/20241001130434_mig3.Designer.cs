@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Patient.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using Patient.Infrastructure.Persistence;
 namespace Patient.Infrastructure.Migrations
 {
     [DbContext(typeof(PatientDbContext))]
-    partial class PatientDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241001130434_mig3")]
+    partial class mig3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -278,33 +281,6 @@ namespace Patient.Infrastructure.Migrations
                     b.UseTptMappingStrategy();
                 });
 
-            modelBuilder.Entity("Patient.Domain.Entities.Disease", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PatientId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("PatientId1")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PatientId");
-
-                    b.HasIndex("PatientId1");
-
-                    b.ToTable("Diseases");
-                });
-
             modelBuilder.Entity("Patient.Domain.Entities.MedicalFile", b =>
                 {
                     b.Property<int>("Id")
@@ -528,21 +504,12 @@ namespace Patient.Infrastructure.Migrations
                     b.Property<string>("DoctorSpecialization")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ImageAvatarFileName")
-                        .HasColumnType("nvarchar(max)");
-
                     b.ToTable("Doctors", (string)null);
                 });
 
             modelBuilder.Entity("Patient.Domain.Entities.Actors.Patient", b =>
                 {
                     b.HasBaseType("Patient.Domain.Entities.Actors.User");
-
-                    b.Property<string>("ImageAvatarFileName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool?>("OnlyPreventionPatient")
-                        .HasColumnType("bit");
 
                     b.Property<int>("PatientType")
                         .HasColumnType("int");
@@ -648,17 +615,6 @@ namespace Patient.Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Patient.Domain.Entities.Disease", b =>
-                {
-                    b.HasOne("Patient.Domain.Entities.Actors.Patient", null)
-                        .WithMany("CurrentlyTreatedDiseases")
-                        .HasForeignKey("PatientId");
-
-                    b.HasOne("Patient.Domain.Entities.Actors.Patient", null)
-                        .WithMany("TreatedDiseasesInThePast")
-                        .HasForeignKey("PatientId1");
                 });
 
             modelBuilder.Entity("Patient.Domain.Entities.MedicalFile", b =>
@@ -850,15 +806,11 @@ namespace Patient.Infrastructure.Migrations
 
             modelBuilder.Entity("Patient.Domain.Entities.Actors.Patient", b =>
                 {
-                    b.Navigation("CurrentlyTreatedDiseases");
-
                     b.Navigation("MedicalFiles");
 
                     b.Navigation("Prescriptions");
 
                     b.Navigation("Reports");
-
-                    b.Navigation("TreatedDiseasesInThePast");
                 });
 #pragma warning restore 612, 618
         }

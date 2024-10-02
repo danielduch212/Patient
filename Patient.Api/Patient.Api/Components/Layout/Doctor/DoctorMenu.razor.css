@@ -93,7 +93,6 @@
 }
 
 
-
 /*tutaj moje*/
 .navbar-row {
     display:none;
@@ -118,10 +117,10 @@
         background-color: rgba(255,255,255,0.37);
         color: white;
     }
-    /*.menu-item ::deep .nav-link:hover {
+    .menu-item ::deep .nav-link:hover {
         background-color: rgba(255,255,255,0.1);
         color: white;
-    }*/
+    }
         
 
 

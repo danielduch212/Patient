@@ -12,6 +12,7 @@ public class ReportToShowToPatientDto
     public string DateOfCreating { get; set; } = default!;
     public UrgencyType? Urgency { get; set; }
     public List<string>? FilesBase64 { get; set; } = new List<string>();
+    public int PatientsHealthRating { get; set; }
 
     public IEnumerable<Doctor>? DoctorsWhoChecked { get; set; } = new List<Doctor>();
     public MedicalRecommandation? MedicalRecommandation { get; set; }

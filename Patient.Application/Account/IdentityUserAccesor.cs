@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Patient.Application.Account
 {
-    internal sealed class IdentityUserAccessor(UserManager<User> userManager, IdentityRedirectManager redirectManager)
+    public sealed class IdentityUserAccessor(UserManager<User> userManager, IdentityRedirectManager redirectManager)
     {
         public async Task<User> GetRequiredUserAsync(HttpContext context)
         {

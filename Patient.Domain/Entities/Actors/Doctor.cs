@@ -7,7 +7,7 @@ public class Doctor : User
 {
     public string DoctorNumber { get; set; } = default!;
     public string? DoctorSpecialization { get; set; } = default!;
-
+    public string? ImageAvatarFileName { get; set; } = default!;
 
     //specjalizacje obsluze przez userroles z identity user
 

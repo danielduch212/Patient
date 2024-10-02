@@ -1,6 +1,9 @@
 ﻿@layout Patient.Api.Components.Layout.Doctor.DoctorLayout
 
+@rendermode @(new InteractiveServerRenderMode(false))
+
 @using Patient.Domain.Constants
+
 
 @attribute [Authorize(Roles = UserRoles.Doctor)]
 
@@ -8,7 +11,12 @@
 
 
 
-<h3> Panel lekarza</h3>
+<div class="container px-5">
+    <section style="height: 10%;">
+        <Patient.Api.Components.Pages.DoctorPages.MainPanel.AdditionalComponents.SummaryComponent />
+    </section>
+</div>
+
 
 @code {
     protected override async Task OnInitializedAsync()

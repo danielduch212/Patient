@@ -47,6 +47,7 @@
 
   <ItemGroup>
     <Folder Include="Account\" />
+    <Folder Include="Components\Pages\DoctorPages\Account\" />
   </ItemGroup>
 
 </Project>

@@ -61,6 +61,7 @@ main {
         height: 100px;
         position: sticky;
         top: 0;
+        z-index: 1000;
     }
 
     .top-row {

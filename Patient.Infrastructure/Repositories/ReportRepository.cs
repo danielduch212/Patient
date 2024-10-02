@@ -66,4 +66,14 @@ internal class ReportRepository(PatientDbContext dbContext) : IReportRepository
            
     }
 
+    public async Task<int> GetDoctorReportsNumber(Doctor doctor)
+    {
+        var results = await dbContext.Reports
+                    .Include(r => r.DoctorsToCheck)
+                    .Where(r => r.DoctorsToCheck.Any(d => d.Id == doctor.Id))
+                    .CountAsync();
+        
+
+        return results;
+    }
 }

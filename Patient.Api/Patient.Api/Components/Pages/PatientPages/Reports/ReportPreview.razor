@@ -21,51 +21,21 @@
                 <btn type="button" class="back-icon bi-arrow-left"></btn>
             </NavLink>
         </div>
-        <div class="col">
-        </div>
-        <div class="col-8 report text-center ">
-            <div class="row  text-center border-1 border-bottom border-dark text-center">
-                <h2>Raport</h2>
-                <p>Data: @reportToShow.DateOfCreating</p>
+        @if(readingReport == true)
+        {
+            <MudProgressCircular Color="Color.Success" Indeterminate="true" />
+        }
+        else
+        {
+            <div class="mx-5">
+                <CascadingValue Value="reportToShow">
+                    <Patient.Api.Components.Pages.AdditionalComponents.ReportPreviewComponent />
+                </CascadingValue>
             </div>
-            <div class="row text-center min-height-10 border-1 border-bottom border-dark">
-                <h4>Opis:</h4>
-                <p>@reportToShow.Description</p>
-            </div>
-            <div class="row  text-center min-height-7">
-                <div class="col border-right">
-                    <h4>Pliki:</h4>
-                    @if(reportToShow.FileNames.Count() > 0)
-                    {
-                        for(int i=0;i<reportToShow.FileNames.Count();i++)
-                        {
-                            <div class="file-block mx-2" @onclick="() => HandleShowFile(i)">
-                                <div class="bi-x-circle"></div>
-                                <div class="bi-file-icon"></div>
-                                @* <p>@reportToShow.FileNames.ElementAt(i)</p> *@
-                            </div>
-                        }
-                    }
-                </div>
-                <div class="col">
-                    <div class="row d-flex-column border-1 border-bottom border-dark">
-                        <p>Lekarze sprawdzajacy:</p>
-                        <p>Lekarz</p>
+        } 
 
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            @reportToShow.IsChecked
-                        </div>
-                        <div class="col">
-                            Rekomendacja
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col">
-        </div>
+        
+        
     </div>
 </div>
 

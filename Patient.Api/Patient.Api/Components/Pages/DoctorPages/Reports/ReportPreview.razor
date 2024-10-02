@@ -48,76 +48,11 @@
             }
             else
             {
-                
-                <div class="col mx-5">
-                    <div class="row d-flex align-items-center">
-                        <div class="col d-flex ms-3 me-3">
-                            <div class="me-3 col">
-                                <btn type="button" class="bi-patient-icon" @onclick="()=>HandleShowPatient()"></btn>
-                            </div>
-                            <div class="me-3 col">
-                                <strong>@reportToShow.PatientName</strong>
-                                <strong>@reportToShow.PatientSurname</strong>
-                            </div>
-                            <div class="me-3 col">
-                                <strong>@reportToShow.PatientPesel</strong>
-                            </div>
-                            <div class="me-3 col">
-                                <strong>Leczone dolegliwości</strong>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="report text-center">
-
-                        <div class="row  text-center border-1 border-bottom border-dark text-center">
-                            <h2>Raport</h2>
-                            <p>Data: @reportToShow.DateOfCreating</p>
-                        </div>
-                        <div class="row text-center min-height-10 border-1 border-bottom border-dark">
-                            <h4>Opis:</h4>
-                            <p>@reportToShow.Description</p>
-                        </div>
-                        <div class="row  text-center min-height-7">
-                            <div class="col border-right">
-                                <h4>Pliki:</h4>
-                                @if (reportToShow.FileNames.Count() > 0)
-                                {
-                                    for (int i = 0; i < reportToShow.FileNames.Count(); i++)
-                                    {
-                                        <btn type="button" class="btn file-block mx-2" @onclick="() => HandleShowFile(i-1)">
-                                            <div class="bi-x-circle"></div>
-                                            <div class="bi-file-icon"></div>
-                                            @* <p>@reportToShow.FileNames.ElementAt(i)</p> *@
-                                        </btn>
-                                    }
-                                }
-                            </div>
-                            <div class="col">
-                                <div class="row d-flex-column border-1 border-bottom border-dark">
-                                    <p>Lekarze sprawdzajacy:</p>
-                                    @foreach (var doctor in doctors)
-                                    {
-                                        <p>@doctor.Name @doctor.Surname</p>
-                                    }
-
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        @reportToShow.IsChecked
-                                    </div>
-                                    <div class="col">
-                                        Rekomendacja
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-
+                <div class="mx-5">
+                    <CascadingValue Value="reportToShow">
+                        <Patient.Api.Components.Pages.AdditionalComponents.ReportPreviewComponent />
+                    </CascadingValue>
                 </div>
-                
-
-
             }
         </div> 
 
@@ -148,7 +83,7 @@
     @if (showPreviewFileModal)
     {
         <CascadingValue Value="previewFileModalData">
-            <PreviewFileModal OnClose="CloseModalFilePreview" />
+            <Patient.Api.Components.Pages.AdditionalComponents.PreviewFileModal OnClose="CloseModalFilePreview" />
         </CascadingValue>
     }
     @if (showAddRecommandationModal)

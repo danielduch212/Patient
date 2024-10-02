@@ -1,18 +1,17 @@
 ﻿@layout Patient.Api.Components.Layout.Doctor.DoctorLayout
 
-
 @rendermode InteractiveServer
 
 
+@inject IJSRuntime _jsRunTIme
 
 <div class="container" onclick="document.querySelector('.navbar-toggler').click()">
     <div class="row">
         <div class="col">
-            <div class="menu-item">
-                
+            <div class="menu-item">  
                 <NavLink class="nav-link  d-flex d-flex-row" href="/lekarz">
                     <span class="bi bi-house-door-fill-nav-menu"></span>
-                    <span class="" aria-hidden="true">Panel</span> 
+                    <span aria-hidden="true">Panel</span> 
                 </NavLink>
             </div>
         </div>
@@ -26,21 +25,21 @@
         <div class="col">
             <div class="menu-item">
                 <NavLink class="nav-link" href="/lekarz/recepty">
-                    <span  aria-hidden="true"></span> 
+                    <span aria-hidden="true">Recepty</span> 
                 </NavLink>
             </div>
         </div>
         <div class="col">
             <div class="menu-item">
                 <NavLink class="nav-link" href="/lekarz/wizyty">
-                    <span  aria-hidden="true"></span> 
+                    <span aria-hidden="true">Wizyty</span>
                 </NavLink>
             </div>
         </div>
         <div class="col">
             <div class="menu-item">
                 <NavLink class="nav-link" href="/lekarz/czat">
-                    <span aria-hidden="true"></span> 
+                    <span aria-hidden="true">Czat</span> 
                 </NavLink>
             </div>
         </div>
@@ -60,7 +59,6 @@
 
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                     <li><a class="Moje Konto" href="/lekarz">Moje konto</a></li>
-                    <li><a class="Dokumentacja medyczna" href="/pacjent/dokumentacja-medyczna">Dokumentacja</a></li>
                     <li><a class="Wyloguj się" href="#">Wyloguj sie</a></li>
                 </ul>
             </div>

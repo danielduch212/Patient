@@ -1,0 +1,9 @@
+﻿
+.summary-item {
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+    .summary-item:hover {
+        background-color: #f5f5f5; 
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); 
+    }
+

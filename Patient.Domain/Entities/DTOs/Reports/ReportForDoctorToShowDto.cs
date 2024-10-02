@@ -12,7 +12,7 @@ public class ReportForDoctorToShowDto
     public string DateOfCreating { get; set; } = default!;
     public UrgencyType? Urgency { get; set; }
     public List<string>? FilesBase64 { get; set; } = new List<string>();
-
+    public int PatientsHealthRating { get; set; }
 
 
     //

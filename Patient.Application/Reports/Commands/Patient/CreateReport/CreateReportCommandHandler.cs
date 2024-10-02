@@ -43,6 +43,7 @@ internal class CreateReportCommandHandler(ILogger<CreateReportCommandHandler> lo
             PatientId = user.Id,
             DateOfCreating = DateTime.Today.ToString("yyyy-MM-dd"),
             DoctorsToCheck = doctorsToCheck,
+            HealthRating = 2,
         };
 
         await reportRepository.CreateReport(report);

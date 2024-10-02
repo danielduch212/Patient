@@ -11,6 +11,7 @@ public class Report
     public bool IsChecked { get; set; } = false;
     public string DateOfCreating { get; set; } = default!;
     public UrgencyType? Urgency { get; set; }
+    public int HealthRating { get; set; } = default!;
 
 
     //

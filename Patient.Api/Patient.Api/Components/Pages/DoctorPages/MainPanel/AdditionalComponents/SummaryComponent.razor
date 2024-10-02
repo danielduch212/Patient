@@ -1,0 +1,78 @@
+﻿@using Patient.Application.Account
+@using Patient.Domain.Repositories
+
+@inject UserManager<Patient.Domain.Entities.Actors.Doctor> _doctorManager
+
+@inject IHttpContextAccessor httpContextAccesor
+@inject IReportRepository _reportRepository
+@inject NavigationManager _navigationManager
+
+
+<div class="container px-4">
+    <h3>Podsumowanie</h3>
+    <div class="row position-relative">
+        <div class="col">           
+            <MudPaper Class="pa-4 ma-2 summary-item" Elevation="3" Style="cursor: pointer;" @onclick='() => RedirectTo("raporty")'>
+
+                <h4>Nowe raporty</h4>
+                <h4>@reportsNumber</h4>
+            </MudPaper>
+           
+        </div>
+        <div class="col">
+            <MudPaper Class="pa-4 ma-2 summary-item" Elevation="3" Style="cursor: pointer;" @onclick='() => RedirectTo("recepty")'>
+                Recepty
+            </MudPaper>
+        </div>
+        <div class="col">
+            <MudPaper Class="pa-4 ma-2 summary-item" Elevation="3" Style="cursor: pointer;" @onclick='() => RedirectTo("wiadomosci")'>
+                Wiadomosci
+            </MudPaper>
+        </div>
+
+        <div class="col">
+            <MudPaper Class="pa-4 ma-2 summary-item" Elevation="3" Style="cursor: pointer;" @onclick='() => RedirectTo("pacjenci")'>
+                
+            </MudPaper>
+        </div>
+    </div>
+</div>
+
+
+
+
+@code {
+
+
+    private Patient.Domain.Entities.Actors.Doctor doctor = new();
+
+
+
+    //charts
+    private List<ChartSeries> reportSeries = new List<ChartSeries>();
+
+    private string[] XAxisLabelsReports = { "Lacznie" };
+
+    private int reportsNumber;
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        doctor = await _doctorManager.GetUserAsync(httpContextAccesor.HttpContext.User);
+
+
+        reportsNumber = await _reportRepository.GetDoctorReportsNumber(doctor);
+        // reportSeries.Add( new() { Name = "Raporty", Data = new double[] { 100 } });
+        // reportSeries.Add(new() { Name = "Sprawdzone raporty dzis", Data = new double[] { 0 } });
+
+
+
+    }
+
+    private void RedirectTo(string path)
+    {
+        _navigationManager.NavigateTo($"/lekarz/{path}");
+    }
+
+   
+}
