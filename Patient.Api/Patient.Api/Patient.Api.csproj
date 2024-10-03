@@ -34,9 +34,6 @@
     <Content Update="Components\App.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
-    <Content Update="Components\Layout\Main\Menus\NavMenu.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
     <Content Update="Components\Pages\MainViewPages\Error.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>

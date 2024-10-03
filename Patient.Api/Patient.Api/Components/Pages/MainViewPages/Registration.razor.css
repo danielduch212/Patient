@@ -1,0 +1,23 @@
+﻿
+.btn-sign-up-doctor {
+    border-color: rgb(144, 238, 144);
+    color: rgb(144, 238, 144);
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+    .btn-sign-up-doctor:hover {
+        background-color: rgb(144, 238, 144);
+        color: white;
+    }
+
+.btn-sign-up-patient {
+    background-color: rgb(144, 238, 144);
+    border-color: rgb(144, 238, 144);
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+    .btn-sign-up-patient:hover {
+        border-color: white;
+    }

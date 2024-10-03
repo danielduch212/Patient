@@ -1,0 +1,13 @@
+﻿body {
+}
+
+.btn-sign-up {
+    background-image: linear-gradient(90deg, rgb(144, 238, 144) 0%, #36b5f5 70%);
+    border-image: linear-gradient(90deg, rgb(144, 238, 144) 0%, #36b5f5 70%);
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+    .btn-sign-up:hover {
+        border-color: white;
+    }

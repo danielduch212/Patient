@@ -31,10 +31,12 @@
 
 <div class="container">
     <div class="row justify-content-center pt-5">
-        <h2>Pacjent - rejestracja</h2>
+        <div class="col">
+            @* tutaj dac zdjecie np - w ogole to trzeba przekminic *@
+        </div>
         <div class="col-md-6">
             <div class="card">
-                <div class="card-header">Rejestracja</div>
+                <h2 class="card-title text-center mb-4">Rejestracja</h2>
                 <div class="card-body">
                     <form>
                         <div class="form-group">
@@ -62,7 +64,7 @@
                             <input type="password" class="form-control" id="confirmPassword" placeholder="Potwierdź hasło" required @bind="confirmPassword">
                         </div>
                         <div class="text-center">
-                            <button @onclick="OnRegister" type="button" class="btn btn-primary mt-4">Zarejestruj się</button>
+                            <button @onclick="OnRegister" type="button" class="btn btn-primary btn-sign-up mt-4">Zarejestruj się</button>
                         </div>
                         @if (waitingForResult != false)
                         {
@@ -99,6 +101,7 @@
 
         </div>
     </div>
+
 </div>
 
     

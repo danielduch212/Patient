@@ -5,48 +5,41 @@
 
 @inject IJSRuntime _jsRunTIme
 
-<div class="container" onclick="document.querySelector('.navbar-toggler').click()">
-    <div class="row">
-        <div class="col">
-            <div class="menu-item">  
+<div class="container">
+    <div class="row d-flex align-items-center align-content-center pt-5">
+        <div class="col-3">
+            <Patient.Api.Client.Layout.AdditionalComponents.HeaderLogo/>
+        </div>
+        <div class="col d-flex">
+            <div class="nav-item">  
                 <NavLink class="nav-link  d-flex d-flex-row" href="/lekarz">
                     <span class="bi bi-house-door-fill-nav-menu"></span>
                     <span aria-hidden="true">Panel</span> 
                 </NavLink>
             </div>
-        </div>
-        <div class="col">
-            <div class="menu-item">
+            <div class="nav-item">
                 <NavLink class="nav-link" href="/lekarz/raporty">
                     <span aria-hidden="true">Raporty</span> 
                 </NavLink>
             </div>
-        </div>
-        <div class="col">
-            <div class="menu-item">
+            <div class="nav-item">
                 <NavLink class="nav-link" href="/lekarz/recepty">
                     <span aria-hidden="true">Recepty</span> 
                 </NavLink>
             </div>
-        </div>
-        <div class="col">
-            <div class="menu-item">
+            <div class="nav-item">
                 <NavLink class="nav-link" href="/lekarz/wizyty">
                     <span aria-hidden="true">Wizyty</span>
                 </NavLink>
             </div>
-        </div>
-        <div class="col">
-            <div class="menu-item">
+            <div class="nav-item">
                 <NavLink class="nav-link" href="/lekarz/czat">
                     <span aria-hidden="true">Czat</span> 
                 </NavLink>
             </div>
-        </div>
-        <div class="col">
             
         </div>
-        <div class="col d-flex d-flex-column justify-content-center align-items-center">
+        <div class="col-3 d-flex d-flex-column justify-content-center align-items-center">
             <div class="dropdown">
                 <a class="dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
                     <div class="myaccount-icon">

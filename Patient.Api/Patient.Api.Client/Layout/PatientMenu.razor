@@ -6,56 +6,51 @@
 @inject IJSRuntime _jsRunTIme
 
 
-<div class="container" onclick="document.querySelector('.navbar-toggler').click()">
-    <div class="row">
-        <div class="col">
-            <div class="menu-item">
-                
-                <NavLink class="nav-link  d-flex d-flex-row" href="/pacjent">
-                    <span class="bi bi-house-door-fill-nav-menu"></span>
+<div class="container">
+    <div class="row d-flex align-items-center align-content-center pt-5">
+        <div class="col-3 ">
+            <Patient.Api.Client.Layout.AdditionalComponents.HeaderLogo/>          
+        </div>
+        <div class="col d-flex justify-content-center">
+            <div class="nav-item">              
+                <NavLink class="nav-link " href="/pacjent">
                     <span class="" aria-hidden="true"></span> Panel
                 </NavLink>
             </div>
-        </div>
-        <div class="col">
-            <div class="menu-item">
+        
+            <div class="nav-item">
                 <NavLink class="nav-link" href="/pacjent/raporty">
                     <span aria-hidden="true"></span> Raporty
                 </NavLink>
             </div>
-        </div>
-        <div class="col">
-            <div class="menu-item">
+        
+            <div class="nav-item">
                 <NavLink class="nav-link" href="/pacjent/recepty">
                     <span  aria-hidden="true"></span> Recepty
                 </NavLink>
             </div>
-        </div>
-        <div class="col">
-            <div class="menu-item">
+        
+            <div class="nav-item">
                 <NavLink class="nav-link" href="/pacjent/wizyty">
                     <span  aria-hidden="true"></span> Umow wizyte
                 </NavLink>
             </div>
-        </div>
-        <div class="col">
-            <div class="menu-item">
+        
+            <div class="nav-item">
                 <NavLink class="nav-link" href="/pacjent/zdrowie">
                     <span aria-hidden="true"></span> Zdrowie
                 </NavLink>
             </div>
-        </div>
-        <div class="col">
-            <div class="menu-item">
+        
+            <div class="nav-item">
                 <NavLink class="nav-link" href="/pacjent/czat">
                     <span aria-hidden="true"></span> Czat
                 </NavLink>
             </div>
-        </div>
-        <div class="col">
+        
             
         </div>
-        <div class="col d-flex d-flex-column justify-content-center align-items-center" >
+        <div class="col-3 d-flex d-flex-column justify-content-center align-items-center" >
             <div class="dropdown">
                 <a class="dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
                     <div class="myaccount-icon">
