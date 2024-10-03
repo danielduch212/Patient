@@ -1,8 +1,18 @@
 ﻿@inherits LayoutComponentBase
 
 
-<div class="page">  
-    @Body
+<div class="page">
+    
+    <div class="header-logo">
+        <Patient.Api.Components.Layout.Main.AdditionalComponents.HeaderLogo/>
+    </div>
+    <main>
+        <article class="content px-10">
+            @Body
+        </article>
+    </main>
+    
+    
 </div>
 
 

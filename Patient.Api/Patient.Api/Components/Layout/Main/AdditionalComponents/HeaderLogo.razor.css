@@ -1,0 +1,21 @@
+﻿body {
+
+}
+
+.header-text {
+    color: rgb(144, 238, 144);
+    font-weight: bold;
+    text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+    font-size: 4rem;
+}
+
+.logo {
+    background-image: url('/images/favicon.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    display: inline-block;
+    width: 7rem;
+    height: 8rem;
+    transform: rotate(10deg);
+    
+}

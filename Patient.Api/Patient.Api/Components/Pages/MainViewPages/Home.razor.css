@@ -1,0 +1,47 @@
+﻿
+
+.rotated-text{
+    display: inline-block;
+    transform: rotate(2deg);
+    font-weight: bold;
+    position: relative;
+
+}
+
+.rotated-header{
+    font-size: 5rem;
+    left: 15%;
+    top: 50%;
+}
+
+.rotated-subheader {
+    font-size: 4rem;
+    color: rgb(164, 238, 144);
+    z-index: 100;
+    left: 30%;
+
+}
+
+.logo{
+    background-size: cover;
+    background-repeat : no-repeat;
+    position: absolute;
+    display: inline-block;
+    transform: rotate(10deg);
+}
+    .logo-heart {
+        background-image: url('/images/logoHeart.png');
+        height: 2.5rem;
+        width: 3rem;
+        left: 65%;
+        top: 55%;
+        
+    }
+
+.logo-googles {
+    background-image: url('/images/logoGoogles.png');
+    height: 11.5rem;
+    width: 10rem;
+    left: 60%;
+    top: 5%;
+}

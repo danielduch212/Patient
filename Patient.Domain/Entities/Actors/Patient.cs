@@ -7,7 +7,7 @@ public class Patient : User
     public string Pesel { get; set; } = default!;
     public PatientType PatientType { get; set; }
     public bool? OnlyPreventionPatient { get; set; }
-
+    //public string Sex = //mezczyzna/kobieta
     public string? ImageAvatarFileName { get; set; } = default!;
 
     //

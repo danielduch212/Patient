@@ -1,0 +1,46 @@
+﻿
+.button-log-in {
+    border-color: rgb(144, 238, 144);
+    color: rgb(144, 238, 144);
+    border-radius: 10px;
+    font-weight: bold;
+}
+    .button-log-in:hover {
+        background-color: rgb(144, 238, 144);
+        color: white;
+    }
+
+.button-sign-up {
+    background-color: rgb(144, 238, 144);
+    border-color: rgb(144, 238, 144);
+    border-radius: 10px;
+    font-weight: bold;
+}
+    .button-sign-up:hover{
+       border-color: white;
+    }
+
+.nav-item {
+    font-size: 1.1rem;
+    padding-bottom: 0.5rem;
+    color: white;
+    margin-left: 0.5rem;
+    font-weight: bold;
+}
+    .nav-item:first-of-type{
+        
+
+    }
+
+    .nav-item ::deep a.active {
+        color: rgb(196, 238, 144);
+    }
+
+    .nav-item ::deep .nav-link:hover {
+        color: rgb(144, 238, 144);
+    }
+
+    .nav-item ::deep .nav-link{
+        color: white;
+    }
+    

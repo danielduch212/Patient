@@ -34,10 +34,10 @@
     <Content Update="Components\App.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
-    <Content Update="Components\Layout\Main\NavMenu.razor">
+    <Content Update="Components\Layout\Main\Menus\NavMenu.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
-    <Content Update="Components\Pages\Error.razor">
+    <Content Update="Components\Pages\MainViewPages\Error.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
     <Content Update="Components\_Imports.razor">
@@ -46,8 +46,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Account\" />
     <Folder Include="Components\Pages\DoctorPages\Account\" />
+    <Folder Include="wwwroot\images\backgrounds\" />
   </ItemGroup>
 
 </Project>
