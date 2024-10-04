@@ -1,4 +1,6 @@
-﻿using Patient.Domain.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using Patient.Domain.Entities;
+using Patient.Domain.Entities.Actors;
 using Patient.Domain.Repositories;
 using Patient.Infrastructure.Persistence;
 
@@ -10,5 +12,13 @@ internal class RecommandationRepository(PatientDbContext dbContext) : IRecommand
     {
         await dbContext.MedicalRecommandations.AddAsync(entity);
         await dbContext.SaveChangesAsync();
+    }
+
+    public async Task<int> CountPatientsNewRecommandations(string patientId)
+    {
+        var results = await dbContext.MedicalRecommandations
+            .Where(mr=>(mr.PatientId==patientId&&mr.DoesPatientChecked==false ))
+            .CountAsync();
+        return results;
     }
 }

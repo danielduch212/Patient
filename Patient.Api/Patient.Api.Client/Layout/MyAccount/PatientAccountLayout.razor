@@ -6,17 +6,26 @@
 
 <UserLayout>
      <div class="page">
-        <div class="sidebar">
-            <Patient.Api.Client.Layout.MyAccount.SideAccountMenu />
-                        
-        </div>
-        <main>
+         <div class="container px-4">
+            <div class="row" style="border-top: 0.5px solid rgb(255,255,255,0.8);">
+                <div class="col-3 justify-content-end position-relative" style="border-right: 0.5px solid rgb(255,255,255,0.8);">
+                    <div class="sidebar">
+                        <Patient.Api.Client.Layout.MyAccount.SideAccountMenu />
 
-            <article class="content px-4">
-                @Body
-            </article>
-        </main>
-        
+                    </div>
+                </div>
+                <div class="col" style="overflow-y: auto;">
+                    <main>
+                        <article class="content px-4">
+                            @Body
+                        </article>
+                    </main>
+                </div>
+             </div>
+             
+            
+         </div>
+               
     </div>
          
 </UserLayout>   

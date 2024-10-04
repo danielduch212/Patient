@@ -10,6 +10,7 @@ public class MedicalRecommandation
     public Prescription? Prescription { get; set; }
     public bool AskForVisit { get; set; }
     public bool AskForVisitOnline { get; set; }
+    public bool DoesPatientChecked { get; set; }
 
 
     //

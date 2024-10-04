@@ -1,0 +1,30 @@
+﻿body {
+    overflow-x: hidden;
+}
+
+.img-avatar {
+    
+    height: 10rem;
+    width: 10rem;
+    border-radius: 50%;
+    
+    overflow: hidden;
+    
+}
+
+.img-avatar img{
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+
+.btn-change {
+    background-color: rgb(144, 238, 144);
+    border-color: rgb(144, 238, 144);
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+    .btn-change:hover {
+        border-color: white;
+    }

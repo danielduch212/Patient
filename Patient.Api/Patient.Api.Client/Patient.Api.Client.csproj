@@ -17,6 +17,8 @@
 
   <ItemGroup>
     <Folder Include="Extensions\" />
+    <Folder Include="Pages\PatientPages\MyAccount\" />
+    <Folder Include="Pages\PatientPages\Prescription\" />
   </ItemGroup>
 
   <ItemGroup>

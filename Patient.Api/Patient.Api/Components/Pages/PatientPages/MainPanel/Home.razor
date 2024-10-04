@@ -1,44 +1,74 @@
 ﻿@layout Patient.Api.Client.Layout.UserLayout
-@using Patient.Domain.Constants;
-@using Patient.Api.Extensions;
-@inject Microsoft.JSInterop.IJSRuntime _jsRuntime
-@inject NavigationManager NavigationManager
-
-
+@rendermode @(new InteractiveServerRenderMode(false))
+@page "/pacjent"
 @attribute [Authorize(Roles = UserRoles.Patient)]
 
+@using Patient.Domain.Constants;
+@using Patient.Api.Extensions;
+@using Patient.Domain.Repositories
 
-@page "/pacjent"
+@inject Microsoft.JSInterop.IJSRuntime _jsRuntime
+@inject NavigationManager _navigationManager
+@inject UserManager<Patient.Domain.Entities.Actors.Patient> _patientManager
+@inject IHttpContextAccessor httpContextAccesor
+@inject IDiseaseRepository _diseaseRepository
 
-<h3> Panel Pacjenta </h3>
-<h2> Na prawo - Rekomendacje: Otrzymano nową rekomendacje </h2>
 
-<h3> Jezeli user nie ma jeszcze przypisanych leczonych chorob jakie chcialby tu leczyc </h3>
+<div class="container px-4">
+    @if(patientsCurrentlyCuredDiseases==0)
+    {
+        <MudPaper Class="pa-4 summary-item" Elevation="3" Style="cursor: pointer;" @onclick='() => RedirectTo("wywiad")'>
+            <div class="row">
+                <h2>Kliknij tutaj aby wypełnić informacje o swoim zdrowiu</h2>
+            </div>
+        </MudPaper>
+        
 
-<h2>
-    <Patient.Api.Components.Pages.PatientPages.MainPanel.AdditionalComponents.SummaryComponent></Patient.Api.Components.Pages.PatientPages.MainPanel.AdditionalComponents.SummaryComponent>
-</h2>
+    }
+    <h3> Jezeli user nie ma jeszcze przypisanych leczonych chorob jakie chcialby tu leczyc </h3>
+
+    <div class="row">
+        @if (isInitialized)
+        {
+            <CascadingValue Value="currentPatient">
+                <Patient.Api.Components.Pages.PatientPages.MainPanel.AdditionalComponents.SummaryComponent />
+            </CascadingValue>
+        }
+        else
+        {
+            <MudProgressCircular Color="Color.Default" Indeterminate="true" Size="Size.Large"/>
+
+        }
+        
+    </div>
+    
+    
+</div>
+
 
 
 
 @code {
-    public string Token { get; set; }
 
+    private Patient.Domain.Entities.Actors.Patient currentPatient { get; set; } = new();
+    private int patientsCurrentlyCuredDiseases { get; set; }
+
+    private bool isInitialized;
 
     protected override async Task OnInitializedAsync()
     {
-        //sprawdzic czy pacjent ma jakies choroby przypisane i jak nie to wyswietlac przejscie do stronki /pacjent/konto/wywiad/zmien 
-        // zeby ktos mogl dodac se choroby ;)
+        currentPatient = await _patientManager.GetUserAsync(httpContextAccesor.HttpContext.User);
+        patientsCurrentlyCuredDiseases = await _diseaseRepository.CountPatientsCurrentDiseases(currentPatient.Id);
 
+
+        isInitialized = true;
+        StateHasChanged();
 
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    private void RedirectTo(string path)
     {
-        if (firstRender)
-        {
-            Token = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", "authToken");
-            
-        }
+        _navigationManager.NavigateTo($"/pacjent/{path}");
     }
+    
 }

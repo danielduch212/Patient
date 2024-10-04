@@ -1,0 +1,67 @@
+﻿@layout Patient.Api.Client.Layout.MyAccount.PatientAccountLayout
+
+@rendermode InteractiveServer
+@page "/pacjent/konto"
+
+@inject IHttpContextAccessor httpContextAccesor
+@inject NavigationManager _navigationManager
+@inject UserManager<Patient.Domain.Entities.Actors.Patient> _patientManager
+
+@using MudBlazor
+
+<div class="container">
+    <section pt-2>
+        <MudPaper Class="pa-16 ma-2" Elevation="3">
+            <div class="row justify-content-center align-items-center align-content-center pt-2">
+                <h3 class="text-center">Pacjent</h3>
+                <div class="img-avatar">
+                    <img src="/images/patientIconClientVersion.jpg" />
+                </div>
+            </div>   
+            <div class="row">
+                <h4>Dane</h4>
+                <ul class="list-group text-center">
+                    <li class="list-group-item"><strong>Imię:  @currentPatient.Name</strong> </li>
+                    <li class="list-group-item"><strong>Nazwisko:  @currentPatient.Surname</strong> </li>
+                    <li class="list-group-item"><strong>Email: @currentPatient.Email</strong> </li>
+                    <li class="list-group-item"><strong>PESEL:  @currentPatient.Pesel</strong> </li>
+                </ul>
+            </div>
+        </MudPaper>
+    </section>
+    <section>
+        <MudPaper Class="pa-16 ma-2" Elevation="3">
+            <div class="row">               
+                <div class="col text-center">                   
+                    <btn type="button" class="btn btn-primary btn-change" data-toggle="collapse" data-target="#collapsePassword" aria-expanded="false" aria-controls="collapsePassword">
+                        Zmień hasło
+                    </btn>                    
+                    <div class="collapse position-relative" id="collapsePassword" >
+                        <div class="card card-body" >
+                            <CascadingValue Value="currentPatient">
+                                <Patient.Api.Components.Pages.PatientPages.MyAccount.AdditionalComponents.ChangePasswordComponent/>
+                            </CascadingValue>
+                            
+                        </div>  
+                    </div>
+
+                </div>
+
+            </div>
+        </MudPaper>
+        
+    </section>
+    
+</div>
+
+@code {
+    private Patient.Domain.Entities.Actors.Patient currentPatient = new();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        currentPatient = await _patientManager.GetUserAsync(httpContextAccesor.HttpContext.User);
+
+    }
+
+}

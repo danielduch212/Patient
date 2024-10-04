@@ -1,41 +1,39 @@
 ﻿@using Patient.Application.Account
 @using Patient.Domain.Repositories
 
-@inject UserManager<Patient.Domain.Entities.Actors.Doctor> _doctorManager
-
+@inject UserManager<Patient.Domain.Entities.Actors.Patient> _patientManager
 @inject IHttpContextAccessor httpContextAccesor
-@inject IReportRepository _reportRepository
+@inject IRecommandationRepository _recommandationRepository
+@inject IPrescriptionRepository _prescriptionRepository
 @inject NavigationManager _navigationManager
 
 
-<div class="container px-4">
-    <h3>Podsumowanie</h3>
-    <div class="row position-relative">
-        <div class="col">           
-            <MudPaper Class="pa-4 ma-2 summary-item" Elevation="3" Style="cursor: pointer;" >
+<div class="container px-4 pt-3">
+    <h3 style="color: white;" class="ma-3">Podsumowanie</h3>
+    <section>
+        <div class="row position-relative">
+            <div class="col ">
+                <MudPaper Class="pa-4 ma-3 summary-item" Elevation="3" Style="cursor: pointer;" @onclick='() => RedirectTo("rekomendacje")'>
+                    <h4>Nowe rekomendacje</h4>
+                    <h4>@newRecommandationNumber</h4>
+                </MudPaper>
+            </div>
+            <div class="col ">
+                <MudPaper Class="pa-4 ma-3 summary-item" Elevation="3" Style="cursor: pointer;" @onclick='() => RedirectTo("recepty")'>
+                    <h4>Recepty</h4>
+                    <h4>@prescriptionsNumber</h4>
+                </MudPaper>
+            </div>
+            <div class="col ">
+                <MudPaper Class="pa-4 ma-3 summary-item" Elevation="3" Style="cursor: pointer;" @onclick='() => RedirectTo("wiadomosci")'>
+                    <h4>Wiadomosci</h4>
+                    <h4>0</h4>
+                </MudPaper>
+            </div>
 
-                <h4>Nowe raporty</h4>
-                
-            </MudPaper>
-           
         </div>
-        <div class="col">
-            <MudPaper Class="pa-4 ma-2 summary-item" Elevation="3" Style="cursor: pointer;" >
-                Recepty
-            </MudPaper>
-        </div>
-        <div class="col">
-            <MudPaper Class="pa-4 ma-2 summary-item" Elevation="3" Style="cursor: pointer;" >
-                Wiadomosci
-            </MudPaper>
-        </div>
-
-        <div class="col">
-            <MudPaper Class="pa-4 ma-2 summary-item" Elevation="3" Style="cursor: pointer;" >
-                
-            </MudPaper>
-        </div>
-    </div>
+    </section>
+    
 </div>
 
 
@@ -43,8 +41,8 @@
 
 @code {
 
-
-    private Patient.Domain.Entities.Actors.Doctor doctor = new();
+    [CascadingParameter]
+    public Patient.Domain.Entities.Actors.Patient CurrentPatient { get; set; } = new();
 
 
 
@@ -53,20 +51,19 @@
 
     private string[] XAxisLabelsReports = { "Lacznie" };
 
-    private int reportsNumber;
+    private int newRecommandationNumber;
+    private int prescriptionsNumber;
+
+
 
     protected override async Task OnInitializedAsync()
     {
 
-        //doctor = await _doctorManager.GetUserAsync(httpContextAccesor.HttpContext.User);
+        newRecommandationNumber = await _recommandationRepository.CountPatientsNewRecommandations(CurrentPatient.Id);
+        prescriptionsNumber = await _prescriptionRepository.CountPatientsPrescriptions(CurrentPatient.Id);
 
 
-        //reportsNumber = await _reportRepository.GetDoctorReportsNumber(doctor);
-        // reportSeries.Add( new() { Name = "Raporty", Data = new double[] { 100 } });
-        // reportSeries.Add(new() { Name = "Sprawdzone raporty dzis", Data = new double[] { 0 } });
-
-
-
+        
     }
 
     private void RedirectTo(string path)

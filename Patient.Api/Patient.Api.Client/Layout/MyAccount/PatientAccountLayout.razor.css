@@ -1,3 +1,7 @@
+body{
+    overflow-x: hidden;
+}
+
 .page {
     position: relative;
     display: flex;
@@ -9,32 +13,14 @@ main {
 }
 
 .sidebar {
-    background-image: linear-gradient(45deg, rgb(144, 238, 144) 0%, rgb(0,123,255)70%);
+    color: white;
+    position: sticky;
+    width: 75%;
+    left: 25%;
+    top: 20%;
 }
 
-.top-row {
-    background-color: #f7f7f7;
-    border-bottom: 1px solid #d6d5d5;
-    justify-content: flex-end;
-    height: 3.5rem;
-    display: flex;
-    align-items: center;
-}
 
-    .top-row ::deep a, .top-row ::deep .btn-link {
-        white-space: nowrap;
-        margin-left: 1.5rem;
-        text-decoration: none;
-    }
-
-        .top-row ::deep a:hover, .top-row ::deep .btn-link:hover {
-            text-decoration: underline;
-        }
-
-        .top-row ::deep a:first-child {
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
 
 @media (max-width: 640.98px) {
     .top-row {
@@ -51,31 +37,7 @@ main {
         flex-direction: row;
     }
 
-    .sidebar {
-        width: 10rem;
-        height: 40rem;
-        position: sticky;
-        top: 0;
-    }
-
     
-
-    .top-row {
-        position: sticky;
-        top: 0;
-        z-index: 1;
-    }
-
-        .top-row.auth ::deep a:first-child {
-            flex: 1;
-            text-align: right;
-            width: 0;
-        }
-
-    .top-row, article {
-        padding-left: 2rem !important;
-        padding-right: 1.5rem !important;
-    }
 }
 
 #blazor-error-ui {

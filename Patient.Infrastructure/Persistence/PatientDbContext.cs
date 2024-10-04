@@ -17,6 +17,7 @@ internal class PatientDbContext(DbContextOptions<PatientDbContext> options) : Id
     internal DbSet<Prescription> Prescriptions { get; set; }
     internal DbSet<Report> Reports { get; set; }
     internal DbSet<Disease> Diseases { get; set; }
+    internal DbSet<PrescriptionRequest> PrescriptionRequests { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
