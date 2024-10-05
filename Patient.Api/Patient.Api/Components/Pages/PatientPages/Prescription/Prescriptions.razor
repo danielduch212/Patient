@@ -3,8 +3,75 @@
 @page "/pacjent/recepty"
 
 
-<h3>Prescription</h3>
+@using Patient.Domain.Interfaces
+@using Patient.Domain.Entities.DTOs
+@using Patient.Domain.Entities;
+@using Patient.Domain.Entities.DTOs.Reports
+@using Patient.Domain.Repositories
+@rendermode @(new InteractiveServerRenderMode(false))
+
+@inject IPatientApiService _patientApiService
+@inject NavigationManager _navigationManager
+@inject IHttpContextAccessor contextAccesor
+@inject UserManager<Patient.Domain.Entities.Actors.Patient> _patientManager
+@inject IPrescriptionRequestRepository _prescriptionRequestRepository
+
+<div class="container px-4 position-relative">
+    <section>
+        <div class="row text-center">
+            <MudPaper Class="pa-4 ma-3 summary-item" Elevation="3" Style="cursor: pointer;">
+                <h3></h3>
+                <btn type="button" class="btn btn-primary btn-custom-primary" @onclick="ShowAskForPrescriptionModal">
+                    Poproś o recepte
+                </btn>
+            </MudPaper>
+        </div>
+    </section>
+    <section>
+        <div class="row">
+            <div class="col">
+                <MudPaper Class="pa-4 ma-3 summary-item" Elevation="3" Style="cursor: pointer;">
+                    <Patient.Api.Components.Pages.PatientPages.Prescription.AdditionalComponents.PatientsPrescriptionsComponent />
+                </MudPaper>
+            </div>
+            <div class="col">
+                <MudPaper Class="pa-4 ma-3 summary-item" Elevation="3" Style="cursor: pointer;">
+                    <h3>Twoje prosby o recepty</h3>
+                    <h3>@prescriptionRequestsNumber</h3>
+                </MudPaper>
+            </div>
+        </div>
+    </section>
+    @if (showAskForPrescriptionModal)
+    {
+        <Patient.Api.Components.Pages.PatientPages.Prescription.AdditionalComponents.AskForPrescriptionModal OnClose="CloseAskForPrescriptionModal" />
+    }
+</div>
+
 
 @code {
+    private bool showAskForPrescriptionModal;
 
+
+    private Patient.Domain.Entities.Actors.Patient currentPatient = new();
+    private int prescriptionRequestsNumber;
+
+    protected override async Task OnInitializedAsync()
+    {
+        currentPatient = await _patientManager.GetUserAsync(contextAccesor.HttpContext.User);
+        prescriptionRequestsNumber = await _prescriptionRequestRepository.CountPatientsPrescriptions(currentPatient.Id);
+        StateHasChanged();
+    }
+
+    private void ShowAskForPrescriptionModal()
+    {
+        showAskForPrescriptionModal = true;
+        StateHasChanged();
+    }
+
+    private void CloseAskForPrescriptionModal()
+    {
+        showAskForPrescriptionModal = false;
+        StateHasChanged();
+    }
 }

@@ -1,0 +1,172 @@
+﻿@using Patient.Domain.Interfaces
+@using Patient.Domain.Entities.DTOs
+@using Patient.Domain.Entities;
+@using Patient.Domain.Entities.DTOs.Prescription
+@using Blazored.Typeahead
+@using Patient.Domain.Repositories
+@using Patient.Domain.Entities.DTOs.PrescriptionRequest
+
+@inject IPatientApiService _patientApiService
+@inject NavigationManager _navigationManager
+@inject IMedicineRepository _medicineRepository
+
+
+<div class="modal-backdrop">
+    <div class="modal" tabindex="-1" style="display:block;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Prośba o wystawienie recepty</h5>
+                <button type="button" class="btn-close" @onclick="CloseModal"></button>
+            </div>
+            <div class="modal-body">
+                @if (addingRequest)
+                {
+                    <div class="row text-center">
+                        <h4>Dodawanie recepty</h4>
+                        <MudProgressCircular Color="Color.Primary" Indeterminate="true">
+
+                        </MudProgressCircular>
+                    </div>
+
+                }
+                else
+                {
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-10">
+                                <BlazoredTypeahead SearchMethod="GetMedicinesBySearchPhrase"
+                                                   @bind-Value="medicine">
+                                    <SelectedTemplate>@context.Name</SelectedTemplate>
+                                    <ResultTemplate>@context.Name</ResultTemplate>
+                                </BlazoredTypeahead>
+                            </div>
+                            <div class="col">
+                                <btn type="button" class="btn btn-outline-primary btn-custom-outline" @onclick="AddMedicine">
+                                    Dodaj lek
+                                </btn>
+                            </div>
+                        </div>
+                        <MudList T="MedicineToPrescriptionRequest" Class="pt-5">
+                            @foreach (var item in medicinesToPrescript)
+                            {
+                                <MudListItem @key="item.Id">
+                                    <div class="row p-2">
+                                        <div class="col-10 text-center justify-content-center align-items-center">
+                                            <p>Nazwa leku</p>
+                                            <p>@item.ChosenMedicine.Name</p>
+                                        </div>
+                                        <div class="col-2 justify-content-center align-items-center align-content-center">
+                                            <MudBlazor.MudButton @onclick="(()=>RemoveMedicine(item))" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error">Usuń</MudBlazor.MudButton>
+                                        </div>
+                                    </div>
+
+                                </MudListItem>
+                            }
+                        </MudList>
+                    </div>
+                }               
+            </div>
+            <div class="modal-footer">
+                <btn type="button" class="btn btn-primary btn-custom-primary" @onclick="HandleAddPrescriptionRequest">Dodaj prośbę</btn>
+                <button class="btn btn-outline-primary btn-custom-outline" @onclick="CloseModal">Zamknij</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public EventCallback OnClose { get; set; }
+
+    private MedicineToPrescriptionRequest medicineToPrescription = new();
+    private Medicine medicine = new();
+    private List<MedicineToPrescriptionRequest> medicinesToPrescript = new();
+
+
+    //loading
+    private bool addingRequest;
+
+    private async Task HandleAddPrescriptionRequest()
+    {
+        if (medicinesToPrescript.Count() == 0)
+        {
+            return;
+        }
+        addingRequest = true;
+        StateHasChanged();
+        PrescriptionRequestDto prescriptionRequest = new()
+        {
+            MedicineNames = GetPrescriptionMedicinesNames(),
+
+        };
+
+        var result = await _patientApiService.SendRequestAddPrescriptionRequest(prescriptionRequest);
+        if (result.IsSuccessStatusCode)
+        {
+            //successfullyAdded = true;
+
+            //await Task.Delay(4000);
+            //successfullyAdded = false;
+            await OnClose.InvokeAsync();
+        }
+        else
+        {
+
+        }
+        addingRequest = false;
+    }
+
+    private async Task<IEnumerable<Medicine>> GetMedicinesBySearchPhrase(string searchTerm)
+    {
+        if (string.IsNullOrWhiteSpace(searchTerm))
+        {
+            return new List<Medicine>();
+        }
+        return await _medicineRepository.SearchMedicines(searchTerm);
+
+
+    }
+
+    private void AddMedicine()
+    {
+        MedicineToPrescriptionRequest medicineToPrescription = new()
+        {
+            ChosenMedicine = medicine,
+            Id = medicinesToPrescript.Count() + 1
+        };
+
+        medicinesToPrescript.Add(medicineToPrescription);
+        StateHasChanged();
+    }
+
+    private void RemoveMedicine(MedicineToPrescriptionRequest item)
+    {
+        medicinesToPrescript.Remove(item);
+        //StateHasChanged();
+    }
+
+    private async void CloseModal()
+    {
+        await OnClose.InvokeAsync();
+    }
+
+    private List<string> GetPrescriptionMedicinesNames()
+    {
+        List<string> medicineNamesList = new();
+        foreach (var item in medicinesToPrescript)
+        {
+            medicineNamesList.Add(item.ChosenMedicine.Name);
+        }
+        return medicineNamesList;
+    }
+
+    private sealed class MedicineToPrescriptionRequest
+    {
+        public int Id;
+        public Medicine ChosenMedicine { get; set; } = new();
+    }
+    
+    
+
+}

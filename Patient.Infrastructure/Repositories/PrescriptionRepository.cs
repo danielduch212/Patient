@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Patient.Domain.Entities;
 using Patient.Domain.Repositories;
 using Patient.Infrastructure.Persistence;
 
@@ -13,4 +14,15 @@ internal class PrescriptionRepository(PatientDbContext dbContext) : IPrescriptio
             .CountAsync();
         return results;
     }
+
+    public async Task<List<Prescription>> GetPatientsPrescriptions(string patientId)
+    {
+        var results = await dbContext.Prescriptions
+            .Include(p=>p.Doctor)
+            .Where(p => p.PatientId == patientId)
+            .ToListAsync();
+        return results;
+    }
+
+ 
 }

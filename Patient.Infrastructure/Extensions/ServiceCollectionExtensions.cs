@@ -87,6 +87,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IDiseaseSeeder, DiseaseSeeder>();
         services.AddScoped<IPrescriptionRepository, PrescriptionRepository>();
         services.AddScoped<IDiseaseRepository, DiseaseRepository>();
+        services.AddScoped<IPrescriptionRequestRepository, PrescriptionRequestRepository>();
 
     }
 }

@@ -6,6 +6,7 @@ using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 using System.Text;
 using Patient.Domain.Entities.DTOs.MedicalFiles;
+using Patient.Domain.Entities.DTOs.PrescriptionRequest;
 
 namespace Patient.Infrastructure.Services;
 
@@ -21,7 +22,7 @@ internal class PatientApiService : IPatientApiService
                 
     }
 
-
+    //MedicalFiles
     public async Task<HttpResponseMessage> SendRequestAddMedicalFiles(List<MedicalFileDto> medicalFileDtos)
     {
         var form = new MultipartFormDataContent();
@@ -55,6 +56,7 @@ internal class PatientApiService : IPatientApiService
         return response;
     }
 
+    //Reports
     public async Task<HttpResponseMessage> SendRequestGetReports()
     {
         AddCookiesToRequest();
@@ -67,6 +69,21 @@ internal class PatientApiService : IPatientApiService
         AddCookiesToRequest();
         var url = $"/api/ReportsController/getReportForPatient?Id={id}";
         var response = await _httpClient.GetAsync(url);
+        return response;
+    }
+
+    //Prescriptions
+    public async Task<HttpResponseMessage> SendRequestGetPrescriptions()
+    {
+        AddCookiesToRequest();
+        var response = await _httpClient.GetAsync("/api/PrescriptionController/getPatientsPrescriptions");
+        return response;
+    }
+
+    public async Task<HttpResponseMessage> SendRequestAddPrescriptionRequest(PrescriptionRequestDto dto)
+    {
+        AddCookiesToRequest();
+        var response = await _httpClient.PostAsJsonAsync("/api/PrescriptionController/addPrescriptionRequest", dto);
         return response;
     }
 

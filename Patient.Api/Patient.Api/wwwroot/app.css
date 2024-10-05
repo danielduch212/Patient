@@ -49,3 +49,30 @@ h1:focus {
 .darker-border-checkbox.form-check-input {
     border-color: #929292;
 }
+
+/*//Kilka klas globalnych
+
+*/
+
+.btn-custom-outline {
+    border-color: rgb(144, 238, 144);
+    color: rgb(144, 238, 144);
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+    .btn-custom-outline:hover {
+        background-color: rgb(144, 238, 144);
+        color: white;
+    }
+
+.btn-custom-primary {
+    background-color: rgb(144, 238, 144);
+    border-color: rgb(144, 238, 144);
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+    .btn-custom-primary:hover {
+        border-color: white;
+    }

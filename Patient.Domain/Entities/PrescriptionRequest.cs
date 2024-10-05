@@ -8,7 +8,7 @@ public class PrescriptionRequest
     public List<string> MedicineNames { get; set; } = new();
     public string Description { get; set; } = default!;
     public DateOnly DateOfIssue { get; set; }
-
+    public bool IsIssued { get; set; }
 
 
     //

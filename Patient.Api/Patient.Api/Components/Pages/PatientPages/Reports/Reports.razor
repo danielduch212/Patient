@@ -10,97 +10,44 @@
 @using Patient.Domain.Entities;
 @using Patient.Domain.Entities.DTOs.Reports
 
-
-
 @inject IPatientApiService _patientApiService
 @inject NavigationManager _navigationManager
 
-<div class="page-background">
-
-    <div class="container px-4">
-        <div class="row pt-5">
-            <div class="col d-flex justify-content-center align-items-center">
-                <NavLink class="btn btn-primary" href="/pacjent/dodaj-raport">
-                    Zloz raport tutaj
+<div class="container px-4">
+    <section>
+        <div class="row text-center">
+            <MudPaper Class="pa-4 ma-3 summary-item" Elevation="3" Style="cursor: pointer;">
+                <h3></h3>
+                <NavLink href="/pacjent/dodaj-raport">
+                    <btn type="button" class="btn btn-outline-primary btn-custom-outline">
+                        Zloz raport tutaj
+                    </btn>
                 </NavLink>
+            </MudPaper>
+        </div>               
+    </section>
+    <section>
+        <div class="row">
+            <div class="col">
+                <MudPaper Class="pa-4 ma-3 summary-item" Elevation="3" Style="cursor: pointer;">
+                    <Patient.Api.Components.Pages.PatientPages.Reports.AdditionalComponents.PatientsReportsComponent/>
+                </MudPaper>
             </div>
-            <div class="col-4 d-flex d-flex-column justify-content-center align-items-center">
+            <div class="col">
+
             </div>
         </div>
-        <div class="list-group pt-5">
-            @if (readingReports)
-            {
-                <div class="spinner-border" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
-            }
+    </section>
 
-            @if (filesGet)
-            {
-                foreach (var report in reportsToShow)
-                {
-                    <button type="button" @onclick="() => HandleShowReportPreview(report)" class="list-group-item list-group-item-action">
-                        Raport
-                        <div class="d-flex-row justify-content-between align-items-center">
-                            <div>
-                                <small class="text-muted">Data utworzenia</small>
-                                <h5 class="mb-1">@report.DateOfCreating</h5>
-
-                            </div>
-                            <div>
-                                <small class="text-muted"></small>
-                                <h5 class="mb-1">@report.</h5>
-                            </div>
-                            <div>
-                                <small class="text-muted">Status: @(report.IsChecked ? "Sprawdzony" : "Nie sprawdzony")</small>
-                            </div>
-
-                        </div>
-
-                    </button>
-                }
-            }
-            else
-            {
-                <div>
-                    Brak raportow do wyswietlenia
-                </div>
-            }
-            
-        </div>
-
-    </div>
 
 </div>
 
 @code {
 
-
-    private int maxFiles = 5;
-    private List<ReportToShowToPatientDto> reportsToShow = new();
-    private bool filesGet;
-    private bool readingReports;
-
-    private bool showPreviewModal;
-
-
     protected async override Task OnInitializedAsync()
     {
-        readingReports = true;
-        var response = await _patientApiService.SendRequestGetReports();
-        if (response.StatusCode == System.Net.HttpStatusCode.OK)
-        {
-            reportsToShow = await response.Content.ReadFromJsonAsync<List<ReportToShowToPatientDto>>();
-            if (reportsToShow.Count > 0) { filesGet = true; }
-            StateHasChanged();
-        }
-        readingReports = false;
+        
 
-    }
-
-    private async void HandleShowReportPreview(ReportToShowToPatientDto report)
-    {
-        _navigationManager.NavigateTo($"/pacjent/raporty/{report.Id}");
     }
 
 }

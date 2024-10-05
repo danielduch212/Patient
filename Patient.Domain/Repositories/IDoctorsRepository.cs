@@ -6,5 +6,6 @@ public interface IDoctorsRepository
 {
     public Task<Doctor> AssignAvailibleDoctor();
     public Task<Doctor> GetDoctorByIdAsync(string id);
+    public Task<Doctor> GetPatientsDoctor(string patientId);
 
 }

@@ -2,9 +2,9 @@
 
 namespace Patient.Domain.Repositories;
 
-public interface IPrescriptionRepository
+public interface IPrescriptionRequestRepository
 {
+    public Task AddPrescriptionRequest(PrescriptionRequest entity);
     public Task<int> CountPatientsPrescriptions(string patientId);
-    public Task<List<Prescription>> GetPatientsPrescriptions(string patientId);
 
 }
