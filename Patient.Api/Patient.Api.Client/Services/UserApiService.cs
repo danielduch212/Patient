@@ -1,6 +1,7 @@
 ﻿using System.Net.Http.Json;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using Shared.AdditionalClasses;
+using Shared.Dtos;
 
 
 namespace Patient.Api.Client.Services;
@@ -38,6 +39,17 @@ public class UserApiService
         return response;
     }
 
-   
+    public async Task<HttpResponseMessage> SendRequestSearchDiseases(string searchPhrase)
+    {
+        var url = $"/api/DiseaseController/getDiseasesNamesBySearchPhrase?searchPhrase={Uri.EscapeDataString(searchPhrase)}";
+        var response = await _httpClient.GetAsync(url);
+        return response;
+    }
+
+    public async Task<HttpResponseMessage> SendRequestAddPatientsDiseases(List<PatientsDiseaseDto> dtos)
+    {
+        var response = await _httpClient.PostAsJsonAsync("/api/PrescriptionController/addPrescriptionRequest", dtos);
+        return response;
+    }
 
 }

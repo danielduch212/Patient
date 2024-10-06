@@ -1,4 +1,4 @@
-﻿namespace Patient.Domain.Entities;
+﻿namespace Shared.Main;
 
 public class Disease
 {

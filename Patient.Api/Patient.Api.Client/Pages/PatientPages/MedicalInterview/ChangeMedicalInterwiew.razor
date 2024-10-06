@@ -1,14 +1,144 @@
 ﻿@layout Patient.Api.Client.Layout.MyAccount.PatientAccountLayout
 
 
-@page "/pacjent/wywiad/zmien"
+@using Shared.Main
+@using Patient.Api.Client.Services
+@using Blazored.Typeahead
+@using Shared.Dtos
+@using MudBlazor
+@using MudBlazor.Components
+@using System.ComponentModel.DataAnnotations
 
-<h3> Tutaj zmieniac wywiad pacjenta - tzn tu moze przypisac choroby dac zdjecia itd</h3>
 
 
+@inject UserApiService _userApiService
+
+
+
+<div class="container">
+    @if (!addingData)
+    {
+        <section>
+            <div class="row text-center">
+                <h4>Twoje schorzenia</h4>
+                <div class="col-10">
+                    <BlazoredTypeahead SearchMethod="GetDiseasesBySearchPhrase"
+                                       @bind-Value="disease">
+                        <SelectedTemplate>@context.Name</SelectedTemplate>
+                        <ResultTemplate>@context.Name</ResultTemplate>
+                    </BlazoredTypeahead>
+
+                </div>
+                <div class="col">
+                    <MudBlazor.MudButton @onclick="AddDisease">
+                        Dodaj schorzenie
+                    </MudBlazor.MudButton>
+                </div>
+            </div>
+
+            @foreach (var item in patientsDiseases)
+            {
+
+                <div class="list-group-item" id="@item.IdToDistinction">
+                    <div class="row p-2">
+                        <div class="col-10">
+                            <p><strong>Nazwa</strong></p>
+                            <p>@item.Disease.Name</p>
+                        </div>
+                        <div class="col">
+                            <div class="col-2 d-flex justify-content-center align-items-center">
+                                <button class="btn btn-danger" @onclick="(()=>RemoveDisease(item))">
+                                    <i class="bi bi-trash"></i> Usuń
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-10">
+                            <p>Opisz swoje dotychczasowe odczucia związane z chorobą: (nie wymagane)</p>
+                            <textarea class="form-control" @bind="item.UserExperienceWithDisease" rows="3" placeholder="Opisz dawkowanie"></textarea>
+
+                        </div>
+                        <div class="col">
+                        </div>
+                    </div>
+                </div>
+            }
+        </section>
+        <section>
+            <div class="row text-center">
+                <btn type="button" class="btn btn-primary btn-custom-primary" @onclick="HandleAddDiseases">
+                    Zatwierdz
+                </btn>
+            </div>
+        </section>
+    }
+    else
+    {
+        <div class="row">
+
+        </div>
+
+    }
+
+    
+</div>
 
 
 
 @code {
+
+    //zastanowic sie pozniej co zrobic z profilaktyką
+
+    private Disease disease = new();
+
+    private bool addingData;
+
+    private List<PatientsDiseaseDto> patientsDiseases = new();
+
+    private async Task<IEnumerable<Disease>> GetDiseasesBySearchPhrase(string searchTerm)
+    {
+        if (string.IsNullOrWhiteSpace(searchTerm))
+        {
+            return new List<Disease>();
+        }
+        var result = await _userApiService.SendRequestSearchDiseases(searchTerm);
+        return await result.Content.ReadFromJsonAsync<List<Disease>>();
+
+    }
+    private async Task HandleAddDiseases()
+    {
+        if (patientsDiseases.Count() == 0)
+        {
+            return;
+        }
+        addingData = true;
+        await InvokeAsync(StateHasChanged);
+        var result = await _userApiService.SendRequestAddPatientsDiseases(patientsDiseases);
+    }
+
+    private async Task AddDisease()
+    {
+        if (disease.Name == null)
+        {
+            return;
+        }
+        var patientsDiseaseDto = new PatientsDiseaseDto()
+        {
+            IdToDistinction = patientsDiseases.Count()+1,
+            Disease = disease,
+            IsCurrentlyTreated = true,
+        };
+        patientsDiseases.Add(patientsDiseaseDto);
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async void RemoveDisease(PatientsDiseaseDto item)
+    {
+        patientsDiseases.Remove(item);
+        await InvokeAsync(StateHasChanged);
+    }
+
+    
 
 }

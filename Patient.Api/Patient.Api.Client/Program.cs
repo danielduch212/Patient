@@ -1,7 +1,8 @@
-using IdentityAuthenticationMOCNYTEST.Client;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Patient.Api.Client;
 using Patient.Api.Client.Services;
+
 
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);

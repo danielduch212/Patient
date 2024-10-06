@@ -11,8 +11,7 @@ public class Patient : User
     public string? ImageAvatarFileName { get; set; } = default!;
 
     //
-    public IEnumerable<Disease>? CurrentlyTreatedDiseases { get; set; } = new List<Disease>();
-    public IEnumerable<Disease>? TreatedDiseasesInThePast { get; set; } = new List<Disease>();
+    public IEnumerable<PatientsDisease> TreatedDiseases { get; set; } = new List<PatientsDisease>();
 
 
     public IEnumerable<Report>? Reports { get; set; } = new List<Report>();

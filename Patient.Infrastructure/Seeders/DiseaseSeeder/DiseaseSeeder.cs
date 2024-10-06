@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Patient.Domain.Constants;
 using Patient.Domain.Entities;
 using Patient.Infrastructure.Persistence;
+using Shared.Main;
 
 namespace Patient.Infrastructure.Seeders.DiseaseSeeder;
 

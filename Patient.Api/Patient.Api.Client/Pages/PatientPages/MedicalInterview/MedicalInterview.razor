@@ -1,12 +1,51 @@
 ﻿@layout Patient.Api.Client.Layout.MyAccount.PatientAccountLayout
 
+@rendermode InteractiveWebAssembly
+
+@using MudBlazor
+
 @page "/pacjent/wywiad"
 
-<h3>MedicalInterview</h3>
 
+<div class="container px-4">
+    @if (!changeData)
+    {       
+        <section>
+            <div class="row text-center">
+                <MudPaper Class="pa-4 ma-3 summary-item" Elevation="3" Style="cursor: pointer;">
+                    <h3>Wywiad Medyczny</h3>
 
-<h3> Tutaj pokazywac stare i terazniejsze choroby usera - jakies odpowiedzi na wywiad, przyjmowane leki itd</h3>
+                </MudPaper>
+            </div>
+        </section>
+        <section>
+            <div class="row">
+                <MudPaper Class="pa-4 ma-3 summary-item" Elevation="3" Style="cursor: pointer;">
+                    <btn type="button" class="btn btn-primary btn-custom-primary" @onclick="ShowChangeDataComponent">
+                        Zmień dane
+                    </btn>
+                </MudPaper>
+            </div>          
+        </section>
+    }
+    else
+    {
+        <MudPaper Class="pa-4 ma-3 summary-item" Elevation="3" Style="cursor: pointer;">
+            <h3>Wywiad Medyczny</h3>
+            <Patient.Api.Client.Pages.PatientPages.MedicalInterview.ChangeMedicalInterwiew/>
+        </MudPaper>
+        
+    }
+    
+</div>
 
 @code {
+    private bool changeData;
 
+
+    private void ShowChangeDataComponent()
+    {
+        changeData = true;
+        StateHasChanged();
+    }
 }

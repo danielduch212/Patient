@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Patient.Domain.Entities;
 using Patient.Domain.Entities.Actors;
+using Shared.Main;
 
 namespace Patient.Infrastructure.Persistence;
 
@@ -18,7 +19,7 @@ internal class PatientDbContext(DbContextOptions<PatientDbContext> options) : Id
     internal DbSet<Report> Reports { get; set; }
     internal DbSet<Disease> Diseases { get; set; }
     internal DbSet<PrescriptionRequest> PrescriptionRequests { get; set; }
-
+    internal DbSet<PatientsDisease> PatientsDiseases { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -61,6 +62,14 @@ internal class PatientDbContext(DbContextOptions<PatientDbContext> options) : Id
             .HasForeignKey(pre => pre.PatientId)
             .OnDelete(DeleteBehavior.Restrict); 
 
+        modelBuilder.Entity<Domain.Entities.Actors.Patient>()
+            .HasMany(p=>p.TreatedDiseases)
+            .WithOne(p=>p.Patient)
+            .HasForeignKey(p=>p.PatientId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+
+
         //doctor
 
         modelBuilder.Entity<Doctor>()
@@ -95,7 +104,8 @@ internal class PatientDbContext(DbContextOptions<PatientDbContext> options) : Id
             .HasMany(r => r.DoctorsWhoChecked)
             .WithMany(d => d.ReportsChecked);
 
-
+        
+        
             
 
     }

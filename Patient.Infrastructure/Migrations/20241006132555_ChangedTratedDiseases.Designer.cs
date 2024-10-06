@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Patient.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using Patient.Infrastructure.Persistence;
 namespace Patient.Infrastructure.Migrations
 {
     [DbContext(typeof(PatientDbContext))]
-    partial class PatientDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241006132555_ChangedTratedDiseases")]
+    partial class ChangedTratedDiseases
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -278,6 +281,23 @@ namespace Patient.Infrastructure.Migrations
                     b.UseTptMappingStrategy();
                 });
 
+            modelBuilder.Entity("Patient.Domain.Entities.Disease", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Diseases");
+                });
+
             modelBuilder.Entity("Patient.Domain.Entities.MedicalFile", b =>
                 {
                     b.Property<int>("Id")
@@ -390,7 +410,7 @@ namespace Patient.Infrastructure.Migrations
                     b.Property<int>("DiseaseId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsCurrentlyTreated")
+                    b.Property<bool>("IsCurrentlyTrated")
                         .HasColumnType("bit");
 
                     b.Property<string>("PatientId")
@@ -549,23 +569,6 @@ namespace Patient.Infrastructure.Migrations
                     b.HasIndex("PatientId");
 
                     b.ToTable("Reports");
-                });
-
-            modelBuilder.Entity("Shared.Main.Disease", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Diseases");
                 });
 
             modelBuilder.Entity("Patient.Domain.Entities.Actors.Admin", b =>
@@ -746,7 +749,7 @@ namespace Patient.Infrastructure.Migrations
 
             modelBuilder.Entity("Patient.Domain.Entities.PatientsDisease", b =>
                 {
-                    b.HasOne("Shared.Main.Disease", "Disease")
+                    b.HasOne("Patient.Domain.Entities.Disease", "Disease")
                         .WithMany()
                         .HasForeignKey("DiseaseId")
                         .OnDelete(DeleteBehavior.Cascade)
