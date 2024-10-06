@@ -5,7 +5,7 @@ namespace Patient.Domain.Entities;
 public class PatientsDisease
 {
     public int Id { get; set; }
-    public Disease Disease { get; set; } = default!;
+    public int DiseaseId { get; set; } = default!;
     public string? UserExperienceWithDisease { get; set; }=default!;
     public bool IsCurrentlyTreated { get; set; }
 

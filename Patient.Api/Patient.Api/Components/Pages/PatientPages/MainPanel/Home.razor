@@ -15,7 +15,7 @@
 
 
 <div class="container px-4">
-    @if(patientsCurrentlyCuredDiseases==0)
+    @if(patientsCurrentlyCuredDiseasesNumber==0 && isCount==true)
     {
         <MudPaper Class="pa-4 summary-item" Elevation="3" Style="cursor: pointer;" @onclick='() => RedirectTo("wywiad")'>
             <div class="row">
@@ -25,8 +25,6 @@
         
 
     }
-    <h3> Jezeli user nie ma jeszcze przypisanych leczonych chorob jakie chcialby tu leczyc </h3>
-
     <div class="row">
         @if (isInitialized)
         {
@@ -51,15 +49,17 @@
 @code {
 
     private Patient.Domain.Entities.Actors.Patient currentPatient { get; set; } = new();
-    private int patientsCurrentlyCuredDiseases { get; set; }
+    private int patientsCurrentlyCuredDiseasesNumber { get; set; }
 
     private bool isInitialized;
+    private bool isCount;
 
     protected override async Task OnInitializedAsync()
     {
         currentPatient = await _patientManager.GetUserAsync(httpContextAccesor.HttpContext.User);
-        patientsCurrentlyCuredDiseases = await _diseaseRepository.CountPatientsCurrentDiseases(currentPatient.Id);
 
+        patientsCurrentlyCuredDiseasesNumber = await _diseaseRepository.CountPatientsCurrentDiseases(currentPatient.Id);
+        isCount = true;
 
         isInitialized = true;
         StateHasChanged();

@@ -20,7 +20,7 @@
     {
         <section>
             <div class="row text-center">
-                <h4>Twoje schorzenia</h4>
+                <h4>Dodaj schorzenia</h4>
                 <div class="col-10">
                     <BlazoredTypeahead SearchMethod="GetDiseasesBySearchPhrase"
                                        @bind-Value="disease">
@@ -76,7 +76,8 @@
     else
     {
         <div class="row">
-
+            Dodawanie danych
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true"></MudProgressCircular>
         </div>
 
     }
@@ -89,6 +90,8 @@
 @code {
 
     //zastanowic sie pozniej co zrobic z profilaktyką
+    [Parameter]
+    public EventCallback OnClose { get; set; }
 
     private Disease disease = new();
 
@@ -115,6 +118,12 @@
         addingData = true;
         await InvokeAsync(StateHasChanged);
         var result = await _userApiService.SendRequestAddPatientsDiseases(patientsDiseases);
+        if (result.IsSuccessStatusCode)
+        {
+            addingData = false;
+        }
+        await Task.Delay(2000);
+        await OnClose.InvokeAsync();
     }
 
     private async Task AddDisease()
@@ -130,7 +139,7 @@
             IsCurrentlyTreated = true,
         };
         patientsDiseases.Add(patientsDiseaseDto);
-        await InvokeAsync(StateHasChanged);
+        
     }
 
     private async void RemoveDisease(PatientsDiseaseDto item)

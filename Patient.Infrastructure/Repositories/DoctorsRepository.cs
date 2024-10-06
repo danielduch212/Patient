@@ -26,8 +26,7 @@ internal class DoctorsRepository(PatientDbContext dbContext) :  IDoctorsReposito
 
         return doctor.Doctor;
     }
-    //w pierwwszej kolejnosci raport ma sprawdzic lekarz pacjenta - lekarz podstawowy jest przydzielany
-    //w momencie kiedy user wypelni wywiad medyczny
+    
     public async Task<Doctor> GetPatientsDoctor(string patientId)
     {
         var patient = await dbContext.Patients
@@ -35,5 +34,43 @@ internal class DoctorsRepository(PatientDbContext dbContext) :  IDoctorsReposito
             .Where(p => p.Id == patientId)
             .FirstOrDefaultAsync();
         return patient.Doctors.FirstOrDefault();
+    }
+    public async Task AssignFirstContactDoctorToPatient(string patientId)
+    {
+
+        var doctor = await dbContext.Doctors
+        .Include(d => d.Patients)
+        .Select(d => new
+        {
+            Doctor = d,
+            PatientsCount = d.Patients.Count()
+        })
+        .OrderBy(d => d.PatientsCount)
+        .FirstOrDefaultAsync();
+
+        var patient = await dbContext.Patients
+            .Include(p => p.Doctors)
+            .FirstOrDefaultAsync(p => p.Id == patientId);
+
+        if (doctor != null && patient != null)
+        {
+            var patientsDoctorsList = patient.Doctors.ToList();
+
+            if (!patientsDoctorsList.Contains(doctor.Doctor))
+            {
+                patientsDoctorsList.Add(doctor.Doctor);
+            }
+
+            patient.Doctors = patientsDoctorsList;
+            var doctorsPatientsList = doctor.Doctor.Patients.ToList();
+
+            if (!doctorsPatientsList.Contains(patient))
+            {
+                doctorsPatientsList.Add(patient);
+            }
+
+            doctor.Doctor.Patients = doctorsPatientsList;
+            await dbContext.SaveChangesAsync();
+        }
     }
 }

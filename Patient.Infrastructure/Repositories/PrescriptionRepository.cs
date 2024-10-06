@@ -2,6 +2,7 @@
 using Patient.Domain.Entities;
 using Patient.Domain.Repositories;
 using Patient.Infrastructure.Persistence;
+using System.Net.WebSockets;
 
 namespace Patient.Infrastructure.Repositories;
 
@@ -24,5 +25,11 @@ internal class PrescriptionRepository(PatientDbContext dbContext) : IPrescriptio
         return results;
     }
 
+    public async Task<Prescription> GetPrescriptionByIdAsync(int prescriptionId)
+    {
+        var result = await dbContext.Prescriptions
+            .FirstOrDefaultAsync(p => p.Id == prescriptionId);
+        return result;
+    }
  
 }

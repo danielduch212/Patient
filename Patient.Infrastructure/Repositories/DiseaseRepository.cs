@@ -25,4 +25,25 @@ internal class DiseaseRepository(PatientDbContext dbContext) : IDiseaseRepositor
             .Where(d => d.Name.Contains(searchTerm.ToLower()))
             .ToListAsync();
     }
+
+    public async Task AddPatientsDiseases(List<PatientsDisease> patientsDiseases)
+    {
+        await dbContext.PatientsDiseases.AddRangeAsync(patientsDiseases);
+        await dbContext.SaveChangesAsync();
+    }
+
+    public async Task<List<PatientsDisease>> GetPatientsDiseases(string patientId)
+    {
+        var patient = await dbContext.Patients
+            .Include(p => p.TreatedDiseases)
+            .FirstOrDefaultAsync(p=>p.Id==patientId);
+        return patient.TreatedDiseases.ToList();
+    }
+
+    public async Task<Disease> GetDiseaseByIdAsync(int id)
+    {
+        var result = await dbContext.Diseases
+            .FirstOrDefaultAsync(d=>d.Id==id);
+        return result;
+    }
 }

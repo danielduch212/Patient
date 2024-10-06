@@ -21,6 +21,10 @@ IDoctorsRepository doctorsRepository) : IRequestHandler<AddPrescriptionRequestCo
         logger.LogInformation($"Adding prescription request for patient user: {user.Id}");
 
         var patientsDoctor = await doctorsRepository.GetPatientsDoctor(user.Id);
+        if (patientsDoctor == null)
+        {
+            return false;
+        }
 
         var prescriptionRequest = new PrescriptionRequest()
         {

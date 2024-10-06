@@ -31,7 +31,9 @@
         <div class="row">
             <div class="col">
                 <MudPaper Class="pa-4 ma-3 summary-item" Elevation="3" Style="cursor: pointer;">
-                    <Patient.Api.Components.Pages.PatientPages.Prescription.AdditionalComponents.PatientsPrescriptionsComponent />
+                    <CascadingValue Value="currentPatient">
+                        <Patient.Api.Components.Pages.PatientPages.Prescription.AdditionalComponents.PatientsPrescriptionsComponent />
+                    </CascadingValue>
                 </MudPaper>
             </div>
             <div class="col">
@@ -58,9 +60,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        currentPatient = await _patientManager.GetUserAsync(contextAccesor.HttpContext.User);
-        prescriptionRequestsNumber = await _prescriptionRequestRepository.CountPatientsPrescriptions(currentPatient.Id);
-        StateHasChanged();
+        await CountUserPrescriptionRequests();
     }
 
     private void ShowAskForPrescriptionModal()
@@ -69,9 +69,19 @@
         StateHasChanged();
     }
 
-    private void CloseAskForPrescriptionModal()
+    private async void CloseAskForPrescriptionModal()
     {
+        await CountUserPrescriptionRequests();
         showAskForPrescriptionModal = false;
         StateHasChanged();
     }
+    private async Task CountUserPrescriptionRequests()
+    {
+        currentPatient = await _patientManager.GetUserAsync(contextAccesor.HttpContext.User);
+        prescriptionRequestsNumber = await _prescriptionRequestRepository.CountPatientsPrescriptions(currentPatient.Id);
+        StateHasChanged();
+    }
+
+
+    
 }

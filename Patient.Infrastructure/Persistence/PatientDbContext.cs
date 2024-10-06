@@ -104,7 +104,12 @@ internal class PatientDbContext(DbContextOptions<PatientDbContext> options) : Id
             .HasMany(r => r.DoctorsWhoChecked)
             .WithMany(d => d.ReportsChecked);
 
-        
+        //PatientDiseases
+        modelBuilder.Entity<PatientsDisease>()
+            .HasOne(pd=>pd.Patient)
+            .WithMany(p=>p.TreatedDiseases)
+            .HasForeignKey(pd=>pd.PatientId)
+            .OnDelete(DeleteBehavior.Restrict);
         
             
 

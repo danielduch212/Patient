@@ -48,14 +48,25 @@
 
     </div>
 </div>
+@if (showPrescriptionPreviewModal)
+{
+    <CascadingValue Value="prescriptionPreviewData">
+        <PrescriptionPreviewModal OnClose="HandleClosePrescriptionPreviewModal"/>
+    </CascadingValue>
+}
 
 @code {
+    [CascadingParameter]
+    public Patient.Domain.Entities.Actors.Patient CurrentPatient { get; set; } = new();
+
     private List<PrescriptionToShowPatientDto> prescriptionsToShow = new();
     private bool filesGet;
     private bool readingPrescriptions;
 
-    private bool showPreviewModal;
+    private bool showPrescriptionPreviewModal;
 
+    //cascading 
+    private PrescriptionPreviewData prescriptionPreviewData = new();
 
     protected async override Task OnInitializedAsync()
     {
@@ -73,7 +84,24 @@
 
     private void HandleShowPrescription(PrescriptionToShowPatientDto prescription)
     {
-        
+        prescriptionPreviewData.CurrentPatient = CurrentPatient;
+        prescriptionPreviewData.CurrentPrescription = prescription;
+        showPrescriptionPreviewModal = true;
+
     }
 
+    private void HandleClosePrescriptionPreviewModal()
+    {
+        showPrescriptionPreviewModal = false;
+        StateHasChanged();
+    }
+
+
+    //additionalClasses
+    public class PrescriptionPreviewData
+    {
+        public PrescriptionToShowPatientDto CurrentPrescription = new();
+        public Patient.Domain.Entities.Actors.Patient CurrentPatient = new();
+
+    }
 }

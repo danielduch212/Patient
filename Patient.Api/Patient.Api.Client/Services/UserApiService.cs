@@ -48,8 +48,12 @@ public class UserApiService
 
     public async Task<HttpResponseMessage> SendRequestAddPatientsDiseases(List<PatientsDiseaseDto> dtos)
     {
-        var response = await _httpClient.PostAsJsonAsync("/api/PrescriptionController/addPrescriptionRequest", dtos);
+        var response = await _httpClient.PostAsJsonAsync("/api/DiseaseController/addPatientsDiseases", dtos);
+        return response;
+    }   
+    public async Task<HttpResponseMessage> SendRequestGetPatientsDiseases()
+    {
+        var response = await _httpClient.GetAsync("/api/DiseaseController/getPatientsDiseases");
         return response;
     }
-
 }

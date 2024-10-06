@@ -1,22 +1,38 @@
 ﻿@layout Patient.Api.Client.Layout.MyAccount.PatientAccountLayout
 
-@rendermode InteractiveWebAssembly
-
-@using MudBlazor
+@rendermode @(new InteractiveWebAssemblyRenderMode(false))
 
 @page "/pacjent/wywiad"
+
+@using MudBlazor
+@using Shared.Dtos
+@using Patient.Api.Client.Services
+
+@inject UserApiService _userApiService
+
 
 
 <div class="container px-4">
     @if (!changeData)
     {       
         <section>
-            <div class="row text-center">
-                <MudPaper Class="pa-4 ma-3 summary-item" Elevation="3" Style="cursor: pointer;">
-                    <h3>Wywiad Medyczny</h3>
+            <h3>Wywiad Medyczny</h3>
+            @if (readingDiseases)
+            {
+                <MudBlazor.MudProgressCircular Color="Color.Primary" Indeterminate="true"></MudBlazor.MudProgressCircular>
 
-                </MudPaper>
-            </div>
+            }
+            else
+            {
+                <div class="row text-center">
+                    <MudPaper Class="pa-4 ma-3 summary-item" Elevation="3" Style="cursor: pointer;">                    
+                        <CascadingValue Value="patientsDiseasesDtos">
+                            <Patient.Api.Client.Pages.PatientPages.MedicalInterview.AdditionalComponents.ShowPatientsDiseasesComponent  />
+                        </CascadingValue>
+                    </MudPaper>
+                </div>
+            }
+            
         </section>
         <section>
             <div class="row">
@@ -32,7 +48,7 @@
     {
         <MudPaper Class="pa-4 ma-3 summary-item" Elevation="3" Style="cursor: pointer;">
             <h3>Wywiad Medyczny</h3>
-            <Patient.Api.Client.Pages.PatientPages.MedicalInterview.ChangeMedicalInterwiew/>
+            <Patient.Api.Client.Pages.PatientPages.MedicalInterview.ChangeMedicalInterwiew OnClose="HandleAddedDiseases" />
         </MudPaper>
         
     }
@@ -41,11 +57,40 @@
 
 @code {
     private bool changeData;
+    private bool readingDiseases;
 
+    private List<PatientsDiseaseDto> patientsDiseasesDtos = new();
 
-    private void ShowChangeDataComponent()
+    protected override async Task OnInitializedAsync()
+    {
+        await GetPatientsDiseases();
+    }
+
+    private async Task GetPatientsDiseases()
+    {
+        var response = await _userApiService.SendRequestGetPatientsDiseases();
+        if (response.IsSuccessStatusCode)
+        {
+            patientsDiseasesDtos = await response.Content.ReadFromJsonAsync<List<PatientsDiseaseDto>>();
+
+            await Task.Delay(2000);
+            readingDiseases = false;
+            StateHasChanged();
+
+        }
+    }
+
+    private async Task ShowChangeDataComponent()
     {
         changeData = true;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async void HandleAddedDiseases()
+    {
+        await GetPatientsDiseases();
+        changeData = false;
         StateHasChanged();
     }
+    
 }

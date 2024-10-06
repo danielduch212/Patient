@@ -1,0 +1,37 @@
+﻿
+
+@using Shared.Dtos
+@using Patient.Api.Client.Services
+
+
+@using Shared.Main
+@using MudBlazor
+@using MudBlazor.Components
+@using System.ComponentModel.DataAnnotations
+
+
+
+<div class="container">
+    <div class="row">
+        <h4 class="text-start">Aktualne schorzenia pacjenta</h4>
+        @foreach (var item in PatientsDiseasesDtos)
+        {
+
+            <div class="list-group-item" id="@item.IdToDistinction">
+                <div class="row d-flex p-2">
+
+                    <p><strong>Schorzenie:  @item.Disease.Name</strong></p>
+                    
+                </div>
+            </div>
+        }
+        
+        
+    </div>
+</div>
+
+@code {
+    [CascadingParameter]
+    public List<PatientsDiseaseDto> PatientsDiseasesDtos { get; set; } = new();
+
+}
