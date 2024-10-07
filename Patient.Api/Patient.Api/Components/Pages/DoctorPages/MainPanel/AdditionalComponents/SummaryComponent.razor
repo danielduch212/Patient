@@ -7,7 +7,7 @@
 @inject IReportRepository _reportRepository
 @inject IPrescriptionRequestRepository _prescriptionRequestRepository
 @inject NavigationManager _navigationManager
-
+@inject IPatientsRepository _patientsRepository
 
 <div class="container px-4">
     <h3>Podsumowanie</h3>
@@ -21,19 +21,14 @@
         </div>
         <div class="col">
             <MudPaper Class="pa-4 ma-2 summary-item" Elevation="3" Style="cursor: pointer;" @onclick='() => RedirectTo("recepty")'>
-                <h4>Prośby o wystawienie recepty</h4>
+                <h4>Prośby o recepty</h4>
                 <h4>@prescriptionRequestsNumber</h4>
             </MudPaper>
         </div>
         <div class="col">
             <MudPaper Class="pa-4 ma-2 summary-item" Elevation="3" Style="cursor: pointer;" @onclick='() => RedirectTo("wiadomosci")'>
-                Wiadomosci
-            </MudPaper>
-        </div>
-
-        <div class="col">
-            <MudPaper Class="pa-4 ma-2 summary-item" Elevation="3" Style="cursor: pointer;" @onclick='() => RedirectTo("pacjenci")'>
-                
+                <h4>Twoi Pacjenci</h4>
+                <h4>@patientsNumber</h4>
             </MudPaper>
         </div>
     </div>
@@ -44,19 +39,23 @@
 
 @code {
 
+    [Parameter]
+    public EventCallback ComponentIsInitialized { get; set; }
 
-    private Patient.Domain.Entities.Actors.Doctor doctor = new();
+    [CascadingParameter]
+    public Patient.Domain.Entities.Actors.Doctor CurrentDoctor { get; set; } = new();
 
     private int reportsNumber;
     private int prescriptionRequestsNumber;
+    private int patientsNumber;
 
     protected override async Task OnInitializedAsync()
     {
-
-        doctor = await _doctorManager.GetUserAsync(httpContextAccesor.HttpContext.User);
-        reportsNumber = await _reportRepository.GetDoctorReportsNumber(doctor);
-        prescriptionRequestsNumber = await _prescriptionRequestRepository.CountDoctorsPrescriptionRequests(doctor.Id);
-
+        reportsNumber = await _reportRepository.GetDoctorReportsNumber(CurrentDoctor);
+        prescriptionRequestsNumber = await _prescriptionRequestRepository.CountDoctorsPrescriptionRequests(CurrentDoctor.Id);
+        patientsNumber = await _patientsRepository.CountDoctorsPatients(CurrentDoctor.Id);
+        await Task.Delay(500);
+        await ComponentIsInitialized.InvokeAsync();
     }
 
     private void RedirectTo(string path)

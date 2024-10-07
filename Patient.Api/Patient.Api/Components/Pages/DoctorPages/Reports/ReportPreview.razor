@@ -50,7 +50,7 @@
             {
                 <div class="mx-5">
                     <CascadingValue Value="reportToShow">
-                        <Patient.Api.Components.Pages.AdditionalComponents.ReportPreviewComponent />
+                        <Patient.Api.Components.Pages.DoctorPages.Reports.ReportPreviewComponent />
                     </CascadingValue>
                 </div>
             }
@@ -120,7 +120,7 @@
 
     ///
 
-    private Patient.Domain.Entities.Actors.Patient currentPatient;
+    private Patient.Domain.Entities.Actors.Patient currentPatient = new();
 
     //RecommendationModal
     AddRecommandationModalData addRecommandationModalData = new();

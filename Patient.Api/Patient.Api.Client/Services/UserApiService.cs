@@ -19,22 +19,25 @@ public class UserApiService
     public async Task<HttpResponseMessage> SendAddReportRequest(ReportDtoFront report)
     {
         var form = new MultipartFormDataContent();
-
         form.Add(new StringContent(report.Description), "Description");
-
-
-        if (report.Files.Any() && report.FileNames != null)
+        form.Add(new StringContent(report.PatientsHealthRating.ToString()), "PatientsHealthRating");
+        foreach (var symptom in report.PatientsSymptoms)
         {
-
-            for(int i=0; i<report.Files.Count(); i++)
+            form.Add(new StringContent(symptom), "PatientsSymptoms");
+        }
+        foreach (var answer in report.PatientsAnswers)
+        {
+            form.Add(new StringContent(answer), "PatientsAnswers");
+        }
+        if (report.Files != null && report.Files.Any() && report.FileNames != null)
+        {
+            for (int i = 0; i < report.Files.Count(); i++)
             {
                 var fileContent = new StreamContent(report.Files.ElementAt(i));
                 fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/octet-stream");
                 form.Add(fileContent, "Files", report.FileNames.ElementAt(i));
             }
         }
-
-
         var response = await _httpClient.PostAsync("/api/ReportsController/createReport", form);
         return response;
     }

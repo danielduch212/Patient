@@ -9,6 +9,7 @@ public interface IDoctorsRepository
     public Task<Doctor> GetPatientsFirstContactDoctor(string patientId);
     public Task AssignFirstContactDoctorToPatient(string patientId);
     public Task AssignDoctorSpecializationForDoctor(string doctorId, string DoctorSpecialization);
+    public Task<List<Doctor>> GetPatientsDoctorsToShow(string patientId);
 
 
 }

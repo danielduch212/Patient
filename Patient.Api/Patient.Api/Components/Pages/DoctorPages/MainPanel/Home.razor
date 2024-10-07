@@ -1,31 +1,80 @@
 ﻿@layout Patient.Api.Components.Layout.Doctor.DoctorLayout
 
 @rendermode @(new InteractiveServerRenderMode(false))
-
-@using Patient.Domain.Constants
-
-
 @attribute [Authorize(Roles = UserRoles.Doctor)]
 
 @page "/lekarz"
 
 
+@using Patient.Domain.Constants
+@using Patient.Application.Account
+@using Patient.Domain.Repositories
+
+@inject UserManager<Patient.Domain.Entities.Actors.Doctor> _doctorManager
+
+@inject IHttpContextAccessor httpContextAccesor
+@inject IReportRepository _reportRepository
+@inject IPrescriptionRequestRepository _prescriptionRequestRepository
+@inject NavigationManager _navigationManager
+
+
+
 
 <div class="container px-5">
-    <section style="height: 10%;">
-        <Patient.Api.Components.Pages.DoctorPages.MainPanel.AdditionalComponents.SummaryComponent />
+    <section style="height: 15%;">
+        <div class="row">
+            @if (mainComponentIsInitialized)
+            {
+                <CascadingValue Value="currentDoctor">
+                    <Patient.Api.Components.Pages.DoctorPages.MainPanel.AdditionalComponents.SummaryComponent ComponentIsInitialized="HandleSummaryComponentIsInitialized" />
+                </CascadingValue>
+            }
+            else
+            {
+                <MudProgressCircular Color="Color.Default" Indeterminate="true" Size="Size.Large" />
+            }
+        </div>     
+    </section>  
+    <section>
+        <div class="row">
+            @if (summaryComponentIsInitialized)
+            {
+                <div class="col">
+                    <CascadingValue Value="currentDoctor">
+                        <Patient.Api.Components.Pages.DoctorPages.MainPanel.AdditionalComponents.DoctorsPatientsComponent />
+                    </CascadingValue>
+                </div>
+                <div class="col">
+                </div>
+            }
+            else
+            {
+                <MudProgressCircular Color="Color.Default" Indeterminate="true" Size="Size.Large" />
+            }
+        </div>       
     </section>
+
 </div>
 
 
 @code {
+    private bool mainComponentIsInitialized;
+    private bool summaryComponentIsInitialized;
+    private Patient.Domain.Entities.Actors.Doctor currentDoctor {get;set;} = new();
+
     protected override async Task OnInitializedAsync()
     {
+        currentDoctor = await _doctorManager.GetUserAsync(httpContextAccesor.HttpContext.User);
 
-
+        mainComponentIsInitialized = true;
 
 
     }
 
-    
+    private async void HandleSummaryComponentIsInitialized()
+    {
+        summaryComponentIsInitialized = true;
+        await InvokeAsync(StateHasChanged);
+    }
+
 }

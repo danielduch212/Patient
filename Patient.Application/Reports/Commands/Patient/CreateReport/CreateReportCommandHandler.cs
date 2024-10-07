@@ -20,10 +20,7 @@ internal class CreateReportCommandHandler(ILogger<CreateReportCommandHandler> lo
         var user = await userAccessor.GetRequiredUserAsync(httpContextAccesor.HttpContext);
         logger.LogInformation($"Trying to add report from user(email): {user.Email}");
 
-
         List<string> fileNames = new();
-
-
         if (request.Files.Any())
         {
             foreach (var file in request.Files)
@@ -32,19 +29,28 @@ internal class CreateReportCommandHandler(ILogger<CreateReportCommandHandler> lo
                 fileNames.Add(await blobStorageService.UploadReportsFilesToBob(stream, file.FileName, user.Id));
             }
         }
-
         List<Doctor> doctorsToCheck = new List<Doctor>();
 
-        doctorsToCheck.Add(await doctorsRepository.GetPatientsFirstContactDoctor(user.Id));
+        //sprawdzenie
+        var patientsDoctorFirstContact = await doctorsRepository.GetPatientsFirstContactDoctor(user.Id);
+        if(patientsDoctorFirstContact == null)
+        {
+            await doctorsRepository.AssignFirstContactDoctorToPatient(user.Id);
+            patientsDoctorFirstContact = await doctorsRepository.GetPatientsFirstContactDoctor(user.Id);
+        }
+        doctorsToCheck.Add(patientsDoctorFirstContact);
         
         Report report = new()
         {
-            Description = request.Description,
+            AdditionalDescription = request.Description,
             FileNames = fileNames,
             PatientId = user.Id,
             DateOfCreating = DateTime.Today.ToString("yyyy-MM-dd"),
             DoctorsToCheck = doctorsToCheck,
-            HealthRating = 2,
+            PatientsHealthRating = 2,
+            PatientsSymptoms = request.PatientsSymptoms,
+            PatientsAnswersForQuestions = request.PatientsAnswers,
+
         };
 
         await reportRepository.CreateReport(report);

@@ -17,40 +17,58 @@
 
 
 <div class="container px-4">
+    
     @if(patientsCurrentlyCuredDiseasesNumber==0 && isCount==true)
     {
-
-        <FullfillMedicalInterviewReminderComponent />
-
-    }
-    <div class="row">
-        
-        @if (isInitialized)
-        {
-            <CascadingValue Value="currentPatient">
-                <Patient.Api.Components.Pages.PatientPages.MainPanel.AdditionalComponents.SummaryComponent />
-            </CascadingValue>
-        }
-        else
-        {
-            <MudProgressCircular Color="Color.Default" Indeterminate="true" Size="Size.Large"/>
-
-        }
-        
-    </div>
-    
+        <div class="row">
+            <FullfillMedicalInterviewReminderComponent />
+        </div>
+    }   
+    <section style="height: 15%;">
+        <div class="row">
+            @if (mainIsInitialized)
+            {               
+                <CascadingValue Value="currentPatient">
+                    <Patient.Api.Components.Pages.PatientPages.MainPanel.AdditionalComponents.SummaryComponent ComponentIsInitialized="HandleSummaryComponentInitialized" />
+                </CascadingValue>               
+            }
+            else
+            {
+                
+                <MudProgressCircular Color="Color.Default" Indeterminate="true" Size="Size.Large" />
+                
+            }
+        </div>     
+    </section>                
+    <section>
+        <div class="row">
+            @if (summaryComponentIsInitialized)
+            {               
+                <div class="col">
+                    <CascadingValue Value="currentPatient">
+                        <Patient.Api.Components.Pages.PatientPages.MainPanel.AdditionalComponents.PatientsDoctorsComponent />
+                    </CascadingValue>
+                </div>
+                <div class="col">
+                </div>                
+            }
+            else
+            {             
+                 <MudProgressCircular Color="Color.Default" Indeterminate="true" Size="Size.Large" />             
+            }
+        </div>                  
+    </section>
+               
     
 </div>
-
-
-
 
 @code {
 
     private Patient.Domain.Entities.Actors.Patient currentPatient { get; set; } = new();
     private int patientsCurrentlyCuredDiseasesNumber { get; set; }
 
-    private bool isInitialized;
+    private bool mainIsInitialized;
+    private bool summaryComponentIsInitialized;
     private bool isCount;
 
     protected override async Task OnInitializedAsync()
@@ -60,11 +78,16 @@
         patientsCurrentlyCuredDiseasesNumber = await _diseaseRepository.CountPatientsCurrentDiseases(currentPatient.Id);
         isCount = true;
 
-        isInitialized = true;
+        mainIsInitialized = true;
         StateHasChanged();
 
     }
 
-    
+    private async void HandleSummaryComponentInitialized()
+    {
+        summaryComponentIsInitialized = true;
+        await InvokeAsync(StateHasChanged);
+    }
+
     
 }

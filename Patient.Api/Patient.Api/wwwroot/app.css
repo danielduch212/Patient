@@ -138,3 +138,16 @@ body{
     top: -1px;
     background-size: cover;
 }
+
+.badge-item-custom-erasable {
+    display: inline-block;
+
+}
+
+    .badge-item-custom-erasable:hover {
+        color: transparent;
+    }
+
+        .badge-item-custom-erasable:hover::after {
+            content: "Usuñ";
+        }

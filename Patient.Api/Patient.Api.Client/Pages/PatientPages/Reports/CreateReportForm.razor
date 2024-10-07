@@ -1,70 +1,107 @@
 ﻿@layout Patient.Api.Client.Layout.UserLayout
 
-@rendermode InteractiveWebAssembly
-
+@rendermode @(new InteractiveWebAssemblyRenderMode(false))
 
 @using Patient.Api.Client.Services
 @using Shared.AdditionalClasses
+@using Shared.Constants
+@using Blazored.Typeahead
+@using MudBlazor
+
 
 @inject UserApiService _userApiService
 
 @page "/pacjent/dodaj-raport"
 
-
-
-<div class="page-background">
-
-    <div class="container px-4">
-        <div class="row pt-5">
-            <div class="col justify-content-start align-content-start">
-                <NavLink href="/pacjent/raporty">
-                    <btn type="button" class="back-icon bi-arrow-left"></btn>
-                </NavLink> 
-            </div>
-            <div class="col">
-                <h2 class="text-center">Dodaj raport</h2>
-            </div>
-            <div class="col">
-
-            </div>
+<div class="container px-4">
+    <div class="row pt-5 mb-4">
+        <div class="col justify-content-start align-content-start">
+            <NavLink href="/pacjent/raporty">
+                <btn type="button" class="back-icon bi-arrow-left"></btn>
+            </NavLink>
+        </div>
+        <div class="col">
+            <h2 class="text-center">Dodaj raport</h2>
         </div>
     </div>
 
-    <div class="container px-4">
-        
+    <MudPaper Class="pa-4 ma-3 summary-item" Elevation="3" Style="cursor: pointer;">
         <EditForm method="post" Model="@report" FormName="CreateReport" Enhance>
-            <div class="row pt-5">
-                <div class="col-4 d-flex d-flex-column justify-content-center align-content-center align-items-center">
-
-                    <h3>Opis</h3>
-
-                </div>
-                <div class="col-8 d-flex d-flex-column">
-                    <div>
-
-                        <InputTextArea id="description" style="width: 100%; height: 400px; resize: none;" @bind-Value="report.Description" class="form-control"></InputTextArea>
-
+            <section class="mt-4 mb-4">
+                <h4>Data: @DateOnly.FromDateTime(DateTime.Today)</h4>
+                <div class="row d-flex mt-4 mb-4">
+                    <div class="col-4">
+                        <p>Określ swoje samopoczucie </p>
                     </div>
+                    <div class="col">
+                        <MudSlider TickMarks="true" Step="10" Value="@report.PatientsHealthRating" />
+                    </div>
+                </div>
+            </section>
+            <section class="mb-4">
+                <div class="row pt-5">
+                    <h3>Pytania</h3>
+                </div>
+                @for (int i = 0; i < questionList.Count(); i++)
+                {
+                    <div class="list-group-item" id="@answerItems[i].Id">
+                        <div class="row mt-4 mb-3">
+                            <p>@questionList[i]</p>
+                            <InputText type="text" @bind-Value="@answerItems[i].Answer" class="form-control" placeholder="Odpowiedz" />
+                        </div>
+                     </div>
                     
+                }
+                <div class="row">
+                    <InputTextArea id="description" style="width: 100%; height: 70px; resize: none;"
+                                   @bind-Value="report.Description" label="Dodatkowy Opis"
+                                   class="form-control mb-4"></InputTextArea>
+                </div>                
+            </section>
+            <section class="mt-5 mb-3">
+                <div class="row">
+                    <h4>Objawy</h4>
+                    <p>Wymień objawy choroby (jeśli występują)</p>
                 </div>
-
-            </div>
-            <div class="row pt-5">
-                <div class="col-4 d-flex d-flex-column justify-content-center align-content-center align-items-center">
-
-                    <h3>Pliki</h3>
-
-                </div>  
-                <div class="col-8 d-flex d-flex-column">
-                    <div>
-
-                        <InputFile OnChange="HandleFileSelected" multiple id="File" class="form-control"></InputFile>
-
+                <div class="row">
+                    <div class="col-10">
+                        <BlazoredTypeahead SearchMethod="SearchSymptomBySearchPhrase" @bind-Value="diseaseSymptom">
+                            <SelectedTemplate Context="contextSymptom">
+                                @contextSymptom
+                            </SelectedTemplate>
+                            <ResultTemplate Context="contextSymptom">
+                                @contextSymptom
+                            </ResultTemplate>
+                        </BlazoredTypeahead>
                     </div>
+                    <div class="col">
+                        <btn type="button" class="btn btn-outline-primary btn-custom-outline" @onclick="AddSymptom">
+                            Dodaj
+                        </btn>
+                    </div>
+                </div>
+                <div class="row d-flex mt-4 mb-4">
+                    @foreach (var item in report.PatientsSymptoms)
+                    {
+                        <span class="badge bg-primary badge-item-custom-erasable mr-2 mb-2" @onclick="()=>EraseSymptom(item)">@item</span>
+                    }
+                </div>
+            </section>
+
+            <section class="mt-5 mb-3">
+                <div class="row">
+                    <h4>Pliki</h4>
+                    <p>Wgraj pliki (np. zdjęcia zmian skórnych lub innych jeśli chcesz)</p>
+                </div>
+                <div class="row">
+                    <div>
+                        <InputFile OnChange="HandleFileSelected" multiple id="File" class="form-control"></InputFile>
+                    </div>
+                </div>
+                <div class="row">
                     @if (filesPreview.Count > 0)
                     {
-                        <div class="d-flex d-flex-row pt-5">
-
+                        <div class="d-flex pt-5">
                             @foreach (var file in filesPreview)
                             {
                                 <div>
@@ -73,54 +110,24 @@
                                         <div class="bi-file-icon"></div>
                                         <p class="font-10px text-center">@file.Name</p>
                                     </div>
-
                                 </div>
-                                
-
                             }
-
                         </div>
-
-                        
                     }
                 </div>
-
-            </div>
-            <div class="row pt-5">
-                <div class="d-flex d-flex-column justify-content-center align-items-center" >
-                    <button type="button" id="BtnAddReport" @onclick="HandleAddReport" style="width: 200px;" class="btn btn-primary">Dodaj raport</button>
+            </section>
+            <section>
+                <div class="row">
+                    <btn type="button" class="btn btn-primary btn-custom-primary" @onclick="HandleAddReport">
+                        Dodaj Raport
+                    </btn>
                 </div>
-            </div>
-            <div class="d-flex d-flex-column align-items-center justify-content-center pt-3">
-                @if (isReportBeingAdded == true)
-                {
-                    <div class="spinner-border" role="status">
-                        <span class="visually-hidden">Loading...</span>
-
-                    </div>
-
-                }
-                @if (reportAddedSuccesfully==true)
-                {
-                    <div class="alert alert-success" role="alert">
-                        Raport dodany pomyślnie
-                    </div>
-                }
-                @if (reportAddingFailed==true)
-                {
-                    <div class="alert alert-warning" role="alert">
-                        Nie udalo sie dodac raportu
-                    </div>
-                }
-            </div>
+            </section>
         </EditForm>
-        
-    </div>
-
+    </MudPaper>
 </div>
 
 @code {
-
     private ReportDtoFront report = new();
     private List<Stream> files = new();
     private List<string> filePreviewUrls = new List<string>();
@@ -133,6 +140,27 @@
     private bool isReportBeingAdded = false;
     private bool reportAddedSuccesfully;
     private bool reportAddingFailed;
+
+    //
+    private List<string> symptomTypes = new();
+
+    private string diseaseSymptom = "";
+
+
+
+    private List<string> questionList = new();
+    private List<AnswerItem> answerItems = new();
+    private List<string> answearsList = new();
+
+
+    protected async override Task OnInitializedAsync()
+    {
+        symptomTypes = DiseaseSymptom.GetAllSymptoms();
+        questionList = QuestionsForReport.GetAllQuestions();
+        MakeAnswearElements(questionList.Count());
+        StateHasChanged();
+    }
+
 
     private async void HandleFileSelected(InputFileChangeEventArgs e)
     {
@@ -165,6 +193,7 @@
         isReportBeingAdded = true;
         //
         MakeFileStreams();
+        GetPatientsAnswers();
         var response = await _userApiService.SendAddReportRequest(report);
         if(response.IsSuccessStatusCode)
         {
@@ -178,8 +207,6 @@
             reportAddingFailed = true;
             StateHasChanged();
         }
-
-
     }
 
     private async void MakeFileStreams()
@@ -191,11 +218,60 @@
             fileNames.Add(file.Name);
             var stream = file.OpenReadStream(maxAllowedSize);
             files.Add(stream);
-
-
         }
         report.Files = files;
         report.FileNames = fileNames;
     }
+    private void AddSymptom()
+    {
+        report.PatientsSymptoms.Add(diseaseSymptom);
+    }
 
+    private void EraseSymptom(string item)
+    {
+        report.PatientsSymptoms.Remove(item);
+    }
+
+    private async Task<IEnumerable<string>> SearchSymptomBySearchPhrase(string searchPhrase)
+    {
+        if (string.IsNullOrWhiteSpace(searchPhrase))
+        {
+            return new List<string>();
+        }
+        var result = symptomTypes
+            .Where(symptom => symptom.Contains(searchPhrase, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+
+        return await Task.FromResult(result);
+    }
+    private async void AddAnswer(string answear)
+    {
+
+    }
+    private async void MakeAnswearElements(int questionsNumber)
+    {
+        answerItems.Clear();
+        for (int i = 0; i < questionsNumber; i++)
+        {
+            answerItems.Add(new AnswerItem
+                {
+                    Id = i + 1,
+                    Answer = string.Empty
+                });
+        }
+    }
+
+    private async void GetPatientsAnswers()
+    {
+        foreach(var item in answerItems)
+        {
+            report.PatientsAnswers.Add(item.Answer);
+        }
+    }
+    //Additional
+    private class AnswerItem()
+    {
+        public int Id { get; set; }
+        public string Answer { get; set; } = "";
+    }
 }

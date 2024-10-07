@@ -39,7 +39,7 @@ internal class GetReportForDoctorQueryHandler(ILogger<GetReportForDoctorQueryHan
         var result = new ReportForDoctorToShowDto()
         {
             Id = report.Id,
-            Description = report.Description,
+            Description = report.AdditionalDescription,
             FileNames = report.FileNames,
             IsChecked = report.IsChecked,
             DateOfCreating = report.DateOfCreating,

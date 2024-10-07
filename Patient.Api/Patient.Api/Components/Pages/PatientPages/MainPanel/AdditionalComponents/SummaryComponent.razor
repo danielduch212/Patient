@@ -44,26 +44,22 @@
     [CascadingParameter]
     public Patient.Domain.Entities.Actors.Patient CurrentPatient { get; set; } = new();
 
+    [Parameter]
+    public EventCallback ComponentIsInitialized { get; set; }
 
-
-    //charts
-    private List<ChartSeries> reportSeries = new List<ChartSeries>();
-
-    private string[] XAxisLabelsReports = { "Lacznie" };
-
+    //chart
     private int newRecommandationNumber;
     private int prescriptionsNumber;
-
-
 
     protected override async Task OnInitializedAsync()
     {
 
         newRecommandationNumber = await _recommandationRepository.CountPatientsNewRecommandations(CurrentPatient.Id);
         prescriptionsNumber = await _prescriptionRepository.CountPatientsPrescriptions(CurrentPatient.Id);
+        await Task.Delay(500);
+        await ComponentIsInitialized.InvokeAsync();
+        await InvokeAsync(StateHasChanged);
 
-
-        
     }
 
     private void RedirectTo(string path)

@@ -6,12 +6,14 @@ namespace Patient.Domain.Entities;
 public class Report
 {
     public int Id { get; set; }
-    public string Description { get; set; } = default!;
+    public string? AdditionalDescription { get; set; } = default!;
     public List<string>? FileNames { get; set; } = new List<string>();
     public bool IsChecked { get; set; } = false;
     public string DateOfCreating { get; set; } = default!;
     public UrgencyType? Urgency { get; set; }
-    public int HealthRating { get; set; } = default!;
+    public int PatientsHealthRating { get; set; } = default!;
+    public List<string> PatientsAnswersForQuestions { get; set; } = new();
+    public List<string> PatientsSymptoms { get; set; } = new();
 
 
     //

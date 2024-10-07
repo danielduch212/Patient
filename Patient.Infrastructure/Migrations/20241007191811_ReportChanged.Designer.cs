@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Patient.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using Patient.Infrastructure.Persistence;
 namespace Patient.Infrastructure.Migrations
 {
     [DbContext(typeof(PatientDbContext))]
-    partial class PatientDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241007191811_ReportChanged")]
+    partial class ReportChanged
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -511,15 +514,23 @@ namespace Patient.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("AdditionalDescription")
+                    b.Property<string>("AnswearsForQuestions")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("DateOfCreating")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("FileNames")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("HealthRating")
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsChecked")
                         .HasColumnType("bit");
@@ -530,17 +541,6 @@ namespace Patient.Infrastructure.Migrations
                     b.Property<string>("PatientId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("PatientsAnswersForQuestions")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("PatientsHealthRating")
-                        .HasColumnType("int");
-
-                    b.Property<string>("PatientsSymptoms")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("Urgency")
                         .HasColumnType("int");

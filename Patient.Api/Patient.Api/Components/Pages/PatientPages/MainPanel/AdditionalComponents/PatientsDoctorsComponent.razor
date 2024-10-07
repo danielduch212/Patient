@@ -1,0 +1,50 @@
+﻿
+@using Patient.Domain.Repositories
+
+@inject IDoctorsRepository _doctorsRepository
+
+<div class="container pt-3">
+    <h3 style="color: white;" class="ma-3">Twoi lekarze</h3>
+    <section>     
+        <MudPaper Class="ma-3 summary-item" Elevation="3">
+            <MudList T="Patient.Domain.Entities.Actors.Doctor" Class="pt-5">
+                @foreach (var item in patientsDoctors)
+                {
+                    <MudListItem @key="item.Id">
+                        <div class="row p-2">
+                            <small>@item.DoctorSpecializations.FirstOrDefault()</small>
+                            <div class="col text-center justify-content-center align-items-center">
+                                <p>@item.Name @item.Surname</p>
+                            </div>
+                            <div class="col">
+                                <p>@item.DoctorNumber</p>
+                            </div>
+                        </div>
+
+                    </MudListItem>
+                }
+            </MudList>
+        </MudPaper>            
+    </section>
+
+</div>
+
+
+@code {
+
+    [CascadingParameter]
+    public Patient.Domain.Entities.Actors.Patient CurrentPatient { get; set; } = new();
+
+    private List<Patient.Domain.Entities.Actors.Doctor> patientsDoctors = new();
+
+    //chart
+    private int newRecommandationNumber;
+    private int prescriptionsNumber;
+
+    protected override async Task OnInitializedAsync()
+    {
+        patientsDoctors = await _doctorsRepository.GetPatientsDoctorsToShow(CurrentPatient.Id);
+        StateHasChanged();
+
+    }
+}

@@ -2,6 +2,7 @@
 @using Patient.Domain.Entities.DTOs.Reports
 @using Patient.Domain.Repositories
 @using Patient.Domain.Interfaces
+@using Shared.Constants
 
 
 @inject IPatientApiService _patientApiService
@@ -33,11 +34,11 @@
                 </div>
             </section>
 
-            <section class="p-3 mb-4 bg-light">
+            @* <section class="p-3 mb-4 bg-light">
                 <div class="row">
                     <h4 style="text-decoration: underline;">Przebieg choroby</h4>
                 </div>
-            </section>
+            </section> *@
 
             <section class="p-3 mb-4 bg-light">
                 <div class="row d-flex align-items-center">
@@ -50,28 +51,40 @@
 
                 </div>
                 <div class="row">
-                    <h4 class="text-start">Opis</h4>
-                    <p>@ReportToShow.Description</p>
+                    <h4 class="text-start">Pytania i odpowiedzi</h4>                 
+                    <div class="row pt-5">
+                        <h3>Pytania</h3>
+                    </div>
+                    @for (int i = 0; i < questionList.Count(); i++)
+                    {
+                        <div class="list-group-item">
+                            <div class="row mt-4 mb-3">
+                                <p>@questionList[i]</p>
+                                <p>@ReportToShow.PatientsAnswersForQuestions[i]</p>
+                            </div>
+                        </div>
 
+                    }
+                    <div class="row">
+                        <p>Dodatkowy opis</p>
+                        <p>@ReportToShow.Description</p>
+                    </div>
+                    
                 </div>
                 <div class="row">
                     <h5>Pliki</h5>
                 </div>
                 <div class="row">
                     <h5>Objawy</h5>
-                    <div class="d-flex">
-                        <p>Kaszel...</p>
-                        <p>Gruzlica...</p>
+                    <div class="row d-flex mt-4 mb-4">
+                        @foreach (var item in ReportToShow.PatientsSymptoms)
+                        {
+                            <span class="badge bg-primary badge-item-custom-erasable mr-2 mb-2">@item</span>
+                        }
                     </div>
                 </div>
             </section>
-            <section class="p-3 mb-4 bg-light">
-                <div class="row">
-                    <h4>Odczucia Pacjenta</h4>
-                    <p>Tutaj wrzucic jakies odpowiedzi na pytania ktore powinny byc w tym dla pacjenta formularzu</p>
-                </div>
-
-            </section>
+            
             <section class="p-3 mb-4 bg-light">
                 <div class="row">
                     <h4>Prosby</h4>
@@ -100,6 +113,7 @@
     private Patient.Domain.Entities.Actors.Patient currentPatient = new();
 
     private bool loading;
+    private List<string> questionList = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -107,6 +121,7 @@
         currentPatient = await _patientManager.GetUserAsync(contextAccesor.HttpContext.User);
         await Task.Delay(1000);
         loading = false;
+        questionList = QuestionsForReport.GetAllQuestions();
         StateHasChanged();
     }
 

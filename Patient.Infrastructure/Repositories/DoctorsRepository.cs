@@ -82,6 +82,14 @@ internal class DoctorsRepository(PatientDbContext dbContext) :  IDoctorsReposito
         result.DoctorSpecializations.Add(DoctorSpecialization);
         await dbContext.SaveChangesAsync();
     }
+    public async Task<List<Doctor>> GetPatientsDoctorsToShow(string patientId)
+    {
+        var result = await dbContext.Patients
+            .Include(p => p.Doctors)
+            .Where(p => p.Id == patientId)
+            .FirstOrDefaultAsync();
+        return result.Doctors.ToList();
+    }
     public async Task SaveDbAsync()
     {
         await dbContext.SaveChangesAsync();
