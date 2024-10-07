@@ -1,6 +1,6 @@
 ﻿namespace Patient.Infrastructure.Seeders.MedicineSeeder;
 
-public interface IMedicineSeeder
+public interface IUserSeeder
 {
     public Task SeedMedicines();
 

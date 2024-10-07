@@ -1,5 +1,5 @@
 ﻿@layout Patient.Api.Client.Layout.UserLayout
-
+@rendermode @(new InteractiveServerRenderMode(false))
 @page "/pacjent/recepty"
 
 
@@ -8,8 +8,8 @@
 @using Patient.Domain.Entities;
 @using Patient.Domain.Entities.DTOs.Reports
 @using Patient.Domain.Repositories
-@rendermode @(new InteractiveServerRenderMode(false))
 
+@inject IDiseaseRepository _diseaseRepository
 @inject IPatientApiService _patientApiService
 @inject NavigationManager _navigationManager
 @inject IHttpContextAccessor contextAccesor
@@ -17,33 +17,43 @@
 @inject IPrescriptionRequestRepository _prescriptionRequestRepository
 
 <div class="container px-4 position-relative">
-    <section>
-        <div class="row text-center">
-            <MudPaper Class="pa-4 ma-3 summary-item" Elevation="3" Style="cursor: pointer;">
-                <h3></h3>
-                <btn type="button" class="btn btn-primary btn-custom-primary" @onclick="ShowAskForPrescriptionModal">
-                    Poproś o recepte
-                </btn>
-            </MudPaper>
-        </div>
-    </section>
-    <section>
-        <div class="row">
-            <div class="col">
+    @if (showReminder)
+    {
+        <section>
+            <Patient.Api.Components.ManageComponents.FullfillMedicalInterviewReminderComponent />
+        </section>
+    }
+    else
+    {
+        <section>
+            <div class="row text-center">
                 <MudPaper Class="pa-4 ma-3 summary-item" Elevation="3" Style="cursor: pointer;">
-                    <CascadingValue Value="currentPatient">
-                        <Patient.Api.Components.Pages.PatientPages.Prescription.AdditionalComponents.PatientsPrescriptionsComponent />
-                    </CascadingValue>
+                    <h3></h3>
+                    <btn type="button" class="btn btn-primary btn-custom-primary" @onclick="ShowAskForPrescriptionModal">
+                        Poproś o recepte
+                    </btn>
                 </MudPaper>
             </div>
-            <div class="col">
-                <MudPaper Class="pa-4 ma-3 summary-item" Elevation="3" Style="cursor: pointer;">
-                    <h3>Twoje prosby o recepty</h3>
-                    <h3>@prescriptionRequestsNumber</h3>
-                </MudPaper>
+        </section>
+        <section>
+            <div class="row">
+                <div class="col">
+                    <MudPaper Class="pa-4 ma-3 summary-item" Elevation="3" Style="cursor: pointer;">
+                        <CascadingValue Value="currentPatient">
+                            <Patient.Api.Components.Pages.PatientPages.Prescription.AdditionalComponents.PatientsPrescriptionsComponent />
+                        </CascadingValue>
+                    </MudPaper>
+                </div>
+                <div class="col">
+                    <MudPaper Class="pa-4 ma-3 summary-item" Elevation="3" Style="cursor: pointer;">
+                        <h3>Twoje prosby o recepty</h3>
+                        <h3>@prescriptionRequestsNumber</h3>
+                    </MudPaper>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
+    }
+    
     @if (showAskForPrescriptionModal)
     {
         <Patient.Api.Components.Pages.PatientPages.Prescription.AdditionalComponents.AskForPrescriptionModal OnClose="CloseAskForPrescriptionModal" />
@@ -58,9 +68,17 @@
     private Patient.Domain.Entities.Actors.Patient currentPatient = new();
     private int prescriptionRequestsNumber;
 
+
+    //dla zablokowania okna
+    private bool showReminder;
+
     protected override async Task OnInitializedAsync()
-    {
+    {       
         await CountUserPrescriptionRequests();
+        if ((await _diseaseRepository.CountPatientsCurrentDiseases(currentPatient.Id) == 0) && (currentPatient.PreventionPatient==false))
+        {
+            showReminder = true;
+        }
     }
 
     private void ShowAskForPrescriptionModal()

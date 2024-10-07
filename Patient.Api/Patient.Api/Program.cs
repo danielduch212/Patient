@@ -44,7 +44,7 @@ var app = builder.Build();
 
 var scope = app.Services.CreateScope();
 var seeder = scope.ServiceProvider.GetRequiredService<IPatientSeeder>();
-var medicineSeeder = scope.ServiceProvider.GetRequiredService<IMedicineSeeder>();
+var medicineSeeder = scope.ServiceProvider.GetRequiredService<IUserSeeder>();
 var diseaseSeeder = scope.ServiceProvider.GetRequiredService<IDiseaseSeeder>();
 
 

@@ -6,6 +6,8 @@
 @using Patient.Domain.Constants;
 @using Patient.Api.Extensions;
 @using Patient.Domain.Repositories
+@using Patient.Api.Components.ManageComponents
+
 
 @inject Microsoft.JSInterop.IJSRuntime _jsRuntime
 @inject NavigationManager _navigationManager
@@ -17,15 +19,12 @@
 <div class="container px-4">
     @if(patientsCurrentlyCuredDiseasesNumber==0 && isCount==true)
     {
-        <MudPaper Class="pa-4 summary-item" Elevation="3" Style="cursor: pointer;" @onclick='() => RedirectTo("wywiad")'>
-            <div class="row">
-                <h2>Kliknij tutaj aby wypełnić informacje o swoim zdrowiu</h2>
-            </div>
-        </MudPaper>
-        
+
+        <FullfillMedicalInterviewReminderComponent />
 
     }
     <div class="row">
+        
         @if (isInitialized)
         {
             <CascadingValue Value="currentPatient">
@@ -66,9 +65,6 @@
 
     }
 
-    private void RedirectTo(string path)
-    {
-        _navigationManager.NavigateTo($"/pacjent/{path}");
-    }
+    
     
 }

@@ -9,44 +9,66 @@
 @using Patient.Domain.Entities.DTOs
 @using Patient.Domain.Entities;
 @using Patient.Domain.Entities.DTOs.Reports
+@using Patient.Domain.Repositories
 
 @inject IPatientApiService _patientApiService
 @inject NavigationManager _navigationManager
+@inject IDiseaseRepository _diseaseRepository
+@inject IHttpContextAccessor contextAccesor
+@inject UserManager<Patient.Domain.Entities.Actors.Patient> _patientManager
 
 <div class="container px-4">
-    <section>
-        <div class="row text-center">
-            <MudPaper Class="pa-4 ma-3 summary-item" Elevation="3" Style="cursor: pointer;">
-                <h3></h3>
-                <NavLink href="/pacjent/dodaj-raport">
-                    <btn type="button" class="btn btn-outline-primary btn-custom-outline">
-                        Zloz raport tutaj
-                    </btn>
-                </NavLink>
-            </MudPaper>
-        </div>               
-    </section>
-    <section>
-        <div class="row">
-            <div class="col">
+    @if (showReminder)
+    {
+        <section>
+            <Patient.Api.Components.ManageComponents.FullfillMedicalInterviewReminderComponent />
+        </section>
+    }
+    else
+    {
+        <section>
+            <div class="row text-center">
                 <MudPaper Class="pa-4 ma-3 summary-item" Elevation="3" Style="cursor: pointer;">
-                    <Patient.Api.Components.Pages.PatientPages.Reports.AdditionalComponents.PatientsReportsComponent/>
+                    <h3></h3>
+                    <NavLink href="/pacjent/dodaj-raport">
+                        <btn type="button" class="btn btn-outline-primary btn-custom-outline">
+                            Zloz raport tutaj
+                        </btn>
+                    </NavLink>
                 </MudPaper>
             </div>
-            <div class="col">
-
+        </section>
+        <section>
+            <div class="row">
+                <div class="col">
+                    <MudPaper Class="pa-4 ma-3 summary-item" Elevation="3" Style="cursor: pointer;">
+                        <Patient.Api.Components.Pages.PatientPages.Reports.AdditionalComponents.PatientsReportsComponent />
+                    </MudPaper>
+                </div>
+                <div class="col">
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
+    }
+    
 
 
 </div>
 
 @code {
 
+
+    private Patient.Domain.Entities.Actors.Patient currentPatient = new();
+
+    private bool showReminder;
+
     protected async override Task OnInitializedAsync()
     {
-        
+        currentPatient = await _patientManager.GetUserAsync(contextAccesor.HttpContext.User);
+        if ((await _diseaseRepository.CountPatientsCurrentDiseases(currentPatient.Id) == 0) && (currentPatient.PreventionPatient == false))
+        {
+            showReminder = true;
+        }
 
     }
 

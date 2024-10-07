@@ -75,4 +75,15 @@ internal class DoctorsRepository(PatientDbContext dbContext) :  IDoctorsReposito
             await dbContext.SaveChangesAsync();
         }
     }
+    public async Task AssignDoctorSpecializationForDoctor(string doctorId, string DoctorSpecialization)
+    {
+        var result = await dbContext.Doctors
+            .FirstOrDefaultAsync(d=>d.Id == doctorId);
+        result.DoctorSpecializations.Add(DoctorSpecialization);
+        await dbContext.SaveChangesAsync();
+    }
+    public async Task SaveDbAsync()
+    {
+        await dbContext.SaveChangesAsync();
+    }
 }

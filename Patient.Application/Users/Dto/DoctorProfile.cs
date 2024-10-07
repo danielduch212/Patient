@@ -6,9 +6,5 @@ namespace Patient.Application.Users.Dto;
 
 public class DoctorProfile : Profile
 {
-    public DoctorProfile()
-    {
-        CreateMap<RegisterDoctorData, Doctor>();
-
-    }
+    
 }

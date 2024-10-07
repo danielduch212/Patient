@@ -79,7 +79,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IDoctorApiService, DoctorApiService>();
 
         services.AddScoped<IMedicalDataRepository, MedicalDataRepository>();
-        services.AddScoped<IMedicineSeeder, MedicineSeeder>();
+        services.AddScoped<IUserSeeder, UserSeeder>();
         services.AddScoped<IDoctorsRepository, DoctorsRepository>();
         services.AddScoped<IMedicineRepository, MedicineRepository>();
         services.AddScoped<IRecommandationRepository, RecommandationRepository>();
@@ -88,6 +88,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IPrescriptionRepository, PrescriptionRepository>();
         services.AddScoped<IDiseaseRepository, DiseaseRepository>();
         services.AddScoped<IPrescriptionRequestRepository, PrescriptionRequestRepository>();
-
+        services.AddScoped<IUserSeeder, UserSeeder>();
     }
 }

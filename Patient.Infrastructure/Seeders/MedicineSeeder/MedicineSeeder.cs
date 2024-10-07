@@ -6,7 +6,7 @@ using Patient.Domain.Entities;
 
 namespace Patient.Infrastructure.Seeders.MedicineSeeder;
 
-internal class MedicineSeeder(HttpClient _httpClient, PatientDbContext dbContext) : IMedicineSeeder
+internal class UserSeeder(HttpClient _httpClient, PatientDbContext dbContext) : IUserSeeder
 {
     //tutaj bede pobieral nazwy z tej strony: 
     private string url = "https://www.mp.pl/pacjent/leki/";

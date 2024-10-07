@@ -1,0 +1,20 @@
+﻿
+
+
+@using MudBlazor
+@inject NavigationManager _navigationManager
+
+<MudPaper Class="pa-4 summary-item" Elevation="3" Style="cursor: pointer;" @onclick='() => RedirectTo("wywiad")'>
+    <div class="row">
+        <h2>Kliknij tutaj aby wypełnić informacje o swoim zdrowiu</h2>
+    </div>
+</MudPaper>
+
+@code {
+
+
+    private void RedirectTo(string path)
+    {
+        _navigationManager.NavigateTo($"/pacjent/{path}");
+    }
+}
