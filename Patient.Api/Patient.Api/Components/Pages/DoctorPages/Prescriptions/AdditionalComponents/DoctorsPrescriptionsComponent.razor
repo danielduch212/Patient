@@ -1,0 +1,116 @@
+﻿@using Patient.Domain.Interfaces
+@using Patient.Domain.Entities.DTOs
+@using Patient.Domain.Entities;
+@using Patient.Domain.Entities.DTOs.Prescription
+@using Patient.Domain.Entities.DTOs.PrescriptionRequest
+
+@inject IDoctorApiService _doctorApiService
+@inject NavigationManager _navigationManager
+
+
+<div class="container">
+    <h4>Prośby twoich pacjentów</h4>
+    <div class="list-group pt-5">
+        @if (readingPrescriptions)
+        {
+            <MudProgressCircular Color="Color.Default" Indeterminate="true">
+
+            </MudProgressCircular>
+        }
+        @if (filesGet)
+        {
+            foreach (var prescription in prescriptionRequests)
+            {
+                <button type="button" @onclick="() => HandleShowPrescription(prescription)" class="list-group-item list-group-item-action">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <small class="text-muted">Data wystawienia</small>
+                            <h5 class="mb-1">@prescription.DateOfIssue</h5>
+                        </div>
+                        <div>
+                            <small class="text-muted">Pesel</small>
+                            <h5 class="mb-1">@prescription.PatientPesel</h5>
+                        </div>
+                        <div>
+                            <small class="text-muted">Pesel</small>
+                            <h5 class="mb-1">@prescription.PatientName</h5>
+                        </div>
+                        <div>
+                            <small class="text-muted">Pesel</small>
+                            <h5 class="mb-1">@prescription.PatientSurname</h5>
+                        </div>
+                        
+                    </div>
+                </button>
+            }
+        }
+        else
+        {
+            <div>
+                Brak próśb o wystawienie recepty
+            </div>
+        }
+
+    </div>
+</div>
+@if (showPrescriptionRequestPreviewModal)
+{
+    <CascadingValue Value="prescriptionRequestToShowToDoctorDto">
+        <PrescriptionRequestPreviewModal OnClose="HandleClosePrescriptionPreviewModal" />
+    </CascadingValue>
+}
+
+@code {
+    [Parameter]
+    public EventCallback OnRefresh { get; set; }
+
+    private List<PrescriptionRequestToShowToDoctorDto> prescriptionRequests = new();
+    private bool filesGet;
+    private bool readingPrescriptions;
+
+    private bool showPrescriptionRequestPreviewModal;
+
+    //for cascading 
+    private PrescriptionRequestToShowToDoctorDto prescriptionRequestToShowToDoctorDto = new();
+
+
+
+    protected async override Task OnInitializedAsync()
+    {
+        await GetDoctorsRequests();
+
+    }
+
+    private void HandleShowPrescription(PrescriptionRequestToShowToDoctorDto prescription)
+    {
+        prescriptionRequestToShowToDoctorDto = prescription;
+        showPrescriptionRequestPreviewModal = true;
+
+    }
+
+    private async Task HandleClosePrescriptionPreviewModal()
+    {
+        await GetDoctorsRequests();
+        showPrescriptionRequestPreviewModal = false;
+        await OnRefresh.InvokeAsync();
+        StateHasChanged();
+    }
+
+    private async Task GetDoctorsRequests()
+    {
+        readingPrescriptions = true;
+        var response = await _doctorApiService.SendRequestGetPrescriptionRequests();
+        if (response.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            prescriptionRequests = await response.Content.ReadFromJsonAsync<List<PrescriptionRequestToShowToDoctorDto>>();
+            if (prescriptionRequests.Count > 0) { filesGet = true; }
+            StateHasChanged();
+        }
+        readingPrescriptions = false;
+    }
+
+
+
+
+    
+}

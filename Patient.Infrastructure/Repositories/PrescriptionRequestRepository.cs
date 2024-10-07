@@ -20,4 +20,38 @@ internal class PrescriptionRequestRepository(PatientDbContext dbContext) : IPres
             .CountAsync();
         return results;
     }
+
+    public async Task<int> CountDoctorsPrescriptionRequests(string doctorId)
+    {
+        var prescriptionRequestsNumber = await dbContext.PrescriptionRequests
+            .Where(pr => (pr.DoctorId == doctorId) && (pr.IsIssued == false))
+            .CountAsync();
+        return prescriptionRequestsNumber;
+    }
+
+    public async Task<List<PrescriptionRequest>> GetDoctorsPrescriptionRequests(string doctorId)
+    {
+        var prescriptionRequests = await dbContext.PrescriptionRequests
+            .Where(pr=>(pr.IsIssued==false)&&(pr.DoctorId==doctorId))
+            .ToListAsync();
+        return prescriptionRequests;
+    }
+
+    public async Task MarkPresriptionRequestAsIssued(int prescriptionId)
+    {
+        var prescriptionRequest = await dbContext.PrescriptionRequests
+            .FirstOrDefaultAsync(pr=>pr.Id==prescriptionId);
+        prescriptionRequest.IsIssued = true;
+        await dbContext.SaveChangesAsync();
+    }
+
+    public async Task ErasePrescriptionRequest(int prescriptionRequestId)
+    {
+        var prescriptionRequest = await dbContext.PrescriptionRequests
+            .FirstOrDefaultAsync(pr=>pr.Id == prescriptionRequestId);
+        dbContext.Remove(prescriptionRequest);
+        await dbContext.SaveChangesAsync();
+    }
+
+
 }

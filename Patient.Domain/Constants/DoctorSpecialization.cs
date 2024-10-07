@@ -2,6 +2,8 @@
 
 public static class DoctorSpecialization
 {
+    public const string PrimaryCareDoctor = "Lekarz pierwszego kontaktu";
+
     public const string CARDIOLOGIST = "Kardiolog";
     public const string DERMATOLOGIST = "Dermatolog";
     public const string ENDOCRINOLOGIST = "Endokrynolog";
@@ -28,6 +30,9 @@ public static class DoctorSpecialization
     {
         return new List<string>
             {
+            //  //
+                PrimaryCareDoctor,
+                //
                 CARDIOLOGIST,
                 DERMATOLOGIST,
                 ENDOCRINOLOGIST,

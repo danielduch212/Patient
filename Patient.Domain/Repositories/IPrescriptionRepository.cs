@@ -7,6 +7,6 @@ public interface IPrescriptionRepository
     public Task<int> CountPatientsPrescriptions(string patientId);
     public Task<List<Prescription>> GetPatientsPrescriptions(string patientId);
     public Task<Prescription> GetPrescriptionByIdAsync(int prescriptionId);
-
+    public Task AddPrescriptionAsync(Prescription entity);
 
 }

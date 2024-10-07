@@ -31,5 +31,12 @@ internal class PrescriptionRepository(PatientDbContext dbContext) : IPrescriptio
             .FirstOrDefaultAsync(p => p.Id == prescriptionId);
         return result;
     }
+
+    public async Task AddPrescriptionAsync(Prescription entity)
+    {
+        var result = await dbContext.Prescriptions.AddAsync(entity);
+        await dbContext.SaveChangesAsync();
+    }
+    
  
 }

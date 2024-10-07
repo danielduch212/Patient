@@ -34,8 +34,9 @@ internal class CreateReportCommandHandler(ILogger<CreateReportCommandHandler> lo
         }
 
         List<Doctor> doctorsToCheck = new List<Doctor>();
-        var doctor = await doctorsRepository.AssignAvailibleDoctor();
-        doctorsToCheck.Add(doctor);
+
+        doctorsToCheck.Add(await doctorsRepository.GetPatientsFirstContactDoctor(user.Id));
+        
         Report report = new()
         {
             Description = request.Description,

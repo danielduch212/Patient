@@ -1,30 +1,5 @@
 ﻿
 
-.d-flex-column {
-    display: flex;
-    flex-direction: column;
-}
-
-.d-flex-row {
-    display: flex;
-    flex-direction: row;
-}
-
-.file-block {
-    display: inline-block;
-    position: static;
-    width: 4.5rem;
-    height: 5rem;
-    margin-block: 1rem;
-    margin-left: 2rem;
-    margin-right: 2rem;
-    border: 2px solid black;
-}
-
-.font-10px {
-    font-size: 10px;
-}
-
 .modal {
     position: absolute;
     width: 50rem;
@@ -45,7 +20,21 @@
     z-index: 1040;
 }
 
+
 .modal-dialog {
     width: 50%;
     max-width: 500px;
 }
+
+.img-avatar {
+    height: 10rem;
+    width: 10rem;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+    .img-avatar img {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+    }

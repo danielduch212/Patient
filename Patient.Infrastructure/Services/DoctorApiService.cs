@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Patient.Domain.Entities.DTOs.PrescriptionRequest;
 using Patient.Domain.Entities.DTOs.Recommandation;
 using Patient.Domain.Interfaces;
 using System.Net.Http.Json;
@@ -41,6 +42,20 @@ public class DoctorApiService : IDoctorApiService
     {
         AddCookiesToRequest();
         var response = await _httpClient.PostAsJsonAsync("/api/RecommandationController/createRecommandation", dto);
+        return response;
+    }
+
+    public async Task<HttpResponseMessage> SendRequestGetPrescriptionRequests()
+    {
+        AddCookiesToRequest();
+        var response = await _httpClient.GetAsync("/api/PrescriptionRequestController/getDoctorsPrescriptionRequests");
+        return response;
+    }
+
+    public async Task<HttpResponseMessage> SendRequestPrescribePrescription(PrescriptionRequestToShowToDoctorDto dto)
+    {
+        AddCookiesToRequest();
+        var response = await _httpClient.PostAsJsonAsync("/api/PrescriptionRequestController/prescribePrescriptionFromRequest", dto);
         return response;
     }
 

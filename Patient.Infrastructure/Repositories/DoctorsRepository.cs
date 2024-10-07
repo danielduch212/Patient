@@ -14,6 +14,7 @@ internal class DoctorsRepository(PatientDbContext dbContext) :  IDoctorsReposito
     }
     public async Task<Doctor> AssignAvailibleDoctor ()
     {
+        // to jest zla funkcja - mozna ja zmienic na jakas lepsza ;)
         var doctor = await dbContext.Doctors
             .Include(d => d.ReportsToCheck)
             .Select(d => new
@@ -27,19 +28,20 @@ internal class DoctorsRepository(PatientDbContext dbContext) :  IDoctorsReposito
         return doctor.Doctor;
     }
     
-    public async Task<Doctor> GetPatientsDoctor(string patientId)
+    public async Task<Doctor> GetPatientsFirstContactDoctor(string patientId)
     {
         var patient = await dbContext.Patients
             .Include(p => p.Doctors)
             .Where(p => p.Id == patientId)
             .FirstOrDefaultAsync();
-        return patient.Doctors.FirstOrDefault();
+        return patient.Doctors.FirstOrDefault(d=>d.DoctorSpecializations.Contains("Lekarz pierwszego kontaktu"));
     }
     public async Task AssignFirstContactDoctorToPatient(string patientId)
     {
 
         var doctor = await dbContext.Doctors
         .Include(d => d.Patients)
+        .Where(d=>d.DoctorSpecializations.Contains("Lekarz pierwszego kontaktu"))
         .Select(d => new
         {
             Doctor = d,

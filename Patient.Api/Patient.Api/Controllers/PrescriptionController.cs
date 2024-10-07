@@ -25,7 +25,7 @@ public class PrescriptionController(IMediator mediator, ILogger<PrescriptionCont
     }
 
     [HttpPost("addPrescriptionRequest")]
-    public async Task<IActionResult> addPrescriptionRequest([FromBody] PrescriptionRequestDto dto)
+    public async Task<IActionResult> AddPrescriptionRequest([FromBody] PrescriptionRequestDto dto)
     {
         var command = new AddPrescriptionRequestCommand()
         {

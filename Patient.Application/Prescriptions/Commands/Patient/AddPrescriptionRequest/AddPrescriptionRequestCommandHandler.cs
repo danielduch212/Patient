@@ -20,7 +20,7 @@ IDoctorsRepository doctorsRepository) : IRequestHandler<AddPrescriptionRequestCo
         var user = await userAccessor.GetRequiredUserAsync(httpContextAccesor.HttpContext);
         logger.LogInformation($"Adding prescription request for patient user: {user.Id}");
 
-        var patientsDoctor = await doctorsRepository.GetPatientsDoctor(user.Id);
+        var patientsDoctor = await doctorsRepository.GetPatientsFirstContactDoctor(user.Id);
         if (patientsDoctor == null)
         {
             return false;

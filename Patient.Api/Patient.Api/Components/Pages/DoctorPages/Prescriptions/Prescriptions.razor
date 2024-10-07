@@ -4,8 +4,72 @@
 
 @page "/lekarz/recepty"
 
-<h3>Prescriptions</h3>
+@using Patient.Domain.Interfaces
+@using Patient.Domain.Entities.DTOs
+@using Patient.Domain.Entities;
+@using Patient.Domain.Entities.DTOs.Reports
+@using Patient.Domain.Repositories
+
+
+@inject IPatientApiService _patientApiService
+@inject NavigationManager _navigationManager
+@inject IHttpContextAccessor contextAccesor
+@inject UserManager<Patient.Domain.Entities.Actors.Doctor> _doctorManager
+@inject IPrescriptionRequestRepository _prescriptionRequestRepository
+
+<div class="container px-4 position-relative">
+    <section>
+        <div class="row text-center">
+            <MudPaper Class="pa-4 ma-3 summary-item" Elevation="3" Style="cursor: pointer;">
+                <h3></h3>
+                
+            </MudPaper>
+        </div>
+    </section>
+    <section>
+        <div class="row">
+            <div class="col">
+                <MudPaper Class="pa-4 ma-3 summary-item" Elevation="3" Style="cursor: pointer;">
+                    <Patient.Api.Components.Pages.DoctorPages.Prescriptions.AdditionalComponents.DoctorsPrescriptionsComponent OnRefresh="Refresh"/>
+                </MudPaper>
+            </div>
+            <div class="col">
+                <MudPaper Class="pa-4 ma-3 summary-item" Elevation="3" Style="cursor: pointer;">
+                    <h3>Prośby o recepty</h3>
+                    <h3>@prescriptionRequestsNumber</h3>
+                </MudPaper>
+            </div>
+        </div>
+    </section>
+    @if (showAskForPrescriptionModal)
+    {
+    }
+</div>
+
 
 @code {
+    private bool showAskForPrescriptionModal;
 
+    private Patient.Domain.Entities.Actors.Doctor currentDoctor = new();
+    private int prescriptionRequestsNumber;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CountDoctorPrescriptionRequests();
+    }
+
+    private async Task CountDoctorPrescriptionRequests()
+    {
+        currentDoctor = await _doctorManager.GetUserAsync(contextAccesor.HttpContext.User);
+        prescriptionRequestsNumber = await _prescriptionRequestRepository.CountDoctorsPrescriptionRequests(currentDoctor.Id);
+        StateHasChanged();
+    }
+
+    private async Task Refresh()
+    {
+        await CountDoctorPrescriptionRequests();
+    }
+
+
+ 
 }

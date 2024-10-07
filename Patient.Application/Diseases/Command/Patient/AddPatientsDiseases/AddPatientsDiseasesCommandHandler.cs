@@ -35,7 +35,7 @@ IDoctorsRepository doctorsRepository) : IRequestHandler<AddPatientsDiseasesComma
         }
 
         await diseaseRepository.AddPatientsDiseases(patientsDiseases);
-        var patientsDoctor = await doctorsRepository.GetPatientsDoctor(user.Id);
+        var patientsDoctor = await doctorsRepository.GetPatientsFirstContactDoctor(user.Id);
         if (patientsDoctor == null)
         {
             await doctorsRepository.AssignFirstContactDoctorToPatient(user.Id);

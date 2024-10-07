@@ -1,0 +1,118 @@
+﻿@using static Patient.Api.Components.Pages.PatientPages.Prescription.AdditionalComponents.PatientsPrescriptionsComponent
+@using Patient.Domain.Repositories
+@using Patient.Domain.Entities
+@using Patient.Domain.Entities.DTOs.PrescriptionRequest
+@using Patient.Domain.Interfaces
+
+@inject IPrescriptionRepository _prescriptionRepository
+@inject IDoctorsRepository _doctorsRepository
+@inject NavigationManager _navigationManager
+@inject IDoctorApiService _doctorApiService
+@inject IPrescriptionRequestRepository _prescriptionRequestRepository
+
+<div class="modal-backdrop">
+    <div class="modal" tabindex="-1" style="display:block;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Prośba o wystawienie recepty</h5>
+                <button type="button" class="btn-close" @onclick="CloseModal"></button>
+            </div>
+            <div class="modal-body">
+                @if (loading)
+                {
+                    <div class="row text-center">
+                        <MudProgressCircular Color="Color.Primary" Indeterminate="true"></MudProgressCircular>
+                    </div>
+
+                }
+                else
+                {
+                    <div class="container">                     
+                        <div class="row">
+                            <div class="col">
+                                <p>Pacjent</p>
+                                <MudAvatar Size="Size.Large" Style="width: 10%; height: 10%;">
+                                    <MudImage Src="/images/icons/patientIcon.jpg"></MudImage>
+                                </MudAvatar>
+                            </div>
+                            <div class="col">
+                                <p>Dane pacjenta</p>
+                                <small>@PrescriptionRequestToShowToDoctorDto.PatientName</small>
+                                <small>@PrescriptionRequestToShowToDoctorDto.PatientSurname</small>
+                                <small>@PrescriptionRequestToShowToDoctorDto.PatientPesel</small>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <p class="text-center">Leki</p>
+                            @foreach (var medicineName in PrescriptionRequestToShowToDoctorDto.MedicineNames)
+                            {
+                                <small>@medicineName</small>
+                            }
+                            
+                        </div>
+                        <div class="row">
+                            <p>Opis </p>
+                            <p>@PrescriptionRequestToShowToDoctorDto.Description</p>
+                        </div>                    
+                    </div>
+                    <div class="row text-center">
+                        <button class="btn btn-primary btn-custom-primary" @onclick="PrescribePrescription">Wystaw receptę</button>
+                    </div>
+                }               
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" @onclick="ErasePrescriptionRequest">Usuń prośbę</button>
+                <button class="btn btn-outline-primary btn-custom-outline" @onclick="CloseModal">Zamknij</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [CascadingParameter]
+    PrescriptionRequestToShowToDoctorDto PrescriptionRequestToShowToDoctorDto { get; set; } = new();
+
+    [Parameter]
+    public EventCallback OnClose { get; set; }
+
+    private bool loading;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        loading = true;
+        await Task.Delay(1000);
+
+
+        loading = false;
+        StateHasChanged();
+    }
+
+    private async Task PrescribePrescription()
+    {
+        var response = await _doctorApiService.SendRequestPrescribePrescription(PrescriptionRequestToShowToDoctorDto);
+        if (response.IsSuccessStatusCode)
+        {
+            await OnClose.InvokeAsync();
+        }
+        else
+        {
+            throw new Exception("Bad");
+        }
+    }
+
+    private async Task ErasePrescriptionRequest()
+    {
+        await _prescriptionRequestRepository.ErasePrescriptionRequest(PrescriptionRequestToShowToDoctorDto.PrescriptionRequestId);
+        await OnClose.InvokeAsync();
+    }
+
+    private async Task CloseModal()
+    {
+        await OnClose.InvokeAsync();
+    }
+
+    private void ShowPatientComponent()
+    {
+    }
+}

@@ -38,6 +38,11 @@
 
     [SupplyParameterFromQuery]
     private string? PatientId { get; set; }
+    
+    [SupplyParameterFromQuery]
+    private string? PrescriptionRequestId { get; set; }
+
+
 
     private Patient.Domain.Entities.Actors.Patient currentPatient = new();
 
@@ -49,6 +54,14 @@
 
     private void HandleBack()
     {
-        _navigationManager.NavigateTo($"/lekarz/raporty/{ReportId}");
+        if (ReportId != null)
+        {
+            _navigationManager.NavigateTo($"/lekarz/raporty/{ReportId}");
+        }
+        if (PrescriptionRequestId != null)
+        {
+            _navigationManager.NavigateTo($"/lekarz/raporty/{ReportId}");
+        }
     }
+    //zrobic to jako modal ;) - zeby mozna bylo sobie to gdziekolwiek wywolywac
 }
