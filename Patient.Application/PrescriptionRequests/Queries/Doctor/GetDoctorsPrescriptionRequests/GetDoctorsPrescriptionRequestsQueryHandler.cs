@@ -25,7 +25,7 @@ internal class GetDoctorsPrescriptionRequestsQueryHandler(ILogger<GetDoctorsPres
 
         var doctor = await doctorManager.FindByEmailAsync(userDoctor.Email);
 
-        var prescriptionRequests = await prescriptionRepository.GetDoctorsPrescriptionRequests(doctor.Id);
+        var prescriptionRequests = await prescriptionRepository.GetDoctorsPrescriptionRequests(doctor.Id, cancellationToken);
 
         List<PrescriptionRequestToShowToDoctorDto> dtos = new();
 

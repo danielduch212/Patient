@@ -2,6 +2,8 @@
 
 @rendermode @(new InteractiveServerRenderMode(false))
 
+@page "/lekarz/raporty/{ReportId}"
+
 @using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
 @using Patient.Domain.Interfaces
 @using Patient.Domain.Entities.DTOs
@@ -30,8 +32,8 @@
 @inject ISnackbar snackBar
 
 
+@implements IDisposable
 
-@page "/lekarz/raporty/{ReportId}"
 
 <div>
     <div class="container px-4  ">
@@ -50,7 +52,7 @@
             {
                 <div class="mx-5">
                     <CascadingValue Value="reportToShow">
-                        <Patient.Api.Components.Pages.DoctorPages.Reports.ReportPreviewComponent />
+                        <Patient.Api.Components.Pages.DoctorPages.Reports.ReportPreviewComponent TokenSource="tokenSource"/>
                     </CascadingValue>
                 </div>
             }
@@ -70,7 +72,7 @@
                     <div class="collapse position-relative" id="collapseCard" style="left: 33.5%; width: 70%;">
                         <div class="card card-body position-absolute" style="z-index: 1000; transform: translateY(0);">
                             <CascadingValue Value="ReportId">
-                                <AskForConsultationComponent />
+                                <AskForConsultationComponent TokenSource="tokenSource"/>
                             </CascadingValue>
                         </div>  
                     </div>
@@ -89,7 +91,7 @@
     @if (showAddRecommandationModal)
     {
         <CascadingValue Value="addRecommandationModalData">
-            <AddRecommandationModal OnClose="CloseModalAddRecommandation" />
+            <AddRecommandationModal OnClose="CloseModalAddRecommandation" TokenSource="tokenSource"/>
         </CascadingValue>
     }
 </div>
@@ -102,6 +104,7 @@
     [Parameter]
     public string ReportId { get; set; }
 
+    private CancellationTokenSource tokenSource = new();
     private ReportForDoctorToShowDto reportToShow = new();
 
     private bool fileGet;
@@ -133,7 +136,7 @@
     {
         readingReport = true;
 
-        var reportToShow = await _doctorApiService.GetReport(ReportId);
+        var reportToShow = await _doctorApiService.GetReport(ReportId, tokenSource.Token);
         if (reportToShow.FileNames.Any())
         {
             foreach (var filename in reportToShow.FileNames)
@@ -145,7 +148,7 @@
         }
         foreach (var doctorId in reportToShow.DoctorsId)
         {
-            var doctor = await _doctorsRepository.GetDoctorByIdAsync(doctorId);
+            var doctor = await _doctorsRepository.GetDoctorByIdAsync(doctorId, tokenSource.Token);
             doctors.Add(doctor);
         }
         currentPatient = await _patientManager.FindByIdAsync(reportToShow.PatientId);
@@ -171,7 +174,7 @@
 
     private async void HandleShowRecommandationModal()
     {
-        var report = await _reportRepository.GetReport(int.Parse(ReportId));
+        var report = await _reportRepository.GetReport(int.Parse(ReportId), tokenSource.Token);
         if (report.MedicalRecommandationId != null)
         {
             snackBar.Add("Raport zawiera już rekomendację", Severity.Error);
@@ -234,6 +237,12 @@
     {      
         public Patient.Domain.Entities.Actors.Patient CurrentPatient { get; set; }
         public string ReportId { get; set; }
-                
+
+    }
+
+    public void Dispose()
+    {
+        tokenSource.Cancel();
+        tokenSource.Dispose();
     }
 }

@@ -1,5 +1,10 @@
 ﻿@layout Patient.Api.Client.Layout.MyAccount.PatientAccountLayout
 
+@rendermode @(new InteractiveServerRenderMode(false))
+
+
+@page "/pacjent/dokumentacja-medyczna"
+
 @using Patient.Domain.Interfaces
 @using Patient.Domain.Entities.DTOs
 @using System.Net.Http 
@@ -9,10 +14,9 @@
 @inject IPatientApiService _patientApiService
 @inject HttpClient _httpClient
 
+@implements IDisposable
 
-@rendermode @(new InteractiveServerRenderMode(false))
 
-@page "/pacjent/dokumentacja-medyczna"
 
 
 <div class="container pt-5 w-100">
@@ -102,6 +106,8 @@
 
 
 @code {
+    private CancellationTokenSource TokenSource = new();
+
     private int maxFiles = 5;
     private List<MedicalFileToShowDto> medicalFilesToShow = new();
     private bool filesGet;
@@ -114,8 +120,9 @@
 
     protected async override Task OnInitializedAsync()
     {
+        await Task.Delay(500);
         readingFiles = true;
-        var medicalFilesToShow = await _patientApiService.GetMedicalFiles();
+        var medicalFilesToShow = await _patientApiService.GetMedicalFiles(TokenSource.Token);
         if (medicalFilesToShow.Count > 0) { filesGet = true; }
         StateHasChanged();
         readingFiles = false;
@@ -150,6 +157,12 @@
             };
             return null;
         }
-        
+
+    }
+
+    public void Dispose()
+    {
+        TokenSource.Cancel();
+        TokenSource.Dispose();
     }
 }

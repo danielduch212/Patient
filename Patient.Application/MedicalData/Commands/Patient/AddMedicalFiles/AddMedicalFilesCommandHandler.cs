@@ -52,7 +52,7 @@ internal class AddMedicalFilesCommandHandler(ILogger<AddMedicalFilesCommandHandl
 
         }
         patient.MedicalFiles = medicalFilesToAdd;
-        await medicalDataRepository.SaveChanges();
+        await medicalDataRepository.SaveChanges(cancellationToken);
 
         if (previousUserMedicalFilesNumber < patient.MedicalFiles.Count())
         {

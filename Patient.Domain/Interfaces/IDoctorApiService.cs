@@ -6,10 +6,10 @@ namespace Patient.Domain.Interfaces;
 
 public interface IDoctorApiService
 {
-    Task<List<ReportForDoctorDto>> GetReports();
-    Task<ReportForDoctorToShowDto> GetReport(string id);
-    Task<bool> AddRecommandation(MedicalRecommandationDto dto);
-    Task<List<PrescriptionRequestToShowToDoctorDto>> GetPrescriptionRequests();
-    Task<bool> PrescribePrescription(PrescriptionRequestToShowToDoctorDto dto);
+    Task<List<ReportForDoctorDto>> GetReports(CancellationToken cancellationToken);
+    Task<ReportForDoctorToShowDto> GetReport(string id, CancellationToken cancellationToken);
+    Task<bool> AddRecommandation(MedicalRecommandationDto dto, CancellationToken cancellationToken);
+    Task<List<PrescriptionRequestToShowToDoctorDto>> GetPrescriptionRequests(CancellationToken cancellationToken);
+    Task<bool> PrescribePrescription(PrescriptionRequestToShowToDoctorDto dto, CancellationToken cancellationToken);
 
 }

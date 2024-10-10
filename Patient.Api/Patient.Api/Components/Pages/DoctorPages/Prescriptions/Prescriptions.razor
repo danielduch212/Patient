@@ -18,6 +18,8 @@
 @inject IPrescriptionRequestRepository _prescriptionRequestRepository
 @inject IUserContext userContext
 
+@implements IDisposable
+
 <div class="container px-4 position-relative">
     <section>
         <div class="row text-center">
@@ -31,7 +33,7 @@
         <div class="row">
             <div class="col">
                 <MudPaper Class="pa-4 ma-3 summary-item" Elevation="3" Style="cursor: pointer;">
-                    <Patient.Api.Components.Pages.DoctorPages.Prescriptions.AdditionalComponents.DoctorsPrescriptionsComponent OnRefresh="Refresh"/>
+                    <Patient.Api.Components.Pages.DoctorPages.Prescriptions.AdditionalComponents.DoctorsPrescriptionsComponent OnRefresh="Refresh" TokenSource="tokenSource"/>
                 </MudPaper>
             </div>
             <div class="col">
@@ -54,6 +56,8 @@
     private Patient.Domain.Entities.Actors.Doctor currentDoctor = new();
     private int prescriptionRequestsNumber;
 
+    private CancellationTokenSource tokenSource = new();
+
     protected override async Task OnInitializedAsync()
     {
         await CountDoctorPrescriptionRequests();
@@ -63,7 +67,7 @@
     {
         var currentUser = await userContext.GetCurrentUserAsync();
         currentDoctor = await _doctorManager.FindByIdAsync(currentUser.Id);
-        prescriptionRequestsNumber = await _prescriptionRequestRepository.CountDoctorsPrescriptionRequests(currentDoctor.Id);
+        prescriptionRequestsNumber = await _prescriptionRequestRepository.CountDoctorsPrescriptionRequests(currentDoctor.Id, tokenSource.Token);
         StateHasChanged();
     }
 
@@ -72,6 +76,10 @@
         await CountDoctorPrescriptionRequests();
     }
 
+    public void Dispose()
+    {
+        tokenSource.Cancel();
+        tokenSource.Dispose();
+    }
 
- 
 }

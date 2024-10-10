@@ -8,14 +8,13 @@ namespace Patient.Infrastructure.Repositories;
 
 internal class DiseaseRepository(PatientDbContext dbContext) : IDiseaseRepository
 {
-
-    public async Task<int> CountPatientsCurrentDiseases(string patientId)
+    public async Task<int> CountPatientsCurrentDiseases(string patientId, CancellationToken cancellationToken)
     {
         var patient = await dbContext.Patients
             .Include(p => p.TreatedDiseases)
-            .FirstOrDefaultAsync(p => p.Id == patientId);
+            .FirstOrDefaultAsync(p => p.Id == patientId, cancellationToken);
 
-        var result = patient.TreatedDiseases.Count(p => p.IsCurrentlyTreated == true); 
+        var result = patient.TreatedDiseases.Count(p => p.IsCurrentlyTreated);
         return result;
     }
 
@@ -26,24 +25,24 @@ internal class DiseaseRepository(PatientDbContext dbContext) : IDiseaseRepositor
             .ToListAsync();
     }
 
-    public async Task AddPatientsDiseases(List<PatientsDisease> patientsDiseases)
+    public async Task AddPatientsDiseases(List<PatientsDisease> patientsDiseases, CancellationToken cancellationToken)
     {
-        await dbContext.PatientsDiseases.AddRangeAsync(patientsDiseases);
-        await dbContext.SaveChangesAsync();
+        await dbContext.PatientsDiseases.AddRangeAsync(patientsDiseases, cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<List<PatientsDisease>> GetPatientsDiseases(string patientId)
+    public async Task<List<PatientsDisease>> GetPatientsDiseases(string patientId, CancellationToken cancellationToken)
     {
         var patient = await dbContext.Patients
             .Include(p => p.TreatedDiseases)
-            .FirstOrDefaultAsync(p=>p.Id==patientId);
+            .FirstOrDefaultAsync(p => p.Id == patientId, cancellationToken);
         return patient.TreatedDiseases.ToList();
     }
 
-    public async Task<Disease> GetDiseaseByIdAsync(int id)
+    public async Task<Disease> GetDiseaseByIdAsync(int id, CancellationToken cancellationToken)
     {
         var result = await dbContext.Diseases
-            .FirstOrDefaultAsync(d=>d.Id==id);
+            .FirstOrDefaultAsync(d => d.Id == id, cancellationToken);
         return result;
     }
 }

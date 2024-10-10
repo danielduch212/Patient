@@ -22,7 +22,7 @@ internal class GetMedicalFilesQueryHandler(ILogger<GetMedicalFilesQueryHandler> 
         var patient = await patientManager.FindByEmailAsync(user.Email);
         logger.LogInformation($"Getting medical files for user: {user.Email}");
 
-        var medicalFiles = await medicalDataRepository.GetPatientFiles(patient);
+        var medicalFiles = await medicalDataRepository.GetPatientFiles(patient, cancellationToken);
 
         List<MedicalFileToShowDto> medicalFilesToShowDto = new List<MedicalFileToShowDto>();
         if (medicalFiles.Any())

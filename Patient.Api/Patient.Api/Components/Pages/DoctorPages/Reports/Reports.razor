@@ -14,6 +14,8 @@
 @inject IDoctorApiService _doctorApiService
 @inject NavigationManager _navigationManager
 
+@implements IDisposable
+
 <div class="page-background">
 
     <div class="container px-4">
@@ -79,11 +81,12 @@
 
     private bool showPreviewModal;
 
+    private CancellationTokenSource tokenSource = new();
 
     protected async override Task OnInitializedAsync()
     {
         readingReports = true;
-        var reportsToShow = await _doctorApiService.GetReports();
+        var reportsToShow = await _doctorApiService.GetReports(tokenSource.Token);
         if (reportsToShow.Count > 0) { filesGet = true; }
         StateHasChanged();
         readingReports = false;
@@ -94,4 +97,9 @@
         _navigationManager.NavigateTo($"/lekarz/raporty/{report.Id}");
     }
 
+    public void Dispose()
+    {
+        tokenSource.Cancel();
+        tokenSource.Dispose();
+    }
 }

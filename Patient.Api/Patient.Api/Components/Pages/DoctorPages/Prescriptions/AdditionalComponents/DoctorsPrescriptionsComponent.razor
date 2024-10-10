@@ -56,13 +56,15 @@
 @if (showPrescriptionRequestPreviewModal)
 {
     <CascadingValue Value="prescriptionRequestToShowToDoctorDto">
-        <PrescriptionRequestPreviewModal OnClose="HandleClosePrescriptionPreviewModal" />
+        <PrescriptionRequestPreviewModal OnClose="HandleClosePrescriptionPreviewModal" TokenSource="TokenSource"/>
     </CascadingValue>
 }
 
 @code {
     [Parameter]
     public EventCallback OnRefresh { get; set; }
+    [Parameter]
+    public CancellationTokenSource TokenSource { get; set; }
 
     private List<PrescriptionRequestToShowToDoctorDto> prescriptionRequests = new();
     private bool filesGet;
@@ -99,7 +101,7 @@
     private async Task GetDoctorsRequests()
     {
         readingPrescriptions = true;
-        var prescriptionRequests = await _doctorApiService.GetPrescriptionRequests();
+        var prescriptionRequests = await _doctorApiService.GetPrescriptionRequests(TokenSource.Token);
         if (prescriptionRequests.Count > 0) { filesGet = true; }
         StateHasChanged();
         readingPrescriptions = false;

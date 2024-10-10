@@ -18,7 +18,7 @@
 @inject NavigationManager _navigationManager
 @inject IUserContext _userContext
 
-
+@implements IDisposable
 
 
 <div class="container px-5">
@@ -27,7 +27,7 @@
             @if (mainComponentIsInitialized)
             {
                 <CascadingValue Value="currentDoctor">
-                    <Patient.Api.Components.Pages.DoctorPages.MainPanel.AdditionalComponents.SummaryComponent ComponentIsInitialized="HandleSummaryComponentIsInitialized" />
+                    <Patient.Api.Components.Pages.DoctorPages.MainPanel.AdditionalComponents.SummaryComponent ComponentIsInitialized="HandleSummaryComponentIsInitialized" TokenSource="tokenSource"/>
                 </CascadingValue>
             }
             else
@@ -42,7 +42,7 @@
             {
                 <div class="col">
                     <CascadingValue Value="currentDoctor">
-                        <Patient.Api.Components.Pages.DoctorPages.MainPanel.AdditionalComponents.DoctorsPatientsComponent />
+                        <Patient.Api.Components.Pages.DoctorPages.MainPanel.AdditionalComponents.DoctorsPatientsComponent TokenSource="tokenSource"/>
                     </CascadingValue>
                 </div>
                 <div class="col">
@@ -62,9 +62,11 @@
     private bool mainComponentIsInitialized;
     private bool summaryComponentIsInitialized;
     private Patient.Domain.Entities.Actors.Doctor currentDoctor {get;set;} = new();
+    private CancellationTokenSource tokenSource = new();
 
     protected override async Task OnInitializedAsync()
     {
+        await Task.Delay(500);
         var currentUser = await _userContext.GetCurrentUserAsync();
         currentDoctor = await _doctorManager.FindByIdAsync(currentUser.Id);
 
@@ -79,4 +81,9 @@
         await InvokeAsync(StateHasChanged);
     }
 
+    public void Dispose()
+    {
+        tokenSource.Cancel();
+        tokenSource.Dispose();
+    }
 }

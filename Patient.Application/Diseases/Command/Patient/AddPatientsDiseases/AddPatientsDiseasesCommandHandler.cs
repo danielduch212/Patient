@@ -35,11 +35,11 @@ IDoctorsRepository doctorsRepository) : IRequestHandler<AddPatientsDiseasesComma
             patientsDiseases.Add(patientDisease);
         }
 
-        await diseaseRepository.AddPatientsDiseases(patientsDiseases);
-        var patientsDoctor = await doctorsRepository.GetPatientsFirstContactDoctor(user.Id);
+        await diseaseRepository.AddPatientsDiseases(patientsDiseases, cancellationToken);
+        var patientsDoctor = await doctorsRepository.GetPatientsFirstContactDoctor(user.Id, cancellationToken);
         if (patientsDoctor == null)
         {
-            await doctorsRepository.AssignFirstContactDoctorToPatient(user.Id);
+            await doctorsRepository.AssignFirstContactDoctorToPatient(user.Id, cancellationToken);
             logger.LogInformation($"Assigning first contact doctor for patient: {user.Id}");
 
         }

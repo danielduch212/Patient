@@ -33,11 +33,11 @@ internal class CreateReportCommandHandler(ILogger<CreateReportCommandHandler> lo
         List<Doctor> doctorsToCheck = new List<Doctor>();
 
         //sprawdzenie
-        var patientsDoctorFirstContact = await doctorsRepository.GetPatientsFirstContactDoctor(user.Id);
+        var patientsDoctorFirstContact = await doctorsRepository.GetPatientsFirstContactDoctor(user.Id, cancellationToken);
         if(patientsDoctorFirstContact == null)
         {
-            await doctorsRepository.AssignFirstContactDoctorToPatient(user.Id);
-            patientsDoctorFirstContact = await doctorsRepository.GetPatientsFirstContactDoctor(user.Id);
+            await doctorsRepository.AssignFirstContactDoctorToPatient(user.Id, cancellationToken);
+            patientsDoctorFirstContact = await doctorsRepository.GetPatientsFirstContactDoctor(user.Id, cancellationToken);
         }
         doctorsToCheck.Add(patientsDoctorFirstContact);
         
@@ -54,7 +54,7 @@ internal class CreateReportCommandHandler(ILogger<CreateReportCommandHandler> lo
 
         };
 
-        await reportRepository.CreateReport(report);
+        await reportRepository.CreateReport(report, cancellationToken);
         logger.LogInformation($"Created report with given id: {report.Id}");
         return report.Id;
 

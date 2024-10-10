@@ -8,7 +8,7 @@ namespace Patient.Infrastructure.Repositories;
 
 internal class PrescriptionRepository(PatientDbContext dbContext) : IPrescriptionRepository
 {
-    public async Task<int> CountPatientsPrescriptions(string patientId)
+    public async Task<int> CountPatientsPrescriptions(string patientId, CancellationToken cancellationToken)
     {
         var results = await dbContext.Prescriptions
             .Where(p => p.PatientId == patientId)
@@ -16,7 +16,7 @@ internal class PrescriptionRepository(PatientDbContext dbContext) : IPrescriptio
         return results;
     }
 
-    public async Task<List<Prescription>> GetPatientsPrescriptions(string patientId)
+    public async Task<List<Prescription>> GetPatientsPrescriptions(string patientId, CancellationToken cancellationToken)
     {
         var results = await dbContext.Prescriptions
             .Include(p=>p.Doctor)
@@ -25,14 +25,14 @@ internal class PrescriptionRepository(PatientDbContext dbContext) : IPrescriptio
         return results;
     }
 
-    public async Task<Prescription> GetPrescriptionByIdAsync(int prescriptionId)
+    public async Task<Prescription> GetPrescriptionByIdAsync(int prescriptionId, CancellationToken cancellationToken)
     {
         var result = await dbContext.Prescriptions
             .FirstOrDefaultAsync(p => p.Id == prescriptionId);
         return result;
     }
 
-    public async Task AddPrescriptionAsync(Prescription entity)
+    public async Task AddPrescriptionAsync(Prescription entity, CancellationToken cancellationToken)
     {
         var result = await dbContext.Prescriptions.AddAsync(entity);
         await dbContext.SaveChangesAsync();

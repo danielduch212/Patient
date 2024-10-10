@@ -71,7 +71,8 @@
 
     [CascadingParameter]
     public int ReportId { get; set; }
-
+    [Parameter]
+    public CancellationTokenSource TokenSource { get; set; }
     [Parameter]
     public EventCallback<List<string>> OnAdded { get; set; }
 

@@ -135,6 +135,8 @@
 
     [Parameter]
     public EventCallback OnClose { get; set; }
+    [Parameter]
+    public CancellationTokenSource TokenSource {get;set;}
 
     private MedicineToPrescription medicineToPrescription = new();
     private MedicalRecommandationDto medicalRecommandation = new();
@@ -158,7 +160,7 @@
         {
             return new List<Medicine>();
         }
-        return await _medicineRepository.SearchMedicines(searchTerm);
+        return await _medicineRepository.SearchMedicines(searchTerm, TokenSource.Token);
 
 
     }
@@ -181,7 +183,7 @@
         medicalRecommandation.PatientId = addRecommandationModalData.CurrentPatient.Id;
         medicalRecommandation.ReportId = int.Parse(addRecommandationModalData.ReportId);
 
-        var result = await _doctorApiService.AddRecommandation(medicalRecommandation);
+        var result = await _doctorApiService.AddRecommandation(medicalRecommandation, TokenSource.Token);
         if (result)
         {
             successfullyAdded = true;

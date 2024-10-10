@@ -78,6 +78,9 @@
 @code {
     [Parameter]
     public EventCallback OnClose { get; set; }
+    [Parameter]
+    public CancellationTokenSource SourceToken { get; set; }
+
 
     private MedicineToPrescriptionRequest medicineToPrescription = new();
     private Medicine medicine = new();
@@ -101,7 +104,7 @@
 
         };
 
-        var result = await _patientApiService.AddPrescriptionRequest(prescriptionRequest);
+        var result = await _patientApiService.AddPrescriptionRequest(prescriptionRequest, SourceToken.Token);
         if (result)
         {
             //successfullyAdded = true;
@@ -123,7 +126,7 @@
         {
             return new List<Medicine>();
         }
-        return await _medicineRepository.SearchMedicines(searchTerm);
+        return await _medicineRepository.SearchMedicines(searchTerm, SourceToken.Token);
 
 
     }

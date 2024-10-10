@@ -22,7 +22,7 @@ internal class GetReportsForDoctorQueryHandler(ILogger<GetReportsForDoctorQueryH
         var doctor = await doctorManager.FindByEmailAsync(user.Email);
         logger.LogInformation($"Getting reports for doctor: {user.Email}");
 
-        var reports = await reportsRepository.GetDoctorReports(doctor);
+        var reports = await reportsRepository.GetDoctorReports(doctor, cancellationToken);
 
         List<ReportForDoctorDto> reportsDto = new List<ReportForDoctorDto>();
 

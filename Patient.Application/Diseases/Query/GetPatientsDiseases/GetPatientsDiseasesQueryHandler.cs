@@ -20,7 +20,7 @@ IDiseaseRepository diseaseRepository, IMapper mapper) : IRequestHandler<GetPatie
         var user = userContext.GetCurrentUser();
         logger.LogInformation($"Getting diseases for patient id: {user.Id}");
 
-        var patientsDiseases = await diseaseRepository.GetPatientsDiseases(user.Id);
+        var patientsDiseases = await diseaseRepository.GetPatientsDiseases(user.Id, cancellationToken);
         List<PatientsDiseaseDto> patientsDiseasesDtos = new();
         foreach (var item in patientsDiseases)
         {
@@ -28,7 +28,7 @@ IDiseaseRepository diseaseRepository, IMapper mapper) : IRequestHandler<GetPatie
             var dto = new PatientsDiseaseDto()
             {
                 IdToDistinction = patientsDiseasesDtos.Count()+1,
-                Disease = await diseaseRepository.GetDiseaseByIdAsync(item.Id),
+                Disease = await diseaseRepository.GetDiseaseByIdAsync(item.Id, cancellationToken),
                 UserExperienceWithDisease = item.UserExperienceWithDisease,
                 IsCurrentlyTreated = item.IsCurrentlyTreated,
             };

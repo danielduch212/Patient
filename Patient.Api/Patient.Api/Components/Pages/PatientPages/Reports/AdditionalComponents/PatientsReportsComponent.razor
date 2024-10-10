@@ -48,6 +48,8 @@
 </div>
 
 @code {
+    [Parameter]
+    public CancellationTokenSource TokenSource { get; set; }
     private List<ReportToShowToPatientDto> reportsToShow = new();
     private bool filesGet;
     private bool readingReports;
@@ -58,7 +60,7 @@
     protected async override Task OnInitializedAsync()
     {
         readingReports = true;
-        var reportsToShow = await _patientApiService.GetReports();
+        var reportsToShow = await _patientApiService.GetReports(TokenSource.Token);
         if (reportsToShow.Count > 0) { filesGet = true; }
         StateHasChanged();
         readingReports = false;

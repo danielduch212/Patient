@@ -18,6 +18,8 @@
 @inject UserManager<Patient.Domain.Entities.Actors.Patient> _patientManager
 @inject IUserContext _userContext
 
+@implements IDisposable
+
 <div class="container px-4">
     @if (showReminder)
     {
@@ -40,15 +42,23 @@
             </div>
         </section>
         <section>
-            <div class="row">
-                <div class="col">
-                    <MudPaper Class="pa-4 ma-3 summary-item" Elevation="3" Style="cursor: pointer;">
-                        <Patient.Api.Components.Pages.PatientPages.Reports.AdditionalComponents.PatientsReportsComponent />
-                    </MudPaper>
+            @if (mainComponentInitialized)
+            {
+                <div class="row">
+                    <div class="col">
+                        <MudPaper Class="pa-4 ma-3 summary-item" Elevation="3" Style="cursor: pointer;">
+                            <Patient.Api.Components.Pages.PatientPages.Reports.AdditionalComponents.PatientsReportsComponent TokenSource="TokenSource" />
+                        </MudPaper>
+                    </div>
+                    <div class="col">
+                    </div>
                 </div>
-                <div class="col">
-                </div>
-            </div>
+            }
+            else
+            {
+                <MudProgressCircular Color="Color.Primary" Indeterminate="true"/>
+            }
+
         </section>
     }
     
@@ -57,22 +67,32 @@
 </div>
 
 @code {
-
+    private CancellationTokenSource TokenSource = new();
 
     private Patient.Domain.Entities.Actors.Patient currentPatient = new();
 
     private bool showReminder;
+    private bool mainComponentInitialized;
 
     protected async override Task OnInitializedAsync()
     {
+        await Task.Delay(500);
+
         var currentUser = await _userContext.GetCurrentUserAsync();
 
         currentPatient = await _patientManager.FindByIdAsync(currentUser.Id);
-        if ((await _diseaseRepository.CountPatientsCurrentDiseases(currentPatient.Id) == 0) && (currentPatient.PreventionPatient == false))
+        if ((await _diseaseRepository.CountPatientsCurrentDiseases(currentPatient.Id, TokenSource.Token) == 0) && (currentPatient.PreventionPatient == false))
         {
             showReminder = true;
         }
+        mainComponentInitialized = true;
 
+    }
+
+    public void Dispose()
+    {
+        TokenSource.Cancel();
+        TokenSource.Dispose();
     }
 
 }

@@ -32,61 +32,61 @@ internal class PatientApiService : IPatientApiService
     }
 
     // MedicalFiles
-    public async Task<bool> AddMedicalFiles(List<MedicalFileDto> medicalFileDtos)
+    public async Task<bool> AddMedicalFiles(List<MedicalFileDto> medicalFileDtos, CancellationToken cancellationToken)
     {
         var command = new AddMedicalFilesCommand
         {
             medicalFileDtos = medicalFileDtos
         };
-        var result = await _mediator.Send(command);
+        var result = await _mediator.Send(command, cancellationToken);
         return result;
     }
 
-    public async Task<List<MedicalFileToShowDto>> GetMedicalFiles()
+    public async Task<List<MedicalFileToShowDto>> GetMedicalFiles(CancellationToken cancellationToken)
     {
         var query = new GetMedicalFilesQuery();
-        var result = await _mediator.Send(query);
+        var result = await _mediator.Send(query, cancellationToken);
         return result;
     }
 
     // Reports
-    public async Task<List<ReportToShowToPatientDto>> GetReports()
+    public async Task<List<ReportToShowToPatientDto>> GetReports(CancellationToken cancellationToken)
     {
         var query = new GetReportsForPatientQuery();
-        var results = await _mediator.Send(query);
+        var results = await _mediator.Send(query, cancellationToken);
         
         return results;
     }
 
-    public async Task<ReportToShowToPatientDto> GetReport(string id)
+    public async Task<ReportToShowToPatientDto> GetReport(string id, CancellationToken cancellationToken)
     {
-        var result = await _mediator.Send(new GetReportForPatientQuery { Id = id });
+        var result = await _mediator.Send(new GetReportForPatientQuery { Id = id }, cancellationToken);
         return result;
     }
 
     // Prescriptions
-    public async Task<List<PrescriptionToShowPatientDto>> GetPrescriptions()
+    public async Task<List<PrescriptionToShowPatientDto>> GetPrescriptions(CancellationToken cancellationToken)
     {
-        var result = await _mediator.Send(new GetPatientsPrescriptionsQuery());
+        var result = await _mediator.Send(new GetPatientsPrescriptionsQuery(), cancellationToken);
         return result;
     }
 
-    public async Task<bool> AddPrescriptionRequest(PrescriptionRequestDto dto)
+    public async Task<bool> AddPrescriptionRequest(PrescriptionRequestDto dto, CancellationToken cancellationToken)
     {
-        var result = await _mediator.Send(new AddPrescriptionRequestCommand { Dto = dto });
+        var result = await _mediator.Send(new AddPrescriptionRequestCommand { Dto = dto }, cancellationToken);
         return result;
     }
 
     // Diseases
-    public async Task<bool> AddPatientsDiseases(List<PatientsDiseaseDto> dtos)
+    public async Task<bool> AddPatientsDiseases(List<PatientsDiseaseDto> dtos, CancellationToken cancellationToken)
     {
-        var result = await _mediator.Send(new AddPatientsDiseasesCommand { Dtos = dtos });
+        var result = await _mediator.Send(new AddPatientsDiseasesCommand { Dtos = dtos }, cancellationToken);
         return result;
     }
 
-    public async Task<List<PatientsDiseaseDto>> GetPatientsDiseases()
+    public async Task<List<PatientsDiseaseDto>> GetPatientsDiseases(CancellationToken cancellationToken)
     {
-        var result = await _mediator.Send(new GetPatientsDiseasesQuery());
+        var result = await _mediator.Send(new GetPatientsDiseasesQuery(), cancellationToken);
         return result;
     }
 }

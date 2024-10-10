@@ -51,13 +51,16 @@
 @if (showPrescriptionPreviewModal)
 {
     <CascadingValue Value="prescriptionPreviewData">
-        <PrescriptionPreviewModal OnClose="HandleClosePrescriptionPreviewModal"/>
+        <PrescriptionPreviewModal OnClose="HandleClosePrescriptionPreviewModal" SourceToken="SourceToken"/>
     </CascadingValue>
 }
 
 @code {
     [CascadingParameter]
     public Patient.Domain.Entities.Actors.Patient CurrentPatient { get; set; } = new();
+
+    [Parameter]
+    public CancellationTokenSource SourceToken { get; set; }
 
     private List<PrescriptionToShowPatientDto> prescriptionsToShow = new();
     private bool filesGet;
@@ -71,7 +74,7 @@
     protected async override Task OnInitializedAsync()
     {
         readingPrescriptions = true;
-        prescriptionsToShow = await _patientApiService.GetPrescriptions();
+        prescriptionsToShow = await _patientApiService.GetPrescriptions(SourceToken.Token);
         if (prescriptionsToShow.Count > 0) { filesGet = true; }
         StateHasChanged();
         readingPrescriptions = false;

@@ -34,6 +34,8 @@
 @code {
     [CascadingParameter]
     private Patient.Domain.Entities.Actors.Patient CurrentPatient { get; set; } = new();
+    [Parameter]
+    public CancellationTokenSource CancellationSource { get; set; }
 
     private List<Patient.Domain.Entities.Actors.Doctor> patientsDoctors = new();
 
@@ -43,7 +45,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        patientsDoctors = await _doctorsRepository.GetPatientsDoctorsToShow(CurrentPatient.Id);
+        patientsDoctors = await _doctorsRepository.GetPatientsDoctorsToShow(CurrentPatient.Id, CancellationSource.Token);
         StateHasChanged();
 
     }

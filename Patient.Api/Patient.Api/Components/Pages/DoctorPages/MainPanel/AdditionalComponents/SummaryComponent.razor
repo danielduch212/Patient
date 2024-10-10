@@ -41,6 +41,8 @@
 
     [Parameter]
     public EventCallback ComponentIsInitialized { get; set; }
+    [Parameter]
+    public CancellationTokenSource TokenSource { get; set; }
 
     [CascadingParameter]
     public Patient.Domain.Entities.Actors.Doctor CurrentDoctor { get; set; } = new();
@@ -51,9 +53,9 @@
 
     protected override async Task OnInitializedAsync()
     {
-        reportsNumber = await _reportRepository.GetDoctorReportsNumber(CurrentDoctor);
-        prescriptionRequestsNumber = await _prescriptionRequestRepository.CountDoctorsPrescriptionRequests(CurrentDoctor.Id);
-        patientsNumber = await _patientsRepository.CountDoctorsPatients(CurrentDoctor.Id);
+        reportsNumber = await _reportRepository.GetDoctorReportsNumber(CurrentDoctor, TokenSource.Token);
+        prescriptionRequestsNumber = await _prescriptionRequestRepository.CountDoctorsPrescriptionRequests(CurrentDoctor.Id, TokenSource.Token);
+        patientsNumber = await _patientsRepository.CountDoctorsPatients(CurrentDoctor.Id, TokenSource.Token);
         await Task.Delay(500);
         await ComponentIsInitialized.InvokeAsync();
     }

@@ -148,6 +148,7 @@
 
 @code {
     private InputRegisterDoctorModel inputDoctorData { get; set; } = new();
+    private CancellationTokenSource tokenSource = new();
 
     private Domain.Entities.Additional.IdentityOperationResult registrationResult = new IdentityOperationResult();
     private bool successfullRegistration;
@@ -219,7 +220,7 @@
                 var isInRole = await userManager.IsInRoleAsync(doctor, UserRoles.Doctor);
 
 
-                await _doctorsRepository.AssignDoctorSpecializationForDoctor(doctor.Id, "Lekarz pierwszego kontaktu");
+                await _doctorsRepository.AssignDoctorSpecializationForDoctor(doctor.Id, "Lekarz pierwszego kontaktu", tokenSource.Token);
 
                 logger.LogInformation($"Doctor with given email {isInRole} added to role Doctor: {inputDoctorData.Email}");
 

@@ -27,42 +27,42 @@ public class DoctorApiService : IDoctorApiService
         _userContext = userContext;
     }
 
-    public async Task<List<ReportForDoctorDto>> GetReports()
+    public async Task<List<ReportForDoctorDto>> GetReports(CancellationToken cancellationToken)
     {
         
-        var results = await _mediator.Send(new GetReportsForDoctorQuery());
+        var results = await _mediator.Send(new GetReportsForDoctorQuery(), cancellationToken);
         return results;
     }
 
-    public async Task<ReportForDoctorToShowDto> GetReport(string id)
+    public async Task<ReportForDoctorToShowDto> GetReport(string id, CancellationToken cancellationToken)
     {       
-        var result = await _mediator.Send(new GetReportForDoctorQuery { Id = id });
+        var result = await _mediator.Send(new GetReportForDoctorQuery { Id = id }, cancellationToken);
         return result;
     }
 
-    public async Task<List<MedicalFileToShowDto>> GetMedicalFiles()
+    public async Task<List<MedicalFileToShowDto>> GetMedicalFiles(CancellationToken cancellationToken)
     {
  
-        var result = await _mediator.Send(new GetMedicalFilesQuery());
+        var result = await _mediator.Send(new GetMedicalFilesQuery(), cancellationToken);
         return result;
     }
 
-    public async Task<bool> AddRecommandation(MedicalRecommandationDto dto)
+    public async Task<bool> AddRecommandation(MedicalRecommandationDto dto, CancellationToken cancellationToken)
     {
 
-        var response = await _mediator.Send(new CreateRecommandationCommand { MedicalRecommandationDto = dto });
+        var response = await _mediator.Send(new CreateRecommandationCommand { MedicalRecommandationDto = dto }, cancellationToken);
         return response;
     }
 
-    public async Task<List<PrescriptionRequestToShowToDoctorDto>> GetPrescriptionRequests()
+    public async Task<List<PrescriptionRequestToShowToDoctorDto>> GetPrescriptionRequests(CancellationToken cancellationToken)
     {
-        var results = await _mediator.Send(new GetDoctorsPrescriptionRequestsQuery());
+        var results = await _mediator.Send(new GetDoctorsPrescriptionRequestsQuery(), cancellationToken);
         return results;
     }
 
-    public async Task<bool> PrescribePrescription(PrescriptionRequestToShowToDoctorDto dto)
+    public async Task<bool> PrescribePrescription(PrescriptionRequestToShowToDoctorDto dto, CancellationToken cancellationToken)
     {
-        var result = await _mediator.Send(new PrescribePrescriptionFromRequestCommand { Dto = dto });
+        var result = await _mediator.Send(new PrescribePrescriptionFromRequestCommand { Dto = dto }, cancellationToken);
         return result;
     }
 }

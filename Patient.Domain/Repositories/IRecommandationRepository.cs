@@ -4,7 +4,7 @@ namespace Patient.Domain.Repositories;
 
 public interface IRecommandationRepository
 {
-    public Task CreateRecommandation(MedicalRecommandation entity);
-    public Task<int> CountPatientsNewRecommandations(string patientId);
+    public Task CreateRecommandation(MedicalRecommandation entity, CancellationToken cancellationToken);
+    public Task<int> CountPatientsNewRecommandations(string patientId, CancellationToken cancellationToken);
 
 }

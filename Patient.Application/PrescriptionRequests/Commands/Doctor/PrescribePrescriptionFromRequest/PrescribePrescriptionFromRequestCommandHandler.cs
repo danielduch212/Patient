@@ -20,7 +20,7 @@ IPrescriptionRepository prescriptionRepository) : IRequestHandler<PrescribePresc
         var userDoctor = userContext.GetCurrentUser();
         logger.LogInformation($"Prescripting medicines by doctor user: {userDoctor.Id}");
 
-        await prescriptionRequestRepository.MarkPresriptionRequestAsIssued(request.Dto.PrescriptionRequestId);
+        await prescriptionRequestRepository.MarkPresriptionRequestAsIssued(request.Dto.PrescriptionRequestId, cancellationToken);
         Prescription prescription = new()
         {
             MedicineNames = request.Dto.MedicineNames,
@@ -30,7 +30,7 @@ IPrescriptionRepository prescriptionRepository) : IRequestHandler<PrescribePresc
             PatientId = request.Dto.PatientId,
             DoctorId = userDoctor.Id,
         };
-        await prescriptionRepository.AddPrescriptionAsync(prescription);
+        await prescriptionRepository.AddPrescriptionAsync(prescription, cancellationToken);
         logger.LogInformation($"Added prescription id: {prescription.Id}");
         return true;
     }

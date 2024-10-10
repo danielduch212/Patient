@@ -1,5 +1,7 @@
 ﻿@layout Patient.Api.Client.Layout.MyAccount.PatientAccountLayout
 @rendermode InteractiveServer
+@page "/pacjent/dokumentacja-medyczna/dodaj"
+
 
 @using Patient.Domain.Constants
 @using Patient.Domain.Entities.DTOs
@@ -9,7 +11,7 @@
 
 @inject IPatientApiService _patientApiService
 
-@page "/pacjent/dokumentacja-medyczna/dodaj"
+@implements IDisposable
 
 
 <div class="container">
@@ -93,7 +95,7 @@
 
 
 @code {
-
+    private CancellationTokenSource tokenSource = new();
     private List<MedicalFileDto> medicalFileDtos = new();
 
     private List<AddMedicalDocumentationDto> addMedicalDocumentionDtos = new();
@@ -109,6 +111,7 @@
 
     protected override void OnInitialized()
     {
+
         medicalDataTypes = MedicalDocumentationType.GetAllTypes();
     }
 
@@ -124,7 +127,7 @@
 
         //
         MakeFileStreams();
-        var result = await _patientApiService.AddMedicalFiles(medicalFileDtos);
+        var result = await _patientApiService.AddMedicalFiles(medicalFileDtos, tokenSource.Token);
         if (result)
         {
             areFilesBeingAdded = false;
@@ -169,7 +172,7 @@
 
 
         }
-        
+
     }
 
 
@@ -202,7 +205,11 @@
         dto.AddDescription = !dto.AddDescription;
     }
 
-    
-    
+    public void Dispose()
+    {
+        tokenSource.Cancel();
+        tokenSource.Dispose();
+    }
+
 }
 

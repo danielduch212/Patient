@@ -9,25 +9,25 @@ using Patient.Domain.Entities.Actors;
 
 internal class ReportRepository(PatientDbContext dbContext) : IReportRepository
 {
-    public async Task CreateReport(Report entity)
+    public async Task CreateReport(Report entity, CancellationToken cancellationToken)
     {
         await dbContext.Reports.AddAsync(entity);
         await dbContext.SaveChangesAsync();
     }
 
-    public async Task<Report> GetReport(int reportId)
+    public async Task<Report> GetReport(int reportId, CancellationToken cancellationToken)
     {
         return await dbContext.Reports
             .Include(r=>r.MedicalRecommandation)
             .Where(r => r.Id == reportId).FirstOrDefaultAsync();
     }
-    public async Task<List<Report>> GetPatientReports(Patient patient)
+    public async Task<List<Report>> GetPatientReports(Patient patient, CancellationToken cancellationToken)
     {
         var results = await dbContext.Reports.Where(r => r.PatientId == patient.Id).ToListAsync();
         return results;
     }
 
-    public async Task<Report> GetReportForPatient(int id, Patient patient)
+    public async Task<Report> GetReportForPatient(int id, Patient patient, CancellationToken cancellationToken)
     {
         var result = await dbContext.Patients
             .Include(p => p.Reports)
@@ -38,7 +38,7 @@ internal class ReportRepository(PatientDbContext dbContext) : IReportRepository
         return result;
     }
 
-    public async Task<List<Report>> GetDoctorReports(Doctor doctor)
+    public async Task<List<Report>> GetDoctorReports(Doctor doctor, CancellationToken cancellationToken)
     {
         var results = await dbContext.Reports
                     .Include(r => r.DoctorsToCheck)
@@ -48,7 +48,7 @@ internal class ReportRepository(PatientDbContext dbContext) : IReportRepository
         return results;
     }
 
-    public async Task<Report> GetReportForDoctor(int id, Doctor doctor)
+    public async Task<Report> GetReportForDoctor(int id, Doctor doctor, CancellationToken cancellationToken)
     {
 
         var result = await dbContext.Doctors
@@ -66,7 +66,7 @@ internal class ReportRepository(PatientDbContext dbContext) : IReportRepository
            
     }
 
-    public async Task<int> GetDoctorReportsNumber(Doctor doctor)
+    public async Task<int> GetDoctorReportsNumber(Doctor doctor, CancellationToken cancellationToken)
     {
         var results = await dbContext.Reports
                     .Include(r => r.DoctorsToCheck)

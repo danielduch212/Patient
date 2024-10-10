@@ -74,6 +74,8 @@
 
     [Parameter]
     public EventCallback OnClose { get; set; }
+    [Parameter]
+    public CancellationTokenSource TokenSource { get; set; }
 
     private bool loading;
 
@@ -90,7 +92,7 @@
 
     private async Task PrescribePrescription()
     {
-        var result = await _doctorApiService.PrescribePrescription(PrescriptionRequestToShowToDoctorDto);
+        var result = await _doctorApiService.PrescribePrescription(PrescriptionRequestToShowToDoctorDto, TokenSource.Token);
         if (result)
         {
             await OnClose.InvokeAsync();
@@ -103,7 +105,7 @@
 
     private async Task ErasePrescriptionRequest()
     {
-        await _prescriptionRequestRepository.ErasePrescriptionRequest(PrescriptionRequestToShowToDoctorDto.PrescriptionRequestId);
+        await _prescriptionRequestRepository.ErasePrescriptionRequest(PrescriptionRequestToShowToDoctorDto.PrescriptionRequestId, TokenSource.Token);
         await OnClose.InvokeAsync();
     }
 

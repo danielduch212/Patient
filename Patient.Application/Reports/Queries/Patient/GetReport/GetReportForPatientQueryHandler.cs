@@ -24,7 +24,7 @@ internal class GetReportForPatientQueryHandler(ILogger<GetReportForPatientQueryH
         var patient = await patientManager.FindByEmailAsync(user.Email);
 
         var reportId = int.Parse(request.Id);
-        var report = await reportsRepository.GetReportForPatient(reportId, patient);
+        var report = await reportsRepository.GetReportForPatient(reportId, patient, cancellationToken);
 
 
         if (report == null) throw new NotFoundException(nameof(Report), request.Id.ToString());

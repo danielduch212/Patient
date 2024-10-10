@@ -16,6 +16,7 @@
 @inject IDiseaseRepository _diseaseRepository
 @inject IUserContext userContext
 
+@implements IDisposable
 
 <div class="container px-4">
     
@@ -30,7 +31,7 @@
             @if (mainIsInitialized)
             {               
                 <CascadingValue Value="currentPatient">
-                    <Patient.Api.Components.Pages.PatientPages.MainPanel.AdditionalComponents.SummaryComponent ComponentIsInitialized="HandleSummaryComponentInitialized" />
+                    <Patient.Api.Components.Pages.PatientPages.MainPanel.AdditionalComponents.SummaryComponent ComponentIsInitialized="HandleSummaryComponentInitialized" CancellationSource="source" />
                 </CascadingValue>               
             }
             else
@@ -47,7 +48,7 @@
             {               
                 <div class="col">
                     <CascadingValue Value="currentPatient">
-                        <Patient.Api.Components.Pages.PatientPages.MainPanel.AdditionalComponents.PatientsDoctorsComponent />
+                        <Patient.Api.Components.Pages.PatientPages.MainPanel.AdditionalComponents.PatientsDoctorsComponent CancellationSource="source"/>
                     </CascadingValue>
                 </div>
                 <div class="col">
@@ -70,13 +71,14 @@
     private bool mainIsInitialized;
     private bool summaryComponentIsInitialized;
     private bool isCount;
+    private CancellationTokenSource source = new();
 
     protected override async Task OnInitializedAsync()
     {
         var currentUser = await userContext.GetCurrentUserAsync();
         currentPatient = await _patientManager.FindByIdAsync(currentUser.Id);
 
-        patientsCurrentlyCuredDiseasesNumber = await _diseaseRepository.CountPatientsCurrentDiseases(currentPatient.Id);
+        patientsCurrentlyCuredDiseasesNumber = await _diseaseRepository.CountPatientsCurrentDiseases(currentPatient.Id, source.Token);
         isCount = true;
 
         mainIsInitialized = true;
@@ -91,5 +93,9 @@
         await InvokeAsync(StateHasChanged);
     }
 
-    
+    public void Dispose()
+    {
+        source.Cancel();
+        source.Dispose();
+    }
 }

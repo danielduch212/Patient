@@ -46,6 +46,8 @@
 
     [Parameter]
     public EventCallback ComponentIsInitialized { get; set; }
+    [Parameter]
+    public CancellationTokenSource CancellationSource { get; set; }
 
     //chart
     private int newRecommandationNumber;
@@ -54,8 +56,8 @@
     protected override async Task OnInitializedAsync()
     {
 
-        newRecommandationNumber = await _recommandationRepository.CountPatientsNewRecommandations(CurrentPatient.Id);
-        prescriptionsNumber = await _prescriptionRepository.CountPatientsPrescriptions(CurrentPatient.Id);
+        newRecommandationNumber = await _recommandationRepository.CountPatientsNewRecommandations(CurrentPatient.Id, CancellationSource.Token);
+        prescriptionsNumber = await _prescriptionRepository.CountPatientsPrescriptions(CurrentPatient.Id, CancellationSource.Token);
         await Task.Delay(500);
         await ComponentIsInitialized.InvokeAsync();
         await InvokeAsync(StateHasChanged);

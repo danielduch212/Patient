@@ -2,6 +2,8 @@
 
 @rendermode @(new InteractiveServerRenderMode(false))
 
+@page "/pacjent/raporty/{Id}"
+
 @using Patient.Domain.Interfaces
 @using Patient.Domain.Entities.DTOs
 @using Patient.Domain.Entities
@@ -11,7 +13,8 @@
 @inject IPatientApiService _patientApiService
 @inject IBlobStorageService _blobStorageService
 
-@page "/pacjent/raporty/{Id}"   
+
+@implements IDisposable
 
 
 <div class="container px-4">
@@ -42,6 +45,9 @@
     [Parameter]
     public string Id { get; set; }
 
+    private CancellationTokenSource TokenSource = new();
+
+
     private ReportToShowToPatientDto reportToShow = new();
     private bool fileGet;
     private bool readingReport;
@@ -52,7 +58,7 @@
     protected async override Task OnInitializedAsync()
     {
         readingReport = true;
-        var reportToShow = await _patientApiService.GetReport(Id);
+        var reportToShow = await _patientApiService.GetReport(Id, TokenSource.Token);
         if (reportToShow.FileNames.Any())
         {
             foreach (var filename in reportToShow.FileNames)
@@ -61,7 +67,7 @@
                 reportToShow.FilesBase64.Add(await LoadImageBase64(url));
             }
         }
-        
+
         StateHasChanged();
         readingReport = false;
 
@@ -93,4 +99,9 @@
 
     }
 
+    public void Dispose()
+    {
+        TokenSource.Cancel();
+        TokenSource.Dispose();
+    }
 }

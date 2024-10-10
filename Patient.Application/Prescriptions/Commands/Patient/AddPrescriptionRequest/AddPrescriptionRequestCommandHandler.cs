@@ -21,7 +21,7 @@ IDoctorsRepository doctorsRepository) : IRequestHandler<AddPrescriptionRequestCo
         var user = userContext.GetCurrentUser();
         logger.LogInformation($"Adding prescription request for patient user: {user.Id}");
 
-        var patientsDoctor = await doctorsRepository.GetPatientsFirstContactDoctor(user.Id);
+        var patientsDoctor = await doctorsRepository.GetPatientsFirstContactDoctor(user.Id, cancellationToken);
         if (patientsDoctor == null)
         {
             return false;
@@ -36,7 +36,7 @@ IDoctorsRepository doctorsRepository) : IRequestHandler<AddPrescriptionRequestCo
             DoctorId = patientsDoctor.Id,
 
         };
-        await prescriptionRequestRepository.AddPrescriptionRequest(prescriptionRequest);
+        await prescriptionRequestRepository.AddPrescriptionRequest(prescriptionRequest, cancellationToken);
         logger.LogInformation($"Added prescription request for user: {user.Id}");
         return true;
     }

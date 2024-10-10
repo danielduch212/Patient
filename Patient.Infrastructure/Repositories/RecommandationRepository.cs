@@ -8,13 +8,13 @@ namespace Patient.Infrastructure.Repositories;
 
 internal class RecommandationRepository(PatientDbContext dbContext) : IRecommandationRepository
 {
-    public async Task CreateRecommandation(MedicalRecommandation entity)
+    public async Task CreateRecommandation(MedicalRecommandation entity, CancellationToken cancellationToken)
     {
         await dbContext.MedicalRecommandations.AddAsync(entity);
         await dbContext.SaveChangesAsync();
     }
 
-    public async Task<int> CountPatientsNewRecommandations(string patientId)
+    public async Task<int> CountPatientsNewRecommandations(string patientId, CancellationToken cancellationToken)
     {
         var results = await dbContext.MedicalRecommandations
             .Where(mr=>(mr.PatientId==patientId&&mr.DoesPatientChecked==false ))

@@ -73,6 +73,8 @@
 
     [Parameter]
     public EventCallback OnClose { get; set; }
+    [Parameter]
+    public CancellationTokenSource SourceToken { get; set; } 
 
     private bool loading;
     PrescriptionToShowPatientDto prescription = new();

@@ -33,7 +33,7 @@ internal class CreateRecommandationCommandHandler(ILogger<CreateRecommandationCo
         var data = request.MedicalRecommandationDto;
         
 
-        var report = await reportRepository.GetReport(data.ReportId.Value);
+        var report = await reportRepository.GetReport(data.ReportId.Value, cancellationToken);
         MedicalRecommandation recommandation = new()
         {
             Description = data.Description,
@@ -45,7 +45,7 @@ internal class CreateRecommandationCommandHandler(ILogger<CreateRecommandationCo
             DateOfIssue = DateOnly.FromDateTime(DateTime.Today),
             DoctorId = doctor.Id,
         }; 
-        await recommandationRepository.CreateRecommandation(recommandation);
+        await recommandationRepository.CreateRecommandation(recommandation, cancellationToken);
         return true;
     }
     

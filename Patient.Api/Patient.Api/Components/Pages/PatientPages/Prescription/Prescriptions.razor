@@ -17,11 +17,14 @@
 @inject IPrescriptionRequestRepository _prescriptionRequestRepository
 @inject IUserContext userContext
 
+@implements IDisposable
+
+
 <div class="container px-4 position-relative">
     @if (showReminder)
     {
         <section>
-            <Patient.Api.Components.ManageComponents.FullfillMedicalInterviewReminderComponent />
+            <Patient.Api.Components.ManageComponents.FullfillMedicalInterviewReminderComponent/>
         </section>
     }
     else
@@ -38,31 +41,40 @@
         </section>
         <section>
             <div class="row">
-                <div class="col">
-                    <MudPaper Class="pa-4 ma-3 summary-item" Elevation="3" Style="cursor: pointer;">
-                        <CascadingValue Value="currentPatient">
-                            <Patient.Api.Components.Pages.PatientPages.Prescription.AdditionalComponents.PatientsPrescriptionsComponent />
-                        </CascadingValue>
-                    </MudPaper>
-                </div>
-                <div class="col">
-                    <MudPaper Class="pa-4 ma-3 summary-item" Elevation="3" Style="cursor: pointer;">
-                        <h3>Twoje prosby o recepty</h3>
-                        <h3>@prescriptionRequestsNumber</h3>
-                    </MudPaper>
-                </div>
+                @if (mainComponentInitialized)
+                {
+                    <div class="col">
+                        <MudPaper Class="pa-4 ma-3 summary-item" Elevation="3" Style="cursor: pointer;">
+                            <CascadingValue Value="currentPatient">
+                                <Patient.Api.Components.Pages.PatientPages.Prescription.AdditionalComponents.PatientsPrescriptionsComponent SourceToken="sourceToken" />
+                            </CascadingValue>
+                        </MudPaper>
+                    </div>
+                    <div class="col">
+                        <MudPaper Class="pa-4 ma-3 summary-item" Elevation="3" Style="cursor: pointer;">
+                            <h3>Twoje prosby o recepty</h3>
+                            <h3>@prescriptionRequestsNumber</h3>
+                        </MudPaper>
+                    </div>
+                }
+                else
+                {
+                    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+                }
             </div>
         </section>
     }
     
     @if (showAskForPrescriptionModal)
     {
-        <Patient.Api.Components.Pages.PatientPages.Prescription.AdditionalComponents.AskForPrescriptionModal OnClose="CloseAskForPrescriptionModal" />
+        <Patient.Api.Components.Pages.PatientPages.Prescription.AdditionalComponents.AskForPrescriptionModal OnClose="CloseAskForPrescriptionModal" SourceToken="sourceToken"/>
     }
 </div>
 
 
 @code {
+    CancellationTokenSource sourceToken = new();
+
     private bool showAskForPrescriptionModal;
 
     private Patient.Domain.Entities.Actors.Patient currentPatient = new();
@@ -71,14 +83,18 @@
 
     //dla zablokowania okna
     private bool showReminder;
+    private bool mainComponentInitialized;
 
     protected override async Task OnInitializedAsync()
-    {       
+    {   
+        await Task.Delay(500);
         await CountUserPrescriptionRequests();
-        if ((await _diseaseRepository.CountPatientsCurrentDiseases(currentPatient.Id) == 0) && (currentPatient.PreventionPatient==false))
+
+        if ((await _diseaseRepository.CountPatientsCurrentDiseases(currentPatient.Id, sourceToken.Token) == 0) && (currentPatient.PreventionPatient==false))
         {
             showReminder = true;
         }
+        mainComponentInitialized = true;
     }
 
     private void ShowAskForPrescriptionModal()
@@ -97,10 +113,15 @@
     {
         var currentUser = await userContext.GetCurrentUserAsync();
         currentPatient = await _patientManager.FindByIdAsync(currentUser.Id);
-        prescriptionRequestsNumber = await _prescriptionRequestRepository.CountPatientsPrescriptions(currentPatient.Id);
+        await Task.Delay(100);
+        prescriptionRequestsNumber = await _prescriptionRequestRepository.CountPatientsPrescriptions(currentPatient.Id, sourceToken.Token);
         StateHasChanged();
     }
 
 
-    
+    public void Dispose()
+    {
+        sourceToken.Cancel();
+        sourceToken.Dispose();
+    }
 }
