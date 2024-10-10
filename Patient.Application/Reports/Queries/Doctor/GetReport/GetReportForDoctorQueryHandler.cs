@@ -10,17 +10,18 @@ using Patient.Domain.Exceptions;
 using Patient.Domain.Entities;
 using Patient.Domain.Entities.DTOs.Reports;
 using Patient.Domain.Constants;
+using Patient.Application.Users;
 
 namespace Patient.Application.Reports.Queries.Doctor.GetReport;
 
 internal class GetReportForDoctorQueryHandler(ILogger<GetReportForDoctorQueryHandler> logger,
     IdentityUserAccessor userAccessor, UserManager<Domain.Entities.Actors.Doctor> doctorManager,
-    IHttpContextAccessor httpContextAccesor, HttpClient _httpClient, IBlobStorageService blobStorageService,
+    IUserContext userContext, HttpClient _httpClient, IBlobStorageService blobStorageService,
     IReportRepository reportsRepository, IMapper mapper) : IRequestHandler<GetReportForDoctorQuery, ReportForDoctorToShowDto>
 {
     public async Task<ReportForDoctorToShowDto> Handle(GetReportForDoctorQuery request, CancellationToken cancellationToken)
     {
-        var user = await userAccessor.GetRequiredUserAsync(httpContextAccesor.HttpContext);
+        var user = userContext.GetCurrentUser();
         logger.LogInformation($"Getting report for user: {user.Email}");
         var doctor = await doctorManager.FindByEmailAsync(user.Email);
 

@@ -3,13 +3,14 @@
 @using Patient.Domain.Repositories
 @using Patient.Domain.Interfaces
 @using Shared.Constants
+@using Patient.Application.Users
 
 
 @inject IPatientApiService _patientApiService
 @inject NavigationManager _navigationManager
-@inject IHttpContextAccessor contextAccesor
 @inject UserManager<Patient.Domain.Entities.Actors.Patient> _patientManager
 @inject IPrescriptionRequestRepository _prescriptionRequestRepository
+@inject IUserContext _userContext
 
 <div class="container">
     <MudPaper Class="pa-16 ma-2" Elevation="3">
@@ -118,7 +119,9 @@
     protected override async Task OnInitializedAsync()
     {
         loading = true;
-        currentPatient = await _patientManager.GetUserAsync(contextAccesor.HttpContext.User);
+        var currentUser = await _userContext.GetCurrentUserAsync();
+        currentPatient = await _patientManager.FindByIdAsync(currentUser.Id);
+
         await Task.Delay(1000);
         loading = false;
         questionList = QuestionsForReport.GetAllQuestions();

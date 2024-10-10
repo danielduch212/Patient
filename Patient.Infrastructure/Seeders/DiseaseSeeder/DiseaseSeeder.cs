@@ -8,7 +8,7 @@ using Shared.Main;
 namespace Patient.Infrastructure.Seeders.DiseaseSeeder;
 
 internal class DiseaseSeeder(PatientDbContext dbContext) : IDiseaseSeeder
-{
+{   
     public async Task SeedData()
     {
         if (await dbContext.Database.CanConnectAsync())

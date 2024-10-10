@@ -18,26 +18,6 @@ namespace Patient.Api.Controllers;
 public class PrescriptionRequestController(IMediator mediator, ILogger<PrescriptionRequestController> logger) : ControllerBase
 {
     
-    [HttpGet("getDoctorsPrescriptionRequests")]
-    public async Task<IActionResult> GetPatientsDiseases()
-    {
-        var results = await mediator.Send(new GetDoctorsPrescriptionRequestsQuery());
-        return Ok(results);
-    }
-
-    [HttpPost("prescribePrescriptionFromRequest")]
-    public async Task<IActionResult> PrescribePrescriptionFromRequest([FromBody] PrescriptionRequestToShowToDoctorDto dto)
-    {
-        var command = new PrescribePrescriptionFromRequestCommand()
-        {
-            Dto = dto,
-        };
-
-        var response = await mediator.Send(command);
-        if (response)
-            return Ok(response);
-
-        return BadRequest();
-    }
+    
 }
 

@@ -7,17 +7,18 @@ using Patient.Domain.Interfaces;
 using Patient.Domain.Repositories;
 using Patient.Domain.Constants;
 using Patient.Domain.Entities.DTOs.MedicalFiles;
+using Patient.Application.Users;
 
 namespace Patient.Application.MedicalData.Queries.Patient.GetMedicalFiles;
 
 internal class GetMedicalFilesQueryHandler(ILogger<GetMedicalFilesQueryHandler> logger,
     IdentityUserAccessor userAccessor, UserManager<Domain.Entities.Actors.Patient> patientManager,
-    IHttpContextAccessor httpContextAccesor, HttpClient _httpClient, IBlobStorageService blobStorageService,
+    IUserContext userContext, HttpClient _httpClient, IBlobStorageService blobStorageService,
     IMedicalDataRepository medicalDataRepository) : IRequestHandler<GetMedicalFilesQuery, List<MedicalFileToShowDto>>
 {
     public async Task<List<MedicalFileToShowDto>> Handle(GetMedicalFilesQuery request, CancellationToken cancellationToken)
     {
-        var user = await userAccessor.GetRequiredUserAsync(httpContextAccesor.HttpContext);
+        var user = userContext.GetCurrentUser();
         var patient = await patientManager.FindByEmailAsync(user.Email);
         logger.LogInformation($"Getting medical files for user: {user.Email}");
 

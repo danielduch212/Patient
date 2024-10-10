@@ -11,7 +11,7 @@
 @inject IPatientApiService _patientApiService
 @inject IBlobStorageService _blobStorageService
 
-@page "/pacjent/raporty/{Id}"
+@page "/pacjent/raporty/{Id}"   
 
 
 <div class="container px-4">
@@ -52,19 +52,14 @@
     protected async override Task OnInitializedAsync()
     {
         readingReport = true;
-        var response = await _patientApiService.SendRequestGetReport(Id);
-        if (response.StatusCode == System.Net.HttpStatusCode.OK)
+        var reportToShow = await _patientApiService.GetReport(Id);
+        if (reportToShow.FileNames.Any())
         {
-            reportToShow = await response.Content.ReadFromJsonAsync<ReportToShowToPatientDto>();
-            if (reportToShow.FileNames.Any())
+            foreach (var filename in reportToShow.FileNames)
             {
-                foreach (var filename in reportToShow.FileNames)
-                {
-                    var url = await _blobStorageService.GetBlobSasUrl(filename, BlobContainerNames.ReportsFiles);
-                    reportToShow.FilesBase64.Add(await LoadImageBase64(url));
-                }
+                var url = await _blobStorageService.GetBlobSasUrl(filename, BlobContainerNames.ReportsFiles);
+                reportToShow.FilesBase64.Add(await LoadImageBase64(url));
             }
-            
         }
         
         StateHasChanged();

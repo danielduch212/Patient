@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Patient.Application.Account;
+using Patient.Application.Users;
 using Patient.Domain.Entities;
 using Patient.Domain.Interfaces;
 using Patient.Domain.Repositories;
@@ -13,13 +14,13 @@ namespace Patient.Application.Recommandation.Commands.Doctor.CreateRecommandatio
 
 internal class CreateRecommandationCommandHandler(ILogger<CreateRecommandationCommandHandler> logger,
     IdentityUserAccessor userAccessor, UserManager<Domain.Entities.Actors.Doctor> doctorManager,
-    IHttpContextAccessor httpContextAccesor, HttpClient _httpClient,
+    IUserContext userContext, HttpClient _httpClient,
     IRecommandationRepository recommandationRepository, IMapper mapper,
     IReportRepository reportRepository) : IRequestHandler<CreateRecommandationCommand, bool>
 {
     public async Task<bool> Handle(CreateRecommandationCommand request, CancellationToken cancellationToken)
     {
-        var user = await userAccessor.GetRequiredUserAsync(httpContextAccesor.HttpContext);
+        var user = userContext.GetCurrentUser();
         var doctor = await doctorManager.FindByEmailAsync(user.Email);
         logger.LogInformation($"Creating recommandation for report: {request.MedicalRecommandationDto.ReportId} by doctor {doctor.Id}");
         var prescription = mapper.Map<Prescription>(request.MedicalRecommandationDto.Prescription);

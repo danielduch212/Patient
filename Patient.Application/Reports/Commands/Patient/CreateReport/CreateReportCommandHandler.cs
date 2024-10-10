@@ -8,16 +8,17 @@ using AutoMapper;
 using Patient.Domain.Entities;
 using Patient.Domain.Constants;
 using Patient.Domain.Entities.Actors;
+using Patient.Application.Users;
 
 namespace Patient.Application.Reports.Commands.Patient.CreateReport;
 
 internal class CreateReportCommandHandler(ILogger<CreateReportCommandHandler> logger,
-    IdentityUserAccessor userAccessor, IHttpContextAccessor httpContextAccesor, HttpClient _httpClient, IBlobStorageService blobStorageService,
+    IdentityUserAccessor userAccessor, IUserContext userContext, HttpClient _httpClient, IBlobStorageService blobStorageService,
     IReportRepository reportRepository, IDoctorsRepository doctorsRepository) : IRequestHandler<CreateReportCommand, int>
 {
     public async Task<int> Handle(CreateReportCommand request, CancellationToken cancellationToken)
     {
-        var user = await userAccessor.GetRequiredUserAsync(httpContextAccesor.HttpContext);
+        var user = userContext.GetCurrentUser();
         logger.LogInformation($"Trying to add report from user(email): {user.Email}");
 
         List<string> fileNames = new();

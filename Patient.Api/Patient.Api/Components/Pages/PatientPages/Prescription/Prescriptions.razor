@@ -8,13 +8,14 @@
 @using Patient.Domain.Entities;
 @using Patient.Domain.Entities.DTOs.Reports
 @using Patient.Domain.Repositories
+@using Patient.Application.Users
 
 @inject IDiseaseRepository _diseaseRepository
 @inject IPatientApiService _patientApiService
 @inject NavigationManager _navigationManager
-@inject IHttpContextAccessor contextAccesor
 @inject UserManager<Patient.Domain.Entities.Actors.Patient> _patientManager
 @inject IPrescriptionRequestRepository _prescriptionRequestRepository
+@inject IUserContext userContext
 
 <div class="container px-4 position-relative">
     @if (showReminder)
@@ -64,7 +65,6 @@
 @code {
     private bool showAskForPrescriptionModal;
 
-
     private Patient.Domain.Entities.Actors.Patient currentPatient = new();
     private int prescriptionRequestsNumber;
 
@@ -95,7 +95,8 @@
     }
     private async Task CountUserPrescriptionRequests()
     {
-        currentPatient = await _patientManager.GetUserAsync(contextAccesor.HttpContext.User);
+        var currentUser = await userContext.GetCurrentUserAsync();
+        currentPatient = await _patientManager.FindByIdAsync(currentUser.Id);
         prescriptionRequestsNumber = await _prescriptionRequestRepository.CountPatientsPrescriptions(currentPatient.Id);
         StateHasChanged();
     }

@@ -181,8 +181,8 @@
         medicalRecommandation.PatientId = addRecommandationModalData.CurrentPatient.Id;
         medicalRecommandation.ReportId = int.Parse(addRecommandationModalData.ReportId);
 
-        var result = await _doctorApiService.SendRequestAddRecommandation(medicalRecommandation);
-        if (result.IsSuccessStatusCode)
+        var result = await _doctorApiService.AddRecommandation(medicalRecommandation);
+        if (result)
         {
             successfullyAdded = true;
             StateHasChanged();

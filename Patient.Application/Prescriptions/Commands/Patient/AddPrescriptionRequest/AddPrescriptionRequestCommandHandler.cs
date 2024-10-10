@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Patient.Application.Account;
+using Patient.Application.Users;
 using Patient.Domain.Entities;
 using Patient.Domain.Repositories;
 
@@ -11,13 +12,13 @@ namespace Patient.Application.Prescriptions.Commands.Patient.AskForPrescription;
 
 internal class AddPrescriptionRequestCommandHandler(ILogger<AddPrescriptionRequestCommandHandler> logger,
 IdentityUserAccessor userAccessor, UserManager<Domain.Entities.Actors.Patient> patientManager,
-IHttpContextAccessor httpContextAccesor, HttpClient _httpClient,
+IUserContext userContext, HttpClient _httpClient,
 IPrescriptionRequestRepository prescriptionRequestRepository, 
 IDoctorsRepository doctorsRepository) : IRequestHandler<AddPrescriptionRequestCommand, bool>
 {
     public async Task<bool> Handle(AddPrescriptionRequestCommand request, CancellationToken cancellationToken)
     {
-        var user = await userAccessor.GetRequiredUserAsync(httpContextAccesor.HttpContext);
+        var user = userContext.GetCurrentUser();
         logger.LogInformation($"Adding prescription request for patient user: {user.Id}");
 
         var patientsDoctor = await doctorsRepository.GetPatientsFirstContactDoctor(user.Id);

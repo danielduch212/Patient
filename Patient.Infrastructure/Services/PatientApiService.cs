@@ -1,95 +1,92 @@
-﻿using Microsoft.AspNetCore.Http;
-using Patient.Domain.Entities;
-using Patient.Domain.Interfaces;
-using Shared.AdditionalClasses;
-using System.Net.Http.Json;
-using System.Text.Json.Serialization;
-using System.Text;
+﻿using MediatR;
+using Microsoft.AspNetCore.Http;
 using Patient.Domain.Entities.DTOs.MedicalFiles;
 using Patient.Domain.Entities.DTOs.PrescriptionRequest;
+using Patient.Domain.Entities.DTOs.Recommandation;
+using Patient.Application.Diseases.Command.Patient.AddPatientsDiseases;
+using Patient.Application.Diseases.Query.GetPatientsDiseases;
+using Patient.Application.MedicalData.Commands.Patient.AddMedicalFiles;
+using Patient.Application.MedicalData.Queries.Patient.GetMedicalFiles;
+using Patient.Application.Prescriptions.Queries.Patient.GetPatientPrescriptions;
+using Patient.Application.Reports.Queries.Patient.GetReports;
+using Patient.Application.Reports.Queries.Patient.GetReport;
+using Patient.Domain.Interfaces;
+using System.Text.Json;
+using Patient.Application.Prescriptions.Commands.Patient.AskForPrescription;
+using Patient.Application.Users;
+using Shared.Dtos;
+using Patient.Domain.Entities.DTOs.Reports;
+using Patient.Domain.Entities.DTOs.Prescription;
 
 namespace Patient.Infrastructure.Services;
 
 internal class PatientApiService : IPatientApiService
 {
-    private readonly HttpClient _httpClient;
-    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IMediator _mediator;
+    private readonly IUserContext _userContext;
 
-    public PatientApiService(HttpClient httpClient, IHttpContextAccessor httpContextAccessor)
+    public PatientApiService(IMediator mediator, IUserContext userContext)
     {
-        _httpClient = httpClient;
-        _httpContextAccessor = httpContextAccessor;
-                
+        _mediator = mediator;
+        _userContext = userContext;
     }
 
-    //MedicalFiles
-    public async Task<HttpResponseMessage> SendRequestAddMedicalFiles(List<MedicalFileDto> medicalFileDtos)
+    // MedicalFiles
+    public async Task<bool> AddMedicalFiles(List<MedicalFileDto> medicalFileDtos)
     {
-        var form = new MultipartFormDataContent();
-
-
-        if (medicalFileDtos.Any())
+        var command = new AddMedicalFilesCommand
         {
-            foreach (var medicalFileDto in medicalFileDtos)
-            {
-                var description = new StringContent(medicalFileDto.Description);
-                form.Add(description, "Description");
-                var medicalDocumentationType = new StringContent(medicalFileDto.MedicalDocumentationType);
-                form.Add(medicalDocumentationType, "MedicalDocumentationType");
-
-                var fileContent = new StreamContent(medicalFileDto.File);
-                fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/octet-stream");
-                form.Add(fileContent, "File", medicalFileDto.FileName);
-            }
-        }
-
-        AddCookiesToRequest();
-
-        var response = await _httpClient.PostAsync("/api/MedicalDataController/addMedicalData", form);
-        return response;
+            medicalFileDtos = medicalFileDtos
+        };
+        var result = await _mediator.Send(command);
+        return result;
     }
 
-    public async Task<HttpResponseMessage> SendRequestGetMedicalFiles()
+    public async Task<List<MedicalFileToShowDto>> GetMedicalFiles()
     {
-        AddCookiesToRequest(); 
-        var response = await _httpClient.GetAsync("/api/MedicalDataController/getUserMedicalData");
-        return response;
+        var query = new GetMedicalFilesQuery();
+        var result = await _mediator.Send(query);
+        return result;
     }
 
-    //Reports
-    public async Task<HttpResponseMessage> SendRequestGetReports()
+    // Reports
+    public async Task<List<ReportToShowToPatientDto>> GetReports()
     {
-        AddCookiesToRequest();
-        var response = await _httpClient.GetAsync("/api/ReportsController/getReportsForPatient");
-        return response;
+        var query = new GetReportsForPatientQuery();
+        var results = await _mediator.Send(query);
+        
+        return results;
     }
 
-    public async Task<HttpResponseMessage> SendRequestGetReport(string id)
+    public async Task<ReportToShowToPatientDto> GetReport(string id)
     {
-        AddCookiesToRequest();
-        var url = $"/api/ReportsController/getReportForPatient?Id={id}";
-        var response = await _httpClient.GetAsync(url);
-        return response;
+        var result = await _mediator.Send(new GetReportForPatientQuery { Id = id });
+        return result;
     }
 
-    //Prescriptions
-    public async Task<HttpResponseMessage> SendRequestGetPrescriptions()
+    // Prescriptions
+    public async Task<List<PrescriptionToShowPatientDto>> GetPrescriptions()
     {
-        AddCookiesToRequest();
-        var response = await _httpClient.GetAsync("/api/PrescriptionController/getPatientsPrescriptions");
-        return response;
+        var result = await _mediator.Send(new GetPatientsPrescriptionsQuery());
+        return result;
     }
 
-    public async Task<HttpResponseMessage> SendRequestAddPrescriptionRequest(PrescriptionRequestDto dto)
+    public async Task<bool> AddPrescriptionRequest(PrescriptionRequestDto dto)
     {
-        AddCookiesToRequest();
-        var response = await _httpClient.PostAsJsonAsync("/api/PrescriptionController/addPrescriptionRequest", dto);
-        return response;
+        var result = await _mediator.Send(new AddPrescriptionRequestCommand { Dto = dto });
+        return result;
     }
 
-    private void AddCookiesToRequest()
+    // Diseases
+    public async Task<bool> AddPatientsDiseases(List<PatientsDiseaseDto> dtos)
     {
-        var cookies = _httpContextAccessor.HttpContext.Request.Headers["Cookie"].ToString();
-        _httpClient.DefaultRequestHeaders.Add("Cookie", cookies);
+        var result = await _mediator.Send(new AddPatientsDiseasesCommand { Dtos = dtos });
+        return result;
+    }
+
+    public async Task<List<PatientsDiseaseDto>> GetPatientsDiseases()
+    {
+        var result = await _mediator.Send(new GetPatientsDiseasesQuery());
+        return result;
     }
 }

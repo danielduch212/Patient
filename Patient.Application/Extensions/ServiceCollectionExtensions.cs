@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Patient.Domain.Entities.Actors;
 using Patient.Application.Account;
+using Patient.Application.Users;
 
 namespace Patient.Application.Extensions;
 
@@ -18,6 +19,6 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<IdentityRedirectManager>();
         services.AddScoped<AuthenticationStateProvider, PersistingRevalidatingAuthenticationStateProvider>();
-
+        services.AddScoped<IUserContext, UserContext>();
     }
 }

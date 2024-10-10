@@ -9,13 +9,14 @@
 @using Patient.Domain.Entities;
 @using Patient.Domain.Entities.DTOs.Reports
 @using Patient.Domain.Repositories
+@using Patient.Application.Users
 
 
 @inject IPatientApiService _patientApiService
 @inject NavigationManager _navigationManager
-@inject IHttpContextAccessor contextAccesor
 @inject UserManager<Patient.Domain.Entities.Actors.Doctor> _doctorManager
 @inject IPrescriptionRequestRepository _prescriptionRequestRepository
+@inject IUserContext userContext
 
 <div class="container px-4 position-relative">
     <section>
@@ -60,7 +61,8 @@
 
     private async Task CountDoctorPrescriptionRequests()
     {
-        currentDoctor = await _doctorManager.GetUserAsync(contextAccesor.HttpContext.User);
+        var currentUser = await userContext.GetCurrentUserAsync();
+        currentDoctor = await _doctorManager.FindByIdAsync(currentUser.Id);
         prescriptionRequestsNumber = await _prescriptionRequestRepository.CountDoctorsPrescriptionRequests(currentDoctor.Id);
         StateHasChanged();
     }

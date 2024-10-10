@@ -99,13 +99,9 @@
     private async Task GetDoctorsRequests()
     {
         readingPrescriptions = true;
-        var response = await _doctorApiService.SendRequestGetPrescriptionRequests();
-        if (response.StatusCode == System.Net.HttpStatusCode.OK)
-        {
-            prescriptionRequests = await response.Content.ReadFromJsonAsync<List<PrescriptionRequestToShowToDoctorDto>>();
-            if (prescriptionRequests.Count > 0) { filesGet = true; }
-            StateHasChanged();
-        }
+        var prescriptionRequests = await _doctorApiService.GetPrescriptionRequests();
+        if (prescriptionRequests.Count > 0) { filesGet = true; }
+        StateHasChanged();
         readingPrescriptions = false;
     }
 

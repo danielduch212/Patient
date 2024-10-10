@@ -54,16 +54,7 @@ public class MedicalDataController(IMediator mediator, ILogger<MedicalDataContro
         return BadRequest();    
     }
 
-    [HttpGet("getUserMedicalData")]
-    public async Task<IActionResult> GetUserMedicalData()
-    {
-        var result = await mediator.Send(new GetMedicalFilesQuery());
-        if (result.Count > 0)
-        {
-            return Ok(result);
-        }
-        return NoContent();
-    }
+    
 
 
 }

@@ -24,32 +24,12 @@ public static class WebApplicationBuilderExtensions
         {
             options.DefaultScheme = IdentityConstants.ApplicationScheme;
             options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+            
         })
             .AddIdentityCookies();
 
         builder.Services.AddAuthorization();
-        builder.Services.AddCascadingAuthenticationState();
-
-        //.AddJwtBearer(options =>
-        //{
-        //        options.TokenValidationParameters = new TokenValidationParameters
-        //        {
-        //            ValidateIssuer = true,
-        //            ValidateAudience = true,
-        //            ValidateLifetime = true,
-        //            ValidateIssuerSigningKey = true,
-        //            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        //            ValidAudience = builder.Configuration["Jwt:Audience"],
-        //            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
-        //            RoleClaimType = ClaimTypes.Role,
-
-        //        };
-        //});
-        //builder.Services.AddAuthentication(options =>
-        //{
-        //    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        //    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        //})
+        builder.Services.AddCascadingAuthenticationState();       
 
         builder.Host.UseSerilog((context, configuration) =>
                 configuration.ReadFrom.Configuration(context.Configuration)

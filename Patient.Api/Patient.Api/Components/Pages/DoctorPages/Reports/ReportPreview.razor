@@ -133,26 +133,22 @@
     {
         readingReport = true;
 
-        var response = await _doctorApiService.SendRequestGetReport(ReportId);
-        if (response.StatusCode == System.Net.HttpStatusCode.OK)
+        var reportToShow = await _doctorApiService.GetReport(ReportId);
+        if (reportToShow.FileNames.Any())
         {
-            reportToShow = await response.Content.ReadFromJsonAsync<ReportForDoctorToShowDto>();
-            if (reportToShow.FileNames.Any())
+            foreach (var filename in reportToShow.FileNames)
             {
-                foreach (var filename in reportToShow.FileNames)
-                {
-                    var url = await _blobStorageService.GetBlobSasUrl(filename, BlobContainerNames.ReportsFiles);
-                    var fileBase64 = await LoadImageBase64(url);
-                    reportToShow.FilesBase64.Add(fileBase64);
-                }
+                var url = await _blobStorageService.GetBlobSasUrl(filename, BlobContainerNames.ReportsFiles);
+                var fileBase64 = await LoadImageBase64(url);
+                reportToShow.FilesBase64.Add(fileBase64);
             }
-            foreach (var doctorId in reportToShow.DoctorsId)
-            {
-                var doctor = await _doctorsRepository.GetDoctorByIdAsync(doctorId);
-                doctors.Add(doctor);
-            }
-            currentPatient = await _patientManager.FindByIdAsync(reportToShow.PatientId);
         }
+        foreach (var doctorId in reportToShow.DoctorsId)
+        {
+            var doctor = await _doctorsRepository.GetDoctorByIdAsync(doctorId);
+            doctors.Add(doctor);
+        }
+        currentPatient = await _patientManager.FindByIdAsync(reportToShow.PatientId);
         StateHasChanged();
         readingReport = false;
 

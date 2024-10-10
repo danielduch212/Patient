@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Patient.Application.Account;
+using Patient.Application.Users;
 using Patient.Domain.Repositories;
 using Shared.Dtos;
 
@@ -11,12 +12,12 @@ namespace Patient.Application.Diseases.Query.GetPatientsDiseases;
 
 internal class GetPatientsDiseasesQueryHandler(ILogger<GetPatientsDiseasesQuery> logger,
 IdentityUserAccessor userAccessor, UserManager<Domain.Entities.Actors.Patient> patientManager,
-IHttpContextAccessor httpContextAccesor,
+IUserContext userContext,
 IDiseaseRepository diseaseRepository, IMapper mapper) : IRequestHandler<GetPatientsDiseasesQuery, List<PatientsDiseaseDto>>
 {
     public async Task<List<PatientsDiseaseDto>> Handle(GetPatientsDiseasesQuery request, CancellationToken cancellationToken)
     {
-        var user = await userAccessor.GetRequiredUserAsync(httpContextAccesor.HttpContext);
+        var user = userContext.GetCurrentUser();
         logger.LogInformation($"Getting diseases for patient id: {user.Id}");
 
         var patientsDiseases = await diseaseRepository.GetPatientsDiseases(user.Id);

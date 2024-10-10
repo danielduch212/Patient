@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Security.Policy;
 using Patient.Infrastructure.Persistence;
 using Patient.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Patient.Infrastructure.Seeders.MedicineSeeder;
 
@@ -21,7 +22,7 @@ internal class UserSeeder(HttpClient _httpClient, PatientDbContext dbContext) : 
     public async Task SeedMedicines()
     {
         if (await dbContext.Database.CanConnectAsync())
-        {
+        {            
             if (!dbContext.Medicines.Any())
             {
                 var medicines = await DownloadDataHtml();

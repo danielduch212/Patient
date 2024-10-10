@@ -101,8 +101,8 @@
 
         };
 
-        var result = await _patientApiService.SendRequestAddPrescriptionRequest(prescriptionRequest);
-        if (result.IsSuccessStatusCode)
+        var result = await _patientApiService.AddPrescriptionRequest(prescriptionRequest);
+        if (result)
         {
             //successfullyAdded = true;
 

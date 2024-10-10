@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Patient.Infrastructure.Persistence;
-using Patient.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 using Patient.Domain.Constants;
+using Patient.Infrastructure.Persistence;
 
 namespace Patient.Infrastructure.Seeders;
 
@@ -9,6 +9,11 @@ internal class PatientSeeder(PatientDbContext dbContext) : IPatientSeeder
 {
     public async Task SeedData()
     {
+        if (dbContext.Database.GetPendingMigrations().Any())
+        {
+            await dbContext.Database.MigrateAsync();
+        }
+
         if (await dbContext.Database.CanConnectAsync())
         {
             if(!dbContext.Roles.Any())

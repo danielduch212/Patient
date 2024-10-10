@@ -1,8 +1,8 @@
 ﻿@using Patient.Application.Account
+@using Patient.Application.Users
 @using Patient.Domain.Repositories
 
 @inject UserManager<Patient.Domain.Entities.Actors.Patient> _patientManager
-@inject IHttpContextAccessor httpContextAccesor
 @inject IRecommandationRepository _recommandationRepository
 @inject IPrescriptionRepository _prescriptionRepository
 @inject NavigationManager _navigationManager
@@ -42,7 +42,7 @@
 @code {
 
     [CascadingParameter]
-    public Patient.Domain.Entities.Actors.Patient CurrentPatient { get; set; } = new();
+    private Patient.Domain.Entities.Actors.Patient CurrentPatient { get; set; } = new();
 
     [Parameter]
     public EventCallback ComponentIsInitialized { get; set; }

@@ -17,6 +17,7 @@ using Patient.Infrastructure.Storage;
 using Patient.Infrastructure.Services;
 using Patient.Infrastructure.Seeders.MedicineSeeder;
 using Patient.Infrastructure.Seeders.DiseaseSeeder;
+using Patient.Application.Users;
 
 
 
@@ -90,5 +91,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IPrescriptionRequestRepository, PrescriptionRequestRepository>();
         services.AddScoped<IUserSeeder, UserSeeder>();
         services.AddScoped<IPatientsRepository, PatientsRepository>();
+
+        
     }
 }

@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <Folder Include="Diseases\Dtos\" />
+    <Folder Include="Doctors\" />
     <Folder Include="Recommandation\Queries\" />
     <Folder Include="Users\Commands\" />
     <Folder Include="Users\Queries\" />

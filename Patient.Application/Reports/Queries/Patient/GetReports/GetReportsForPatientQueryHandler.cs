@@ -8,17 +8,18 @@ using Patient.Domain.Interfaces;
 using Patient.Domain.Repositories;
 using Patient.Domain;
 using Patient.Domain.Entities.DTOs.Reports;
+using Patient.Application.Users;
 
 namespace Patient.Application.Reports.Queries.Patient.GetReports;
 
 internal class GetReportsForPatientQueryHandler(ILogger<GetReportsForPatientQueryHandler> logger,
     IdentityUserAccessor userAccessor, UserManager<Domain.Entities.Actors.Patient> patientManager,
-    IHttpContextAccessor httpContextAccesor, HttpClient _httpClient, IBlobStorageService blobStorageService,
+    IUserContext userContext, HttpClient _httpClient, IBlobStorageService blobStorageService,
     IReportRepository reportsRepository, IMapper mapper) : IRequestHandler<GetReportsForPatientQuery, List<ReportToShowToPatientDto>>
 {
     public async Task<List<ReportToShowToPatientDto>> Handle(GetReportsForPatientQuery request, CancellationToken cancellationToken)
     {
-        var user = await userAccessor.GetRequiredUserAsync(httpContextAccesor.HttpContext);
+        var user = userContext.GetCurrentUser();
         var patient = await patientManager.FindByEmailAsync(user.Email);
         logger.LogInformation($"Getting reports for doctor: {user.Email}");
 

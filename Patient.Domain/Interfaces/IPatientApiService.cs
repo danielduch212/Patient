@@ -1,15 +1,20 @@
 ﻿using Patient.Domain.Entities.DTOs.MedicalFiles;
+using Patient.Domain.Entities.DTOs.Prescription;
 using Patient.Domain.Entities.DTOs.PrescriptionRequest;
+using Patient.Domain.Entities.DTOs.Reports;
+using Shared.Dtos;
 
 namespace Patient.Domain.Interfaces;
 
 public interface IPatientApiService
 {
-    public Task<HttpResponseMessage> SendRequestAddMedicalFiles(List<MedicalFileDto> medicalFileDtos);
-    public Task<HttpResponseMessage> SendRequestGetMedicalFiles();
-    public Task<HttpResponseMessage> SendRequestGetReports();
-    public Task<HttpResponseMessage> SendRequestGetReport(string id);
-    public Task<HttpResponseMessage> SendRequestGetPrescriptions();
-    public Task<HttpResponseMessage> SendRequestAddPrescriptionRequest(PrescriptionRequestDto dto);
+    Task<bool> AddMedicalFiles(List<MedicalFileDto> medicalFileDtos);
+    Task<List<MedicalFileToShowDto>> GetMedicalFiles();
+    Task<List<ReportToShowToPatientDto>> GetReports();
+    Task<ReportToShowToPatientDto> GetReport(string id);
+    Task<List<PrescriptionToShowPatientDto>> GetPrescriptions();
+    Task<bool> AddPrescriptionRequest(PrescriptionRequestDto dto);
+    Task<bool> AddPatientsDiseases(List<PatientsDiseaseDto> dtos);
+    Task<List<PatientsDiseaseDto>> GetPatientsDiseases();
 
 }

@@ -115,13 +115,9 @@
     protected async override Task OnInitializedAsync()
     {
         readingFiles = true;
-        var response = await _patientApiService.SendRequestGetMedicalFiles();
-        if(response.StatusCode == System.Net.HttpStatusCode.OK)
-        {
-            medicalFilesToShow = await response.Content.ReadFromJsonAsync<List<MedicalFileToShowDto>>();
-            if(medicalFilesToShow.Count > 0){ filesGet = true; }
-            StateHasChanged();
-        }
+        var medicalFilesToShow = await _patientApiService.GetMedicalFiles();
+        if (medicalFilesToShow.Count > 0) { filesGet = true; }
+        StateHasChanged();
         readingFiles = false;
 
     }

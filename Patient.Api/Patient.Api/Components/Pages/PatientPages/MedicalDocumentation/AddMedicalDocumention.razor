@@ -124,8 +124,8 @@
 
         //
         MakeFileStreams();
-       var response = await _patientApiService.SendRequestAddMedicalFiles(medicalFileDtos);
-        if (response.IsSuccessStatusCode)
+        var result = await _patientApiService.AddMedicalFiles(medicalFileDtos);
+        if (result)
         {
             areFilesBeingAdded = false;
             filesAddedSuccesfully = true;

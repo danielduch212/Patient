@@ -7,19 +7,20 @@ using Patient.Application.Account;
 using Patient.Domain.Entities;
 using Patient.Domain.Interfaces;
 using Patient.Domain.Repositories;
+using Patient.Application.Users;
 
 
 namespace Patient.Application.MedicalData.Commands.Patient.AddMedicalFiles;
 
 internal class AddMedicalFilesCommandHandler(ILogger<AddMedicalFilesCommandHandler> logger,
     IdentityUserAccessor userAccessor, UserManager<Domain.Entities.Actors.Patient> patientManager,
-    IHttpContextAccessor httpContextAccesor, IBlobStorageService blobStorageService,
+    IUserContext userContext, IBlobStorageService blobStorageService,
     IMedicalDataRepository medicalDataRepository, IMapper mapper, HttpClient _httpClient) : IRequestHandler<AddMedicalFilesCommand, bool>
 {
     public async Task<bool> Handle(AddMedicalFilesCommand request, CancellationToken cancellationToken)
     {
 
-        var user = await userAccessor.GetRequiredUserAsync(httpContextAccesor.HttpContext);
+        var user = userContext.GetCurrentUser();
         var patient = await patientManager.FindByEmailAsync(user.Email);
 
         int previousUserMedicalFilesNumber = 0;

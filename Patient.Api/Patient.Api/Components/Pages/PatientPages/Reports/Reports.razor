@@ -10,12 +10,13 @@
 @using Patient.Domain.Entities;
 @using Patient.Domain.Entities.DTOs.Reports
 @using Patient.Domain.Repositories
+@using Patient.Application.Users
 
 @inject IPatientApiService _patientApiService
 @inject NavigationManager _navigationManager
 @inject IDiseaseRepository _diseaseRepository
-@inject IHttpContextAccessor contextAccesor
 @inject UserManager<Patient.Domain.Entities.Actors.Patient> _patientManager
+@inject IUserContext _userContext
 
 <div class="container px-4">
     @if (showReminder)
@@ -64,7 +65,9 @@
 
     protected async override Task OnInitializedAsync()
     {
-        currentPatient = await _patientManager.GetUserAsync(contextAccesor.HttpContext.User);
+        var currentUser = await _userContext.GetCurrentUserAsync();
+
+        currentPatient = await _patientManager.FindByIdAsync(currentUser.Id);
         if ((await _diseaseRepository.CountPatientsCurrentDiseases(currentPatient.Id) == 0) && (currentPatient.PreventionPatient == false))
         {
             showReminder = true;

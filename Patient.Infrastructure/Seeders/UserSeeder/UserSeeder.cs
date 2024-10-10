@@ -6,6 +6,7 @@ using Patient.Domain.Entities;
 using Patient.Domain.Entities.Actors;
 using Patient.Domain.Entities.Additional;
 using Patient.Domain.Constants;
+using Microsoft.EntityFrameworkCore;
 
 namespace Patient.Infrastructure.Seeders.UserSeeder;
 
@@ -14,6 +15,7 @@ internal class UserSeeder(HttpClient _httpClient, PatientDbContext dbContext) : 
 
     public async Task SeedUsers()
     {
+
         if (await dbContext.Database.CanConnectAsync())
         {
             if (!dbContext.Medicines.Any())

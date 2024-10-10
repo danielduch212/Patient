@@ -90,8 +90,8 @@
 
     private async Task PrescribePrescription()
     {
-        var response = await _doctorApiService.SendRequestPrescribePrescription(PrescriptionRequestToShowToDoctorDto);
-        if (response.IsSuccessStatusCode)
+        var result = await _doctorApiService.PrescribePrescription(PrescriptionRequestToShowToDoctorDto);
+        if (result)
         {
             await OnClose.InvokeAsync();
         }

@@ -1,25 +1,25 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Patient.Application.Account;
-using Patient.Domain.Interfaces;
-using Patient.Domain.Repositories;
-using Patient.Domain.Exceptions;
+using Patient.Application.Users;
 using Patient.Domain.Entities;
 using Patient.Domain.Entities.DTOs.Reports;
+using Patient.Domain.Exceptions;
+using Patient.Domain.Interfaces;
+using Patient.Domain.Repositories;
 
 namespace Patient.Application.Reports.Queries.Patient.GetReport;
 
 internal class GetReportForPatientQueryHandler(ILogger<GetReportForPatientQueryHandler> logger,
     IdentityUserAccessor userAccessor, UserManager<Domain.Entities.Actors.Patient> patientManager,
-    IHttpContextAccessor httpContextAccesor, HttpClient _httpClient, IBlobStorageService blobStorageService,
+    IUserContext userContext, HttpClient _httpClient, IBlobStorageService blobStorageService,
     IReportRepository reportsRepository, IMapper mapper) : IRequestHandler<GetReportForPatientQuery, ReportToShowToPatientDto>
 {
     public async Task<ReportToShowToPatientDto> Handle(GetReportForPatientQuery request, CancellationToken cancellationToken)
     {
-        var user = await userAccessor.GetRequiredUserAsync(httpContextAccesor.HttpContext);
+        var user = userContext.GetCurrentUser();
         logger.LogInformation($"Getting report for user: {user.Email}");
         var patient = await patientManager.FindByEmailAsync(user.Email);
 

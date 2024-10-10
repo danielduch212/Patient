@@ -3,9 +3,11 @@
 @rendermode InteractiveServer
 @page "/pacjent/konto"
 
-@inject IHttpContextAccessor httpContextAccesor
+@using Patient.Application.Users
+
 @inject NavigationManager _navigationManager
 @inject UserManager<Patient.Domain.Entities.Actors.Patient> _patientManager
+@inject IUserContext userContext
 
 @using MudBlazor
 
@@ -60,7 +62,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        currentPatient = await _patientManager.GetUserAsync(httpContextAccesor.HttpContext.User);
+        var currentUser = await userContext.GetCurrentUserAsync();
+        currentPatient = await _patientManager.FindByIdAsync(currentUser.Id);
 
     }
 

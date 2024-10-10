@@ -1,23 +1,23 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Patient.Application.Account;
-using Patient.Domain.Repositories;
+using Patient.Application.Users;
 using Patient.Domain.Entities;
+using Patient.Domain.Repositories;
 
 namespace Patient.Application.PrescriptionRequests.Commands.Doctor.PrescribePrescriptionFromRequest;
 
 internal class PrescribePrescriptionFromRequestCommandHandler(ILogger<PrescribePrescriptionFromRequestCommandHandler> logger,
 IdentityUserAccessor userAccessor, UserManager<Domain.Entities.Actors.Patient> patientManager,
-IHttpContextAccessor httpContextAccesor, HttpClient _httpClient,
+IUserContext userContext, HttpClient _httpClient,
 IPrescriptionRequestRepository prescriptionRequestRepository,
 IDoctorsRepository doctorsRepository,
 IPrescriptionRepository prescriptionRepository) : IRequestHandler<PrescribePrescriptionFromRequestCommand, bool>
 {
     public async Task<bool> Handle(PrescribePrescriptionFromRequestCommand request, CancellationToken cancellationToken)
     {
-        var userDoctor = await userAccessor.GetRequiredUserAsync(httpContextAccesor.HttpContext);
+        var userDoctor = userContext.GetCurrentUser();
         logger.LogInformation($"Prescripting medicines by doctor user: {userDoctor.Id}");
 
         await prescriptionRequestRepository.MarkPresriptionRequestAsIssued(request.Dto.PrescriptionRequestId);

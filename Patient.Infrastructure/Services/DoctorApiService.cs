@@ -1,67 +1,68 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using MediatR;
+using Microsoft.AspNetCore.Http;
+using Patient.Application.Reports.Queries.Doctor.GetReports;
+using Patient.Application.Reports.Queries.Doctor.GetReport;
+using Patient.Application.MedicalData.Queries.Patient.GetMedicalFiles;
+using Patient.Application.PrescriptionRequests.Commands.Doctor.PrescribePrescriptionFromRequest;
+using Patient.Application.PrescriptionRequests.Queries.Doctor.GetDoctorsPrescriptionRequests;
+using Patient.Application.Recommandation.Commands.Doctor.CreateRecommandation;
 using Patient.Domain.Entities.DTOs.PrescriptionRequest;
 using Patient.Domain.Entities.DTOs.Recommandation;
 using Patient.Domain.Interfaces;
-using System.Net.Http.Json;
+using System.Text.Json;
+using Patient.Application.Users;
+using Patient.Domain.Entities.DTOs.Reports;
+using Patient.Domain.Entities.DTOs.MedicalFiles;
 
 namespace Patient.Infrastructure.Services;
 
 public class DoctorApiService : IDoctorApiService
 {
-    private readonly HttpClient _httpClient;
-    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IMediator _mediator;
+    private readonly IUserContext _userContext;
 
-    public DoctorApiService(HttpClient httpClient, IHttpContextAccessor httpContextAccessor)
+    public DoctorApiService(IMediator mediator, IUserContext userContext)
     {
-        _httpClient = httpClient;
-        _httpContextAccessor = httpContextAccessor;
-
+        _mediator = mediator;
+        _userContext = userContext;
     }
-    public async Task<HttpResponseMessage> SendRequestGetReports()
+
+    public async Task<List<ReportForDoctorDto>> GetReports()
     {
-        AddCookiesToRequest();
-        var response = await _httpClient.GetAsync("/api/ReportsController/getReportsForDoctor"); //musi dawac raporty tylko dla tego lekarza
+        
+        var results = await _mediator.Send(new GetReportsForDoctorQuery());
+        return results;
+    }
+
+    public async Task<ReportForDoctorToShowDto> GetReport(string id)
+    {       
+        var result = await _mediator.Send(new GetReportForDoctorQuery { Id = id });
+        return result;
+    }
+
+    public async Task<List<MedicalFileToShowDto>> GetMedicalFiles()
+    {
+ 
+        var result = await _mediator.Send(new GetMedicalFilesQuery());
+        return result;
+    }
+
+    public async Task<bool> AddRecommandation(MedicalRecommandationDto dto)
+    {
+
+        var response = await _mediator.Send(new CreateRecommandationCommand { MedicalRecommandationDto = dto });
         return response;
     }
 
-    public async Task<HttpResponseMessage> SendRequestGetReport(string id)
+    public async Task<List<PrescriptionRequestToShowToDoctorDto>> GetPrescriptionRequests()
     {
-        AddCookiesToRequest();
-        var url = $"/api/ReportsController/getReportForDoctor?Id={id}";
-        var response = await _httpClient.GetAsync(url);
-        return response;
-    }   
-    public async Task<HttpResponseMessage> SendRequestGetMedicalFiles(string userId)
-    {
-        AddCookiesToRequest();
-        var response = await _httpClient.GetAsync("/api/MedicalDataController/getUserMedicalData");
-        return response;
-    }
-    
-    public async Task<HttpResponseMessage> SendRequestAddRecommandation(MedicalRecommandationDto dto)
-    {
-        AddCookiesToRequest();
-        var response = await _httpClient.PostAsJsonAsync("/api/RecommandationController/createRecommandation", dto);
-        return response;
+        var results = await _mediator.Send(new GetDoctorsPrescriptionRequestsQuery());
+        return results;
     }
 
-    public async Task<HttpResponseMessage> SendRequestGetPrescriptionRequests()
+    public async Task<bool> PrescribePrescription(PrescriptionRequestToShowToDoctorDto dto)
     {
-        AddCookiesToRequest();
-        var response = await _httpClient.GetAsync("/api/PrescriptionRequestController/getDoctorsPrescriptionRequests");
-        return response;
-    }
-
-    public async Task<HttpResponseMessage> SendRequestPrescribePrescription(PrescriptionRequestToShowToDoctorDto dto)
-    {
-        AddCookiesToRequest();
-        var response = await _httpClient.PostAsJsonAsync("/api/PrescriptionRequestController/prescribePrescriptionFromRequest", dto);
-        return response;
-    }
-
-    private void AddCookiesToRequest()
-    {
-        var cookies = _httpContextAccessor.HttpContext.Request.Headers["Cookie"].ToString();
-        _httpClient.DefaultRequestHeaders.Add("Cookie", cookies);
+        var result = await _mediator.Send(new PrescribePrescriptionFromRequestCommand { Dto = dto });
+        return result;
     }
 }

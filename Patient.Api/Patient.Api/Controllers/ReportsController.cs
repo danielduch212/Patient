@@ -28,44 +28,6 @@ public class ReportsController(IMediator mediator, ILogger<ReportsController> lo
         return BadRequest(response);
     }
 
-    [Authorize(Roles = UserRoles.Patient)]
-    [HttpGet("getReportsForPatient")]
-    public async Task<IActionResult> GetReportsForPatient()
-    {
-        var result = await mediator.Send(new GetReportsForPatientQuery());
-        if (result.Count > 0)
-        {
-            return Ok(result);
-        }
-        return NoContent();
-    }
-
-    [Authorize(Roles = UserRoles.Patient)]
-    [HttpGet("getReportForPatient")]
-    public async Task<IActionResult> GetReportForPatient([FromQuery] GetReportForPatientQuery query)
-    { 
-        var result = await mediator.Send(query);
-        return Ok(result);
-    }
-
     
-    [HttpGet("getReportsForDoctor")]
-    public async Task<IActionResult> GetReportsForDoctor()
-    {
-        var result = await mediator.Send(new GetReportsForDoctorQuery());//
-        if (result.Count > 0)
-        {
-            return Ok(result);
-        }
-        return NoContent();
-    }
-
-    [Authorize(Roles = UserRoles.Doctor)]
-    [HttpGet("getReportForDoctor")]
-    public async Task<IActionResult> GetReportForDoctor([FromQuery] GetReportForDoctorQuery query)
-    {
-        var result = await mediator.Send(query);//
-        return Ok(result);
-    }
 
 }

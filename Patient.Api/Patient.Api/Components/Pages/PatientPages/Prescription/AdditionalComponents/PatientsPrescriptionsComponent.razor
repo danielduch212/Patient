@@ -71,13 +71,9 @@
     protected async override Task OnInitializedAsync()
     {
         readingPrescriptions = true;
-        var response = await _patientApiService.SendRequestGetPrescriptions();
-        if (response.StatusCode == System.Net.HttpStatusCode.OK)
-        {
-            prescriptionsToShow = await response.Content.ReadFromJsonAsync<List<PrescriptionToShowPatientDto>>();
-            if (prescriptionsToShow.Count > 0) { filesGet = true; }
-            StateHasChanged();
-        }
+        prescriptionsToShow = await _patientApiService.GetPrescriptions();
+        if (prescriptionsToShow.Count > 0) { filesGet = true; }
+        StateHasChanged();
         readingPrescriptions = false;
 
     }

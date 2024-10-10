@@ -3,7 +3,7 @@
 
 @inject UserManager<Patient.Domain.Entities.Actors.Doctor> _doctorManager
 
-@inject IHttpContextAccessor httpContextAccesor
+
 @inject IReportRepository _reportRepository
 @inject IPrescriptionRequestRepository _prescriptionRequestRepository
 @inject NavigationManager _navigationManager
@@ -26,7 +26,7 @@
             </MudPaper>
         </div>
         <div class="col">
-            <MudPaper Class="pa-4 ma-2 summary-item" Elevation="3" Style="cursor: pointer;" @onclick='() => RedirectTo("wiadomosci")'>
+            <MudPaper Class="pa-4 ma-2 summary-item" Elevation="3" Style="cursor: pointer;" >
                 <h4>Twoi Pacjenci</h4>
                 <h4>@patientsNumber</h4>
             </MudPaper>

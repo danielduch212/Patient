@@ -1,4 +1,5 @@
 ﻿
+@using Patient.Application.Users
 @using Patient.Domain.Repositories
 
 @inject IDoctorsRepository _doctorsRepository
@@ -31,9 +32,8 @@
 
 
 @code {
-
     [CascadingParameter]
-    public Patient.Domain.Entities.Actors.Patient CurrentPatient { get; set; } = new();
+    private Patient.Domain.Entities.Actors.Patient CurrentPatient { get; set; } = new();
 
     private List<Patient.Domain.Entities.Actors.Doctor> patientsDoctors = new();
 

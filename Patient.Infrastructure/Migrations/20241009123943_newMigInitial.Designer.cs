@@ -12,8 +12,8 @@ using Patient.Infrastructure.Persistence;
 namespace Patient.Infrastructure.Migrations
 {
     [DbContext(typeof(PatientDbContext))]
-    [Migration("20241007112750_mig123")]
-    partial class mig123
+    [Migration("20241009123943_newMigInitial")]
+    partial class newMigInitial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -514,19 +514,15 @@ namespace Patient.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("DateOfCreating")
-                        .IsRequired()
+                    b.Property<string>("AdditionalDescription")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Description")
+                    b.Property<string>("DateOfCreating")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FileNames")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("HealthRating")
-                        .HasColumnType("int");
 
                     b.Property<bool>("IsChecked")
                         .HasColumnType("bit");
@@ -537,6 +533,17 @@ namespace Patient.Infrastructure.Migrations
                     b.Property<string>("PatientId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("PatientsAnswersForQuestions")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PatientsHealthRating")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PatientsSymptoms")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("Urgency")
                         .HasColumnType("int");
@@ -601,15 +608,15 @@ namespace Patient.Infrastructure.Migrations
                     b.Property<string>("ImageAvatarFileName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool?>("OnlyPreventionPatient")
-                        .HasColumnType("bit");
-
                     b.Property<int>("PatientType")
                         .HasColumnType("int");
 
                     b.Property<string>("Pesel")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("PreventionPatient")
+                        .HasColumnType("bit");
 
                     b.ToTable("Patients", (string)null);
                 });

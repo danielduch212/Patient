@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Patient.Application.Account;
 using Patient.Application.MedicalData.Queries.Patient.GetMedicalFiles;
+using Patient.Application.Users;
 using Patient.Domain.Entities.DTOs.Prescription;
 using Patient.Domain.Interfaces;
 using Patient.Domain.Repositories;
@@ -12,13 +13,13 @@ namespace Patient.Application.Prescriptions.Queries.Patient.GetPatientPrescripti
 
 internal class GetPatientsPrescriptionsQueryHandler(ILogger<GetPatientsPrescriptionsQueryHandler> logger,
     IdentityUserAccessor userAccessor, UserManager<Domain.Entities.Actors.Patient> patientManager,
-    IHttpContextAccessor httpContextAccesor, HttpClient _httpClient,
+    IUserContext userContext, HttpClient _httpClient,
     IPrescriptionRepository prescriptionRepository) : IRequestHandler<GetPatientsPrescriptionsQuery, List<PrescriptionToShowPatientDto>>
 {
     public async Task<List<PrescriptionToShowPatientDto>> Handle(GetPatientsPrescriptionsQuery request, CancellationToken cancellationToken)
     {
 
-        var user = await userAccessor.GetRequiredUserAsync(httpContextAccesor.HttpContext);
+        var user = userContext.GetCurrentUser();
         logger.LogInformation($"Getting prescriptions for patient user: {user.Email}");
 
         var patient = await patientManager.FindByEmailAsync(user.Email);
