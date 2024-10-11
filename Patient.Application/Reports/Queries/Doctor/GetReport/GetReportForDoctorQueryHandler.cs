@@ -21,7 +21,7 @@ internal class GetReportForDoctorQueryHandler(ILogger<GetReportForDoctorQueryHan
 {
     public async Task<ReportForDoctorToShowDto> Handle(GetReportForDoctorQuery request, CancellationToken cancellationToken)
     {
-        var user = userContext.GetCurrentUser();
+        var user = await userContext.GetCurrentUserAsync();
         logger.LogInformation($"Getting report for user: {user.Email}");
         var doctor = await doctorManager.FindByEmailAsync(user.Email);
 

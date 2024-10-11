@@ -9,7 +9,10 @@
 @using MudBlazor
 
 
+
 @inject UserApiService _userApiService
+@inject NavigationManager _navigationManager
+
 
 @page "/pacjent/dodaj-raport"
 
@@ -199,13 +202,19 @@
         {
             isReportBeingAdded = false;
             reportAddedSuccesfully = true;
+
             StateHasChanged();
+            _navigationManager.NavigateTo("/pacjent/raporty");
+
         }
         else
         {
             isReportBeingAdded = false;
             reportAddingFailed = true;
             StateHasChanged();
+            _navigationManager.NavigateTo("/pacjent/raporty");
+            //no i tu tez powinno byc inaczej - ze po prostu jest kontrola danych wprowadzanych do tego.
+            //a nie jak request zwroci
         }
     }
 

@@ -41,14 +41,12 @@ public class UserApiService
         var response = await _httpClient.PostAsync("/api/ReportsController/createReport", form);
         return response;
     }
-
     public async Task<HttpResponseMessage> SendRequestSearchDiseases(string searchPhrase)
     {
         var url = $"/api/DiseaseController/getDiseasesNamesBySearchPhrase?searchPhrase={Uri.EscapeDataString(searchPhrase)}";
         var response = await _httpClient.GetAsync(url);
         return response;
     }
-
     public async Task<HttpResponseMessage> SendRequestAddPatientsDiseases(List<PatientsDiseaseDto> dtos)
     {
         var response = await _httpClient.PostAsJsonAsync("/api/DiseaseController/addPatientsDiseases", dtos);

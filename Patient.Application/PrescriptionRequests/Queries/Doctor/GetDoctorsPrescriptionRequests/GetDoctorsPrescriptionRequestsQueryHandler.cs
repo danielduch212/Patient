@@ -20,7 +20,7 @@ internal class GetDoctorsPrescriptionRequestsQueryHandler(ILogger<GetDoctorsPres
 {
     public async Task<List<PrescriptionRequestToShowToDoctorDto>> Handle(GetDoctorsPrescriptionRequestsQuery request, CancellationToken cancellationToken)
     {
-        var userDoctor = userContext.GetCurrentUser();
+        var userDoctor = await userContext.GetCurrentUserAsync();
         logger.LogInformation($"Getting prescription requests for doctor user: {userDoctor.Email}");
 
         var doctor = await doctorManager.FindByEmailAsync(userDoctor.Email);

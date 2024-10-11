@@ -20,7 +20,7 @@ internal class AddMedicalFilesCommandHandler(ILogger<AddMedicalFilesCommandHandl
     public async Task<bool> Handle(AddMedicalFilesCommand request, CancellationToken cancellationToken)
     {
 
-        var user = userContext.GetCurrentUser();
+        var user = await userContext.GetCurrentUserAsync();
         var patient = await patientManager.FindByEmailAsync(user.Email);
 
         int previousUserMedicalFilesNumber = 0;

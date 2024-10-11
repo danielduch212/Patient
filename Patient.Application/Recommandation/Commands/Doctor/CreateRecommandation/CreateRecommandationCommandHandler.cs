@@ -20,7 +20,7 @@ internal class CreateRecommandationCommandHandler(ILogger<CreateRecommandationCo
 {
     public async Task<bool> Handle(CreateRecommandationCommand request, CancellationToken cancellationToken)
     {
-        var user = userContext.GetCurrentUser();
+        var user = await userContext.GetCurrentUserAsync();
         var doctor = await doctorManager.FindByEmailAsync(user.Email);
         logger.LogInformation($"Creating recommandation for report: {request.MedicalRecommandationDto.ReportId} by doctor {doctor.Id}");
         var prescription = mapper.Map<Prescription>(request.MedicalRecommandationDto.Prescription);

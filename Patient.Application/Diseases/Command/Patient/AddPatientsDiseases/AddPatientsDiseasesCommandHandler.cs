@@ -19,7 +19,7 @@ IDoctorsRepository doctorsRepository) : IRequestHandler<AddPatientsDiseasesComma
     public async Task<bool> Handle(AddPatientsDiseasesCommand request, CancellationToken cancellationToken)
     {
         //tutaj tylko dodaje nowe choroby - do usuwania starych bedzie inny command zeby nie utrudniac
-        var user = userContext.GetCurrentUser();
+        var user =  userContext.GetCurrentUser();
         logger.LogInformation($"Adding diseases for patient id: {user.Id}");
 
         List<PatientsDisease> patientsDiseases = new List<PatientsDisease>();

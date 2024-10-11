@@ -42,6 +42,6 @@ public class DiseaseController(IMediator mediator, ILogger<DiseaseController> lo
         var results = await mediator.Send(new GetPatientsDiseasesQuery());
         return Ok(results);
     }
-
+    
 }
 

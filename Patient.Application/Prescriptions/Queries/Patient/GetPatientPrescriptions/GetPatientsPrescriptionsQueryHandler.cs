@@ -19,7 +19,7 @@ internal class GetPatientsPrescriptionsQueryHandler(ILogger<GetPatientsPrescript
     public async Task<List<PrescriptionToShowPatientDto>> Handle(GetPatientsPrescriptionsQuery request, CancellationToken cancellationToken)
     {
 
-        var user = userContext.GetCurrentUser();
+        var user = await userContext.GetCurrentUserAsync();
         logger.LogInformation($"Getting prescriptions for patient user: {user.Email}");
 
         var patient = await patientManager.FindByEmailAsync(user.Email);

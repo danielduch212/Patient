@@ -18,7 +18,7 @@ IDoctorsRepository doctorsRepository) : IRequestHandler<AddPrescriptionRequestCo
 {
     public async Task<bool> Handle(AddPrescriptionRequestCommand request, CancellationToken cancellationToken)
     {
-        var user = userContext.GetCurrentUser();
+        var user = await userContext.GetCurrentUserAsync();
         logger.LogInformation($"Adding prescription request for patient user: {user.Id}");
 
         var patientsDoctor = await doctorsRepository.GetPatientsFirstContactDoctor(user.Id, cancellationToken);

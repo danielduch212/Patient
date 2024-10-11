@@ -18,7 +18,7 @@ internal class GetMedicalFilesQueryHandler(ILogger<GetMedicalFilesQueryHandler> 
 {
     public async Task<List<MedicalFileToShowDto>> Handle(GetMedicalFilesQuery request, CancellationToken cancellationToken)
     {
-        var user = userContext.GetCurrentUser();
+        var user = await userContext.GetCurrentUserAsync();
         var patient = await patientManager.FindByEmailAsync(user.Email);
         logger.LogInformation($"Getting medical files for user: {user.Email}");
 

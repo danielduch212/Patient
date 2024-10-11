@@ -17,7 +17,7 @@ IPrescriptionRepository prescriptionRepository) : IRequestHandler<PrescribePresc
 {
     public async Task<bool> Handle(PrescribePrescriptionFromRequestCommand request, CancellationToken cancellationToken)
     {
-        var userDoctor = userContext.GetCurrentUser();
+        var userDoctor = await userContext.GetCurrentUserAsync();
         logger.LogInformation($"Prescripting medicines by doctor user: {userDoctor.Id}");
 
         await prescriptionRequestRepository.MarkPresriptionRequestAsIssued(request.Dto.PrescriptionRequestId, cancellationToken);
