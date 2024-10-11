@@ -120,12 +120,20 @@
 
     protected async override Task OnInitializedAsync()
     {
-        await Task.Delay(500);
-        readingFiles = true;
-        var medicalFilesToShow = await _patientApiService.GetMedicalFiles(TokenSource.Token);
-        if (medicalFilesToShow.Count > 0) { filesGet = true; }
-        StateHasChanged();
-        readingFiles = false;
+        try
+        {
+            await Task.Delay(500);
+            readingFiles = true;
+            var medicalFilesToShow = await _patientApiService.GetMedicalFiles(TokenSource.Token);
+            if (medicalFilesToShow.Count > 0) { filesGet = true; }
+            StateHasChanged();
+            readingFiles = false;
+        }
+        catch(OperationCanceledException e)
+        {
+            
+        }
+        
 
     }
 

@@ -111,8 +111,15 @@
 
     protected override void OnInitialized()
     {
-
-        medicalDataTypes = MedicalDocumentationType.GetAllTypes();
+        try
+        {
+            medicalDataTypes = MedicalDocumentationType.GetAllTypes();
+        }
+        catch(OperationCanceledException e)
+        {
+            
+        }
+        
     }
 
     private async void HandleAddFiles()

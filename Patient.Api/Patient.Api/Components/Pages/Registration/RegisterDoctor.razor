@@ -37,86 +37,84 @@
         <div class="col-md-6">
             <div class="card">
                 <h2 class="card-title text-center mb-4">Rejestracja Lekarz</h2>
-                <div class="card-body">                    
-                    <EditForm Model="inputDoctorData" method="post" OnValidSubmit="OnRegister" >
-                        <DataAnnotationsValidator />
-
-                        <hr />
-                        <ValidationSummary class="text-danger" role="alert" />
-
-                        <div class="form-floating mb-3">
-                            <InputText @bind-Value="inputDoctorData.Email" class="form-control" autocomplete="username" aria-required="true" />
-                            <label for="email">Email</label>
-                            <ValidationMessage For="() => inputDoctorData.Email" class="text-danger" />
-                        </div>
-
-                        <div class="form-floating mb-3">
-                            <InputText @bind-Value="inputDoctorData.Password" type="password" class="form-control" aria-required="true" />
-                            <label for="password">Hasło</label>
-                            <ValidationMessage For="() => inputDoctorData.Password" class="text-danger" />
-                        </div>
-
-                        <div class="form-floating mb-3">
-                            <InputText @bind-Value="inputDoctorData.ConfirmPassword" type="password" class="form-control" aria-required="true" />
-                            <label for="confirmPassword">Powtórz hasło</label>
-                            <ValidationMessage For="() => inputDoctorData.ConfirmPassword" class="text-danger" />
-                        </div>
-
-                        <div class="form-floating mb-3">
-                            <InputText @bind-Value="inputDoctorData.Name" class="form-control" aria-required="true" />
-                            <label for="name">Imię</label>
-                            <ValidationMessage For="() => inputDoctorData.Name" class="text-danger" />
-                        </div>
-
-                        <div class="form-floating mb-3">
-                            <InputText @bind-Value="inputDoctorData.Surname" class="form-control" aria-required="true" />
-                            <label for="surname">Nazwisko</label>
-                            <ValidationMessage For="() => inputDoctorData.Surname" class="text-danger" />
-                        </div>
-
-                        
-                        <div class="form-floating mb-3">
-                            <InputDate @bind-Value="inputDoctorData.DateOfBirth" class="form-control" aria-required="true" />
-                            <label for="dateOfBirth">Data Urodzenia</label>
-                            <ValidationMessage For="() => inputDoctorData.DateOfBirth" class="text-danger" />
-                        </div>
-
-                        <div class="form-floating mb-3">
-                            <InputText @bind-Value="inputDoctorData.City" class="form-control" />
-                            <label for="city">Miasto</label>
-                            <ValidationMessage For="() => inputDoctorData.City" class="text-danger" />
-                        </div>
-
-                        <div class="form-floating mb-3">
-                            <InputText @bind-Value="inputDoctorData.Street" class="form-control" />
-                            <label for="street">Ulica</label>
-                            <ValidationMessage For="() => inputDoctorData.Street" class="text-danger" />
-                        </div>
-
-                        <div class="form-floating mb-3">
-                            <InputText @bind-Value="inputDoctorData.PostalCode" class="form-control" />
-                            <label for="postalCode">Kod pocztowy</label>
-                            <ValidationMessage For="() => inputDoctorData.PostalCode" class="text-danger" />
-                        </div>
-                        <div class="form-floating mb-3">
-                            <InputText @bind-Value="inputDoctorData.DoctorNumber" class="form-control" aria-required="true" />
-                            <label for="doctorNumber">Nr Lekarza</label>
-                            <ValidationMessage For="() => inputDoctorData.DoctorNumber" class="text-danger" />
-                        </div>
-                        <button type="submit" class="btn btn-primary btn-custom-primary">Zarejestruj</button>
-                    </EditForm>
-
-                    
-
+                <div class="card-body"> 
                     @if (waitingForResult != false)
                     {
-                        <div class="spinner-border" role="status">
-                            <span class="sr-only">Loading...</span>
-                        </div>
+                        <MudProgressCircular Color="Color.Primary"></MudProgressCircular>
                     }
+                    else
+                    {
+                        <EditForm Model="inputDoctorData" method="post" OnValidSubmit="OnRegister">
+                            <DataAnnotationsValidator />
+
+                            <hr />
+                            <ValidationSummary class="text-danger" role="alert" />
+
+                            <div class="form-floating mb-3">
+                                <InputText @bind-Value="inputDoctorData.Email" class="form-control" autocomplete="username" aria-required="true" />
+                                <label for="email">Email</label>
+                                <ValidationMessage For="() => inputDoctorData.Email" class="text-danger" />
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <InputText @bind-Value="inputDoctorData.Password" type="password" class="form-control" aria-required="true" />
+                                <label for="password">Hasło</label>
+                                <ValidationMessage For="() => inputDoctorData.Password" class="text-danger" />
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <InputText @bind-Value="inputDoctorData.ConfirmPassword" type="password" class="form-control" aria-required="true" />
+                                <label for="confirmPassword">Powtórz hasło</label>
+                                <ValidationMessage For="() => inputDoctorData.ConfirmPassword" class="text-danger" />
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <InputText @bind-Value="inputDoctorData.Name" class="form-control" aria-required="true" />
+                                <label for="name">Imię</label>
+                                <ValidationMessage For="() => inputDoctorData.Name" class="text-danger" />
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <InputText @bind-Value="inputDoctorData.Surname" class="form-control" aria-required="true" />
+                                <label for="surname">Nazwisko</label>
+                                <ValidationMessage For="() => inputDoctorData.Surname" class="text-danger" />
+                            </div>
 
 
+                            <div class="form-floating mb-3">
+                                <MudDatePicker PickerVariant="PickerVariant.Dialog" @bind-Value="inputDoctorData.DateOfBirth"
+                                               Label="Data urodzenia" Date="@(new DateTime(2020,10,19))"
+                                               DateFormat="yyyy/MM/dd/" />
+                                <ValidationMessage For="() => inputDoctorData.DateOfBirth" class="text-danger" />
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <InputText @bind-Value="inputDoctorData.City" class="form-control" />
+                                <label for="city">Miasto</label>
+                                <ValidationMessage For="() => inputDoctorData.City" class="text-danger" />
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <InputText @bind-Value="inputDoctorData.Street" class="form-control" />
+                                <label for="street">Ulica</label>
+                                <ValidationMessage For="() => inputDoctorData.Street" class="text-danger" />
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <InputText @bind-Value="inputDoctorData.PostalCode" class="form-control" />
+                                <label for="postalCode">Kod pocztowy</label>
+                                <ValidationMessage For="() => inputDoctorData.PostalCode" class="text-danger" />
+                            </div>
+                            <div class="form-floating mb-3">
+                                <InputText @bind-Value="inputDoctorData.DoctorNumber" class="form-control" aria-required="true" />
+                                <label for="doctorNumber">Nr Lekarza</label>
+                                <ValidationMessage For="() => inputDoctorData.DoctorNumber" class="text-danger" />
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-custom-primary">Zarejestruj</button>
+                        </EditForm>
+                    }
                     
+                  
                 </div>
 
             </div>
@@ -170,83 +168,91 @@
         badRegistration = false;
         successfullRegistration = false;
 
-        logger.LogInformation("Trying register Doctor");
-        waitingForResult = true;
-        userBeingRegistered = true;
-
-        var user = CreateUser();
-
-        await userStore.SetUserNameAsync(user, inputDoctorData.Email, CancellationToken.None);
-
-        var emailStore = GetEmailStore();
-        await emailStore.SetEmailAsync(user, inputDoctorData.Email, CancellationToken.None);
-
-
-        (var isDataValidate, var message) = await userAdditionalValidator.ValidateDoctorData(inputDoctorData.DoctorNumber, inputDoctorData.Email);
-        if (isDataValidate)
+        try
         {
+            logger.LogInformation("Trying register Doctor");
+            waitingForResult = true;
+            userBeingRegistered = true;
+            StateHasChanged();
 
-            //potem dac tu mapper albo zostawic
-            var doctor = new Doctor()
+            var user = CreateUser();
+
+            await userStore.SetUserNameAsync(user, inputDoctorData.Email, CancellationToken.None);
+
+            var emailStore = GetEmailStore();
+            await emailStore.SetEmailAsync(user, inputDoctorData.Email, CancellationToken.None);
+
+
+            (var isDataValidate, var message) = await userAdditionalValidator.ValidateDoctorData(inputDoctorData.DoctorNumber, inputDoctorData.Email);
+            if (isDataValidate)
             {
-                NormalizedUserName = inputDoctorData.Email.ToLower(),
-                Name = inputDoctorData.Name,
-                Surname = inputDoctorData.Surname,
-                Email = inputDoctorData.Email,
-                DateOfBirth = inputDoctorData.DateOfBirth,
-                UserName = inputDoctorData.Email,
-                Address = new Address()
+
+                //potem dac tu mapper albo zostawic
+                var doctor = new Doctor()
+                    {
+                        NormalizedUserName = inputDoctorData.Email.ToLower(),
+                        Name = inputDoctorData.Name,
+                        Surname = inputDoctorData.Surname,
+                        Email = inputDoctorData.Email,
+                        DateOfBirth = DateOnly.FromDateTime(inputDoctorData.DateOfBirth),
+                        UserName = inputDoctorData.Email,
+                        Address = new Address()
+                        {
+                            City = inputDoctorData.City,
+                            Street = inputDoctorData.Street,
+                            PostalCode = inputDoctorData.PostalCode,
+                        },
+                        DoctorNumber = inputDoctorData.DoctorNumber,
+                    };
+
+
+
+                var hashedPassword = passwordHasher.HashPassword(doctor, inputDoctorData.Password);
+                doctor.PasswordHash = hashedPassword;
+
+                var resultFromCreating = await userManager.CreateAsync(doctor);
+                result = resultFromCreating.Succeeded;
+                if (result)
                 {
-                    City = inputDoctorData.City,
-                    Street = inputDoctorData.Street,
-                    PostalCode = inputDoctorData.PostalCode,
-                },
-                DoctorNumber = inputDoctorData.DoctorNumber,
-            };
-    
+                    logger.LogInformation("Doctor with given email created: {Email}", inputDoctorData.Email);
+                    var role = await roleManager.FindByNameAsync(UserRoles.Doctor);
+                    if (role == null) { throw new NotFoundException(nameof(IdentityRole), UserRoles.Doctor); }
+                    await userManager.AddToRoleAsync(doctor, role.ToString());
+                    var isInRole = await userManager.IsInRoleAsync(doctor, UserRoles.Doctor);
 
 
-            var hashedPassword = passwordHasher.HashPassword(doctor, inputDoctorData.Password);
-            doctor.PasswordHash = hashedPassword;
+                    await _doctorsRepository.AssignDoctorSpecializationForDoctor(doctor.Id, "Lekarz pierwszego kontaktu", tokenSource.Token);
 
-            var resultFromCreating = await userManager.CreateAsync(doctor);
-            result = resultFromCreating.Succeeded;
-            if (result)
-            {
-                logger.LogInformation("Doctor with given email created: {Email}", inputDoctorData.Email);
-                var role = await roleManager.FindByNameAsync(UserRoles.Doctor);
-                if (role == null) { throw new NotFoundException(nameof(IdentityRole), UserRoles.Doctor); }
-                await userManager.AddToRoleAsync(doctor, role.ToString());
-                var isInRole = await userManager.IsInRoleAsync(doctor, UserRoles.Doctor);
+                    logger.LogInformation($"Doctor with given email {isInRole} added to role Doctor: {inputDoctorData.Email}");
 
+                }
+                registrationResult.Errors = resultFromCreating.Errors.Select(e => e.Description.ToString()).ToList();
 
-                await _doctorsRepository.AssignDoctorSpecializationForDoctor(doctor.Id, "Lekarz pierwszego kontaktu", tokenSource.Token);
-
-                logger.LogInformation($"Doctor with given email {isInRole} added to role Doctor: {inputDoctorData.Email}");
 
             }
-            registrationResult.Errors = resultFromCreating.Errors.Select(e => e.Description.ToString()).ToList();
+            registrationResult.IsSuccess = isDataValidate;
 
 
+            waitingForResult = false;
+
+            if (registrationResult.IsSuccess == true)
+            {
+                successfullRegistration = true;
+                await Task.Delay(3000);
+                StateHasChanged();                
+                Navigation.NavigateTo("/logowanieLekarz");
+            }
+            else
+            {
+                badRegistration = true;
+                successfullRegistration = false;
+                StateHasChanged();
+            }
         }
-        registrationResult.IsSuccess = isDataValidate;      
+        catch (Exception ex)
+        {
+        }
         
-
-        waitingForResult = false;
-
-        if (registrationResult.IsSuccess == true)
-        {
-            successfullRegistration = true;
-            StateHasChanged();
-            await Task.Delay(3000);
-            Navigation.NavigateTo("/logowanieLekarz");
-        }
-        else
-        {
-            badRegistration = true;
-            successfullRegistration = false;
-            StateHasChanged();
-        }
 
     }
 

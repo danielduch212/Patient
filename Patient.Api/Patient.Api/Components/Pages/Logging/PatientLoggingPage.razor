@@ -14,6 +14,7 @@
 @using Microsoft.AspNetCore.Identity
 @using Patient.Application.Account
 @using System.Net
+@using Patient.Api.Components.ManageComponents
 
 
 @inject NavigationManager Navigation
@@ -88,19 +89,17 @@
 
     private async Task OnLogin()
     {
-
         var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
-        if(result.Succeeded)
+        if (result.Succeeded)
         {
-            
+            await Task.Delay(100);
             _redirectManager.RedirectTo("/pacjent");
         }
         else
         {
+            errorMessage = "Nieprawidlowy email lub hasło";
             badRequest = true;
-        }
-
-
+        }       
 
     }
 

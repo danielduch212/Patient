@@ -87,15 +87,22 @@
 
     protected override async Task OnInitializedAsync()
     {   
-        await Task.Delay(500);
-        await CountUserPrescriptionRequests();
+        try{
+            await Task.Delay(500);
+            await CountUserPrescriptionRequests();
 
-        if ((await _diseaseRepository.CountPatientsCurrentDiseases(currentPatient.Id, sourceToken.Token) == 0) && (currentPatient.PreventionPatient==false))
-        {
-            showReminder = true;
+            if ((await _diseaseRepository.CountPatientsCurrentDiseases(currentPatient.Id, sourceToken.Token) == 0) && (currentPatient.PreventionPatient == false))
+            {
+                showReminder = true;
+            }
+            mainComponentInitialized = true;
+            StateHasChanged();
         }
-        mainComponentInitialized = true;
-        StateHasChanged();
+        catch(OperationCanceledException e)
+        {
+            
+        }
+        
     }
 
     private void ShowAskForPrescriptionModal()

@@ -29,8 +29,7 @@ public sealed class InputRegisterPatientModel
     public string Surname { get; set; } = default!;
     [Required]
     [Display(Name = "Data Urodzenia")]
-    [DataType(DataType.Date)]
-    public DateOnly DateOfBirth { get; set; } = default!;
+    public DateTime DateOfBirth { get; set; } = default!;
 
     [Required]
     [Display(Name = "Miasto")]
@@ -47,5 +46,7 @@ public sealed class InputRegisterPatientModel
     /// </summary>
     [Required]
     [Display(Name = "Pesel")]
+    [StringLength(11, ErrorMessage = "Pesel musi mieć dokładnie 11 znaków")]
+    [MinLength(11, ErrorMessage = "Pesel musi mieć dokładnie 11 znaków")]
     public string Pesel { get; set; } = default!;
 }
