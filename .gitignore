@@ -364,3 +364,5 @@ FodyWeavers.xsd
 /Patient.Api/Patient.Api/appsettings.json
 /Patient.Infrastructure/Migrations/PatientDbContextModelSnapshot.cs
 /Patient.Infrastructure/Migrations/20241009123943_newMigInitial.cs
+/Patient.Api/Patient.Api/appsettings.Development.json
+/Patient.Api/Patient.Api/appsettings.json
