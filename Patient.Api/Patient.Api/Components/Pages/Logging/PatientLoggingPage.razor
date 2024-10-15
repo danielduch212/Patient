@@ -89,7 +89,10 @@
 
     private async Task OnLogin()
     {
+        
         var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+
+        
         if (result.Succeeded)
         {
             await Task.Delay(100);

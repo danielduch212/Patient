@@ -32,9 +32,18 @@
     <section>
         <div class="row">
             <div class="col">
-                <MudPaper Class="pa-4 ma-3 summary-item" Elevation="3" Style="cursor: pointer;">
-                    <Patient.Api.Components.Pages.DoctorPages.Prescriptions.AdditionalComponents.DoctorsPrescriptionsComponent OnRefresh="Refresh" TokenSource="tokenSource"/>
-                </MudPaper>
+                @if(mainComponentIsInitialized)
+                {
+                    <MudPaper Class="pa-4 ma-3 summary-item" Elevation="3" Style="cursor: pointer;">
+                        <Patient.Api.Components.Pages.DoctorPages.Prescriptions.AdditionalComponents.DoctorsPrescriptionsComponent OnRefresh="Refresh" TokenSource="tokenSource" />
+                    </MudPaper>
+                }
+                else{
+                    <div class="row text-center">
+                        <MudProgressCircular Color="Color.Primary" Indeterminate="true"></MudProgressCircular>
+                    </div>
+                }
+                
             </div>
             <div class="col">
                 <MudPaper Class="pa-4 ma-3 summary-item" Elevation="3" Style="cursor: pointer;">
@@ -44,23 +53,22 @@
             </div>
         </div>
     </section>
-    @if (showAskForPrescriptionModal)
-    {
-    }
+   
 </div>
 
 
 @code {
-    private bool showAskForPrescriptionModal;
 
     private Patient.Domain.Entities.Actors.Doctor currentDoctor = new();
     private int prescriptionRequestsNumber;
 
     private CancellationTokenSource tokenSource = new();
 
+    private bool mainComponentIsInitialized;
     protected override async Task OnInitializedAsync()
     {
         await CountDoctorPrescriptionRequests();
+        mainComponentIsInitialized = true;
     }
 
     private async Task CountDoctorPrescriptionRequests()
