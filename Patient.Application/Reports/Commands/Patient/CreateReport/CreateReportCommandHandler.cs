@@ -9,6 +9,7 @@ using Patient.Domain.Entities;
 using Patient.Domain.Constants;
 using Patient.Domain.Entities.Actors;
 using Patient.Application.Users;
+using Patient.Domain.Exceptions;
 
 namespace Patient.Application.Reports.Commands.Patient.CreateReport;
 
@@ -36,8 +37,7 @@ internal class CreateReportCommandHandler(ILogger<CreateReportCommandHandler> lo
         var patientsDoctorFirstContact = await doctorsRepository.GetPatientsFirstContactDoctor(user.Id, cancellationToken);
         if(patientsDoctorFirstContact == null)
         {
-            await doctorsRepository.AssignFirstContactDoctorToPatient(user.Id, cancellationToken);
-            patientsDoctorFirstContact = await doctorsRepository.GetPatientsFirstContactDoctor(user.Id, cancellationToken);
+            throw new NotFullfilledMedicalInterviewException();
         }
         doctorsToCheck.Add(patientsDoctorFirstContact);
         

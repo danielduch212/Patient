@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Patient.Application.Account;
 using Patient.Application.Users;
 using Patient.Domain.Entities;
+using Patient.Domain.Exceptions;
 using Patient.Domain.Repositories;
 
 namespace Patient.Application.Prescriptions.Commands.Patient.AskForPrescription;
@@ -24,7 +25,7 @@ IDoctorsRepository doctorsRepository) : IRequestHandler<AddPrescriptionRequestCo
         var patientsDoctor = await doctorsRepository.GetPatientsFirstContactDoctor(user.Id, cancellationToken);
         if (patientsDoctor == null)
         {
-            return false;
+            throw new NotFullfilledMedicalInterviewException();
         }
 
         var prescriptionRequest = new PrescriptionRequest()

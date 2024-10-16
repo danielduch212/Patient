@@ -19,7 +19,7 @@
             <h3>Wywiad Medyczny</h3>
             @if (readingDiseases)
             {
-                <MudBlazor.MudProgressCircular Color="Color.Primary" Indeterminate="true"></MudBlazor.MudProgressCircular>
+                <MudBlazor.MudProgressCircular Color="Color.Primary" Indeterminate="true" />
 
             }
             else
@@ -68,12 +68,12 @@
 
     private async Task GetPatientsDiseases()
     {
+        readingDiseases = true;
         var response = await _userApiService.SendRequestGetPatientsDiseases();
         if (response.IsSuccessStatusCode)
         {
             patientsDiseasesDtos = await response.Content.ReadFromJsonAsync<List<PatientsDiseaseDto>>();
-
-            await Task.Delay(2000);
+            await Task.Delay(500);
             readingDiseases = false;
             StateHasChanged();
 

@@ -21,7 +21,7 @@ internal class GetReportsForPatientQueryHandler(ILogger<GetReportsForPatientQuer
     {
         var user = await userContext.GetCurrentUserAsync();
         var patient = await patientManager.FindByEmailAsync(user.Email);
-        logger.LogInformation($"Getting reports for doctor: {user.Email}");
+        logger.LogInformation($"Getting reports for patient: {user.Email}");
 
         var reports = await reportsRepository.GetPatientReports(patient, cancellationToken);
 

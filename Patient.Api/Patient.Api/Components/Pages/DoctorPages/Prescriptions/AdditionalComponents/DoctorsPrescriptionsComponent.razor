@@ -101,7 +101,7 @@
     private async Task GetDoctorsRequests()
     {
         readingPrescriptions = true;
-        var prescriptionRequests = await _doctorApiService.GetPrescriptionRequests(TokenSource.Token);
+        prescriptionRequests = await _doctorApiService.GetPrescriptionRequests(TokenSource.Token);
         if (prescriptionRequests.Count > 0) { filesGet = true; }
         StateHasChanged();
         readingPrescriptions = false;

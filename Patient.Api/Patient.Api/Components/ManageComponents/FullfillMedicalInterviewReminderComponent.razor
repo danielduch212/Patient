@@ -1,14 +1,26 @@
-﻿
-
-
-@using MudBlazor
+﻿@using MudBlazor
 @inject NavigationManager _navigationManager
 
-<MudPaper Class="pa-4 summary-item" Elevation="3" Style="cursor: pointer;" @onclick='() => RedirectTo("wywiad")'>
-    <div class="row">
-        <h2>Kliknij tutaj aby wypełnić informacje o swoim zdrowiu</h2>
+<div class="modal-backdrop">
+    <div class="modal" tabindex="-1" style="display:block;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Informacja</h5>
+                
+            </div>
+            <div class="modal-body">
+                <div class="container">                   
+                    <MudPaper Class="pa-4 summary-item" Elevation="3" Style="cursor: pointer;" @onclick='() => RedirectTo("wywiad")'>
+                        <div class="row">
+                            <h2>Kliknij tutaj aby wypełnić informacje o swoim zdrowiu</h2>
+                        </div>
+                    </MudPaper>                   
+                </div>
+            </div>
+
+        </div>
     </div>
-</MudPaper>
+</div>
 
 @code {
 

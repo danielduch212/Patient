@@ -15,9 +15,10 @@ body{
     height: 100vh;
 }
 
+
+
 main {
     flex: 1;
-    
 }
 
 .menu-bar{

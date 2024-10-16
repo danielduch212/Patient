@@ -24,6 +24,12 @@
 
                     </MudListItem>
                 }
+                @if (patientsDoctors.Count() == 0)
+                {
+                    <MudListItem >
+                        Nie posiadasz jeszcze żadnych przypisanych lekarzy
+                    </MudListItem>
+                }
             </MudList>
         </MudPaper>            
     </section>

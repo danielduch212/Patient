@@ -21,47 +21,47 @@
 
 
 <div class="container px-4 position-relative">
+    
+    
+    <section>
+        <div class="row text-center">
+            <MudPaper Class="pa-4 ma-3 summary-item" Elevation="3" Style="cursor: pointer;">
+                <h3></h3>
+                <btn type="button" class="btn btn-primary btn-custom-primary" @onclick="ShowAskForPrescriptionModal">
+                    Poproś o recepte
+                </btn>
+            </MudPaper>
+        </div>
+    </section>
+    <section>
+        <div class="row">
+            @if (mainComponentInitialized)
+            {
+                <div class="col">
+                    <MudPaper Class="pa-4 ma-3 summary-item" Elevation="3" Style="cursor: pointer;">
+                        <CascadingValue Value="currentPatient">
+                            <Patient.Api.Components.Pages.PatientPages.Prescription.AdditionalComponents.PatientsPrescriptionsComponent SourceToken="sourceToken" />
+                        </CascadingValue>
+                    </MudPaper>
+                </div>
+                <div class="col">
+                    <MudPaper Class="pa-4 ma-3 summary-item" Elevation="3" Style="cursor: pointer;">
+                        <h3>Twoje prosby o recepty</h3>
+                        <h3>@prescriptionRequestsNumber</h3>
+                    </MudPaper>
+                </div>
+            }
+            else
+            {
+                <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+            }
+        </div>
+    </section>
+    
     @if (showReminder)
     {
         <section>
-            <Patient.Api.Components.ManageComponents.FullfillMedicalInterviewReminderComponent/>
-        </section>
-    }
-    else
-    {
-        <section>
-            <div class="row text-center">
-                <MudPaper Class="pa-4 ma-3 summary-item" Elevation="3" Style="cursor: pointer;">
-                    <h3></h3>
-                    <btn type="button" class="btn btn-primary btn-custom-primary" @onclick="ShowAskForPrescriptionModal">
-                        Poproś o recepte
-                    </btn>
-                </MudPaper>
-            </div>
-        </section>
-        <section>
-            <div class="row">
-                @if (mainComponentInitialized)
-                {
-                    <div class="col">
-                        <MudPaper Class="pa-4 ma-3 summary-item" Elevation="3" Style="cursor: pointer;">
-                            <CascadingValue Value="currentPatient">
-                                <Patient.Api.Components.Pages.PatientPages.Prescription.AdditionalComponents.PatientsPrescriptionsComponent SourceToken="sourceToken" />
-                            </CascadingValue>
-                        </MudPaper>
-                    </div>
-                    <div class="col">
-                        <MudPaper Class="pa-4 ma-3 summary-item" Elevation="3" Style="cursor: pointer;">
-                            <h3>Twoje prosby o recepty</h3>
-                            <h3>@prescriptionRequestsNumber</h3>
-                        </MudPaper>
-                    </div>
-                }
-                else
-                {
-                    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
-                }
-            </div>
+            <Patient.Api.Components.ManageComponents.FullfillMedicalInterviewReminderComponent />
         </section>
     }
     

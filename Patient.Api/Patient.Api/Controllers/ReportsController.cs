@@ -16,7 +16,7 @@ namespace Patient.Server.Controllers;
 [Route("/api/ReportsController")]
 public class ReportsController(IMediator mediator, ILogger<ReportsController> logger) : ControllerBase
 {
-    [Authorize(Roles =UserRoles.Patient)]
+    
     [HttpPost("createReport")]
     public async Task<IActionResult> CreateReport([FromForm] CreateReportCommand command)
     {
