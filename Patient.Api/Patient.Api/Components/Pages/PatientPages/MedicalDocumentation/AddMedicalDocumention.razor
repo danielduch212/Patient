@@ -19,75 +19,76 @@
         <NavLink href="/pacjent/dokumentacja-medyczna">
             <btn type="button" href ="/pacjent/dokumentacja-medyczna" class="back-icon bi-arrow-left"></btn>
         </NavLink>
-        <h2 class="text-center pt-2">Dodaj dokumentacje medyczna</h2>
+        <h2 class="text-center pt-2" style="color: white;">Dodaj dokumentacje medyczna</h2>
         
     </div>
-    <div class="row d-flex justify-content-center align-items-center pt-5">
-            <InputFile OnChange="HandleFileSelected" multiple id="File" class="form-control w-25"></InputFile>           
-    </div>
-    @if (addMedicalDocumentionDtos.Any())
-    {
-
-        foreach (var dto in addMedicalDocumentionDtos)
-        {
-            <div class="row mt-2 d-flex-row border border-primary align-items-center justify-content-start mt-5">
-                <div class="col  d-flex-column justify-content-center align-items-center text-center">
-                    <div class="file-block mx-2">
-                        <div @onclick="() => HandleEraseFile(dto)" class="bi-x-circle"></div>
-                        <div class="bi-file-icon"></div>
-                    </div>
-                </div>
-                
-                <div class="col d-flex-column">
-                    <p>Nazwa pliku</p>
-                    <p class="font-20px">@dto.FilePreview.Name</p>
-                </div>
-                <div class="col d-flex-column">
-                    <InputSelect class="form-select selectpicker w-10" @bind-Value="dto.MedicalDocumentationType">
-                        <option>Wybierz</option>
-                        @foreach (var type in medicalDataTypes)
-                        {
-                            <option value="@type">@type</option>
-                        }
-                    </InputSelect>
-                </div>
-                <div class="col d-flex-column text-center justify-content-center align-items-center">
-                      <btn type="button" class="btn btn-outline-primary" @onclick="() => AddDescriptionHandle(dto)">Dodaj opis</btn>
-                    @if (dto.AddDescription)
-                    {
-                        <InputTextArea id="description" style="width: 80%; height: 200px; resize: none; direction: ltr;" @bind-Value="dto.Description" class="form-control mt-5 text-center"></InputTextArea>
-                    }
-                </div>
-
-                
-            </div>
-
-        }
-        <btn type="button" class="btn btn-primary" @onclick="HandleAddFiles">Dodaj pliki</btn>
-    }
-
-
 
     @if (areFilesBeingAdded)
     {
-        <div class="spinner-border" role="status">
-            <span class="visually-hidden">Loading</span>
-
-        </div>
+        <h4>Dodawanie plików</h4>
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
     }
-    @if (filesAddedSuccesfully)
+    else if (filesAddedSuccesfully)
     {
-        <div class="alert alert-success" role="alert">
+        <div class="alert alert-success pt-5" role="alert">
             Pomyslnie dodano pliki
         </div>
     }
-    @if (filesAddingFailed)
+    else if (filesAddingFailed)
     {
-        <div class="alert alert-warning" role="alert">
+        <div class="alert alert-warning pt-5" role="alert">
             Nie udalo sie dodac plikow
         </div>
     }
+    else
+    {
+        <div class="row d-flex justify-content-center align-items-center pt-5">
+            <InputFile OnChange="HandleFileSelected" multiple id="File" class="form-control w-25"></InputFile>
+        </div>
+        @if (addMedicalDocumentionDtos.Any())
+        {             
+                foreach (var dto in addMedicalDocumentionDtos)
+                {
+                    <div class="row mt-2 d-flex-row border border-primary border-primary-custom align-items-center justify-content-start mt-5">
+                        <div class="col  d-flex-column justify-content-center align-items-center text-center">
+                            <div class="file-block mx-2">
+                                <div @onclick="() => HandleEraseFile(dto)" class="bi-x-circle"></div>
+                                <div class="bi-file-icon"></div>
+                            </div>
+                        </div>
 
+                        <div class="col d-flex-column">
+                            <p>Nazwa pliku</p>
+                            <p class="font-20px">@dto.FilePreview.Name</p>
+                        </div>
+                        <div class="col d-flex-column">
+                            <InputSelect class="form-select selectpicker w-10" @bind-Value="dto.MedicalDocumentationType">
+                                <option>Wybierz</option>
+                                @foreach (var type in medicalDataTypes)
+                                {
+                                    <option value="@type">@type</option>
+                                }
+                            </InputSelect>
+                        </div>
+                        <div class="col d-flex-column text-center justify-content-center align-items-center">
+                            <btn type="button" class="btn btn-outline-primary" @onclick="() => AddDescriptionHandle(dto)">Dodaj opis</btn>
+                            @if (dto.AddDescription)
+                            {
+                                <InputTextArea id="description" style="width: 80%; height: 200px; resize: none; direction: ltr;" @bind-Value="dto.Description" class="form-control mt-5 text-center"></InputTextArea>
+                            }
+                        </div>
+
+
+                    </div>
+
+                }
+                <div class="row text-center pt-2">
+                    <btn type="button" class="btn btn-primary btn-custom-primary text-center" @onclick="HandleAddFiles">Dodaj pliki</btn>
+                </div>
+            }
+
+        }
+    }
 
 </div>
 
@@ -117,9 +118,9 @@
         }
         catch(OperationCanceledException e)
         {
-            
+
         }
-        
+
     }
 
     private async void HandleAddFiles()
@@ -131,10 +132,11 @@
         filesAddingFailed = false;
         filesAddedSuccesfully = false;
         areFilesBeingAdded = true;
-
+        StateHasChanged();
         //
         MakeFileStreams();
         var result = await _patientApiService.AddMedicalFiles(medicalFileDtos, tokenSource.Token);
+        await Task.Delay(1000);
         if (result)
         {
             areFilesBeingAdded = false;

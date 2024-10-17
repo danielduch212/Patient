@@ -29,7 +29,13 @@
     </div>
 
     <MudPaper Class="pa-4 ma-3 summary-item" Elevation="3" Style="cursor: pointer;">
-        <EditForm method="post" Model="@report" FormName="CreateReport" Enhance>
+        @if (isReportBeingAdded)
+        {
+            <h4>Dodawanie raportu...</h4>
+            <MudBlazor.MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+        }
+        else{
+            <EditForm method="post" Model="@report" FormName="CreateReport" Enhance>
             <section class="mt-4 mb-4">
                 <h4>Data: @DateOnly.FromDateTime(DateTime.Today)</h4>
                 <div class="row d-flex mt-4 mb-4">
@@ -90,7 +96,6 @@
                     }
                 </div>
             </section>
-
             <section class="mt-5 mb-3">
                 <div class="row">
                     <h4>Pliki</h4>
@@ -127,6 +132,8 @@
                 </div>
             </section>
         </EditForm>
+        }
+        
     </MudPaper>
 </div>
 
@@ -199,12 +206,11 @@
         MakeFileStreams();
         GetPatientsAnswers();
         var response = await _userApiService.SendAddReportRequest(report);
+        await Task.Delay(1000);
         if(response.IsSuccessStatusCode)
         {
             isReportBeingAdded = false;
             reportAddedSuccesfully = true;
-
-            StateHasChanged();
             _navigationManager.NavigateTo("/pacjent/raporty");
 
         }
@@ -212,7 +218,6 @@
         {
             isReportBeingAdded = false;
             reportAddingFailed = true;
-            StateHasChanged();
             _navigationManager.NavigateTo("/pacjent/raporty");
             //no i tu tez powinno byc inaczej - ze po prostu jest kontrola danych wprowadzanych do tego.
             //a nie jak request zwroci

@@ -10,9 +10,9 @@
 @inject IPatientApiService _patientApiService
 @inject NavigationManager _navigationManager
 
-
-<div class="container">
-    <h4>Twoje raporty</h4>
+<h4>Twoje raporty</h4>
+<div class="container" style="max-height: 300px; overflow-y: auto;">
+    
     <div class="list-group pt-5">
         @if (readingReports)
         {

@@ -1,6 +1,4 @@
-﻿@using static Patient.Api.Components.Pages.DoctorPages.Reports.ReportPreview
-
-
+﻿
 <div class="modal-backdrop">
     <div class="modal" tabindex="-1" style="display:block;">
         <div class="modal-content">
@@ -13,7 +11,7 @@
                     <div class="row">
                         <div class="col-4">
                             <p>Nazwa pliku</p>
-                            <p>@previewFileModalData.CurrentFileName</p>
+                            <p>@CurrentFileName</p>
                         </div>
                         <div class="col-8">
                             <p>Typ pliku</p>
@@ -24,35 +22,37 @@
                     <div class="row">
 
                         <div class="col">
-                            <img src=@previewFileModalData.CurrentFileBase64 />
+                            <img src=@CurrentFileBase64 />
                             <p>Opis</p>
-
-
                         </div>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" @onclick="CloseModalFilePreview">Zamknij</button>
+                <button class="btn btn-primary btn-custom-primary" @onclick="CloseModalFilePreview">Zamknij</button>
             </div>
         </div>
     </div>
 </div>
 
 @code {
-    [CascadingParameter]
-    public PreviewFileModalData previewFileModalData { get; set; }
 
+    [Parameter]
+    public string CurrentFileBase64 { get; set; } = "";
+    [Parameter]
+    public string CurrentFileName { get; set; } = "";
+    [Parameter]
+    public string? CurrentFileType { get; set; }
     [Parameter]
     public EventCallback OnClose { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-
+        
     }
 
     private void CloseModalFilePreview()
     {
-        OnClose.InvokeAsync(); //callback
+        OnClose.InvokeAsync(); 
     }
 }

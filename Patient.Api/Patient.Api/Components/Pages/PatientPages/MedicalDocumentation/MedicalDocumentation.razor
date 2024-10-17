@@ -9,10 +9,10 @@
 @using Patient.Domain.Entities.DTOs
 @using System.Net.Http 
 @using Patient.Domain.Entities.DTOs.MedicalFiles
+@using MudBlazor
 
 @inject NavigationManager navigationManager 
 @inject IPatientApiService _patientApiService
-@inject HttpClient _httpClient
 
 @implements IDisposable
 
@@ -20,9 +20,9 @@
 
 
 <div class="container pt-5 w-100">
-    <h3 class="text-center">Dokumentacja medyczna</h3>
+    <h3 class="text-center" style="color: white;">Dokumentacja medyczna</h3>
     <div class="row d-flex justify-content-center align-items-center">
-        <NavLink class="btn btn-primary text-center w-25" href="/pacjent/dokumentacja-medyczna/dodaj">
+        <NavLink class="btn btn-outline-primary btn-custom-outline text-center w-25" href="/pacjent/dokumentacja-medyczna/dodaj">
             Dodaj plik
         </NavLink>
     </div>
@@ -30,9 +30,7 @@
         <h2 class="pt-5">Twoje pliki</h2>
         @if (readingFiles)
         {
-            <div class="spinner-border" role="status">
-                <span class="visually-hidden">Loading</span>
-            </div>
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
         }
         
         <div class="col d-flex d-flex-row pt-2 position-relative" style="height: 100px;">
@@ -52,7 +50,7 @@
                     <div class="modal" tabindex="-1" style="display:block;">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title">Podglad</h5>
+                                <h5 class="modal-title" >Podglad</h5>
                                 <button type="button" class="btn-close" @onclick="CloseModal"></button>
                             </div>
                             <div class="modal-body">
@@ -64,42 +62,37 @@
                                         </div>
                                         <div class="col-8">
                                             <p>Typ pliku</p>
-                                            <p>@medicalFileToShowPreview.MedicalDocumentationType</p>
+                                            <p></p>
                                         </div>
                                     </div>
 
                                     <div class="row">
 
                                         <div class="col">
-                                            @if (loadingDocument)
-                                            {
-                                                <div class="spinner-border" role="status">
-                                                    <span class="visually-hidden">Loading...</span>
-                                                </div>
-                                            }
-                                            else
-                                            {
-                                                <img src=@medicalFileToShowPreview.FileBase64 />
-                                                <p>Opis</p>
-                                                <p>@medicalFileToShowPreview.Description</p>
-                                            }
-
+                                            <img src=@medicalFileToShowPreview.FileBase64 />
+                                            <p>Opis</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button class="btn btn-secondary" @onclick="CloseModal">Zamknij</button>
+                                <button class="btn btn-primary btn-custom-primary" @onclick="CloseModal">Zamknij</button>
                             </div>
                         </div>
                     </div>
                 </div>
+                @* <div style="transform: translate(80%, 8%);"> *@
+                    @* <Patient.Api.Components.Pages.AdditionalComponents.PreviewFileModal 
+                                                                                        CurrentFileBase64="@medicalFileToShowPreview.FileBase64"
+                                                                                        CurrentFileName="@medicalFileToShowPreview.FileName"
+                                                                                        CurrentFileType="@medicalFileToShowPreview.MedicalDocumentationType" /> *@
+                @* </div> *@
+                
             }
         </div>
 
     </div>
 
-   
 
 
 </div>
@@ -122,12 +115,12 @@
     {
         try
         {
-            await Task.Delay(500);
+            await Task.Delay(100);
             readingFiles = true;
-            var medicalFilesToShow = await _patientApiService.GetMedicalFiles(TokenSource.Token);
-            if (medicalFilesToShow.Count > 0) { filesGet = true; }
-            StateHasChanged();
+            medicalFilesToShow = await _patientApiService.GetMedicalFiles(TokenSource.Token);
+            if (medicalFilesToShow.Count > 0) { filesGet = true; }         
             readingFiles = false;
+            StateHasChanged();
         }
         catch(OperationCanceledException e)
         {
@@ -139,11 +132,9 @@
 
     private async void HandleShowFile(MedicalFileToShowDto file)
     {
-        medicalFileToShowPreview = file;
-        showPreviewModal = true;
-        loadingDocument = true;
+        medicalFileToShowPreview = file;      
         medicalFileToShowPreview.FileBase64 = await LoadImageBase64(medicalFileToShowPreview.FileUrl);
-        loadingDocument = false;
+        showPreviewModal = true;
         StateHasChanged();
     }
 
@@ -154,7 +145,7 @@
 
     private async Task<string> LoadImageBase64(string url)
     {
-        using(var _httpClient = new HttpClient())
+        using (var _httpClient = new HttpClient())
         {
             var response = await _httpClient.GetAsync(url);
             if (response.IsSuccessStatusCode)

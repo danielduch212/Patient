@@ -1,10 +1,12 @@
 ﻿
 
 
+
 .modal {
     position: fixed;
     width: 50rem;
     height: 75rem;
+    transform: translate(31%, 14%);
     z-index: 1050;
     border-radius: 10px;
     justify-content: center;
@@ -20,12 +22,22 @@
     z-index: 1040;
 }
 
-.modal-content {
-    max-height: 80vh;
-    overflow-y: auto;
-}
 
 .modal-dialog {
     width: 50%;
     max-width: 500px;
 }
+
+.img-avatar {
+    height: 10rem;
+    width: 10rem;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+    .img-avatar img {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+    }
+

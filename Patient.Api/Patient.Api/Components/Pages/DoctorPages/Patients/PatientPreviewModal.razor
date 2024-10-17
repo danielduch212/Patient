@@ -1,0 +1,76 @@
+﻿@layout Patient.Api.Components.Layout.Doctor.DoctorLayout
+
+
+@rendermode InteractiveServer
+
+@using Patient.Domain.Entities
+@using Patient.Application.Account
+
+
+@inject UserManager<Patient.Domain.Entities.Actors.Patient> _patientManager
+@inject NavigationManager _navigationManager
+
+
+
+<div class="container px-4">
+    <div class="modal-backdrop">
+        <div class="modal" tabindex="-1" style="display: block;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Podgląd pacjenta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="row justify-content-center align-items-center align-content-center pt-2">
+                            <MudAvatar Size="Size.Large" Style="width: 10%; height: 10%;">
+                                <MudImage Src="/images/patientIconClientVersion.jpg"></MudImage>
+                            </MudAvatar>
+                        </div>
+                        <div class="row">
+                            <h4>Dane</h4>
+                            <ul class="list-group text-center">
+                                <li class="list-group-item"><strong>Imię:  @currentPatient.Name</strong></li>
+                                <li class="list-group-item"><strong>Nazwisko:  @currentPatient.Surname</strong></li>
+                                <li class="list-group-item"><strong>Email: @currentPatient.Email</strong></li>
+                                <li class="list-group-item"><strong>PESEL:  @currentPatient.Pesel</strong></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Zamknij</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@code {
+
+
+    [SupplyParameterFromQuery]
+    private string? PatientId { get; set; }
+
+    [Parameter]
+    public CancellationTokenSource tokenSource { get; set; }
+
+    private Patient.Domain.Entities.Actors.Patient currentPatient = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        currentPatient = await _patientManager.FindByIdAsync(PatientId);
+
+    }
+
+    private void HandleBack()
+    {
+        
+    }
+    //zrobic to jako modal ;) - zeby mozna bylo sobie to gdziekolwiek wywolywac
+
+    
+}

@@ -4,8 +4,9 @@
 
 @inject IDoctorsRepository _doctorsRepository
 
-<div class="container pt-3">
-    <h3 style="color: white;" class="ma-3">Twoi lekarze</h3>
+
+<h3 style="color: white;" class="ma-3">Twoi lekarze</h3>
+<div class="container pt-3" style="max-height: 200px; overflow-y: auto;">  
     <section>     
         <MudPaper Class="ma-3 summary-item" Elevation="3">
             <MudList T="Patient.Domain.Entities.Actors.Doctor" Class="pt-5">
