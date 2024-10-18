@@ -11,10 +11,9 @@
     
 }
 
-.font-10px{
-    font-size: 10px;
+.no-border-input{
+    border-right: none !important;
+    border-left: none !important;
+    border-top: none !important;
 }
 
-.badge-item-custom-erasable{
-    width: 4rem;
-}

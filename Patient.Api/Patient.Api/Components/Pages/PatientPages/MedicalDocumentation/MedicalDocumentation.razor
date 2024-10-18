@@ -38,7 +38,7 @@
             {                
                 @foreach (var file in medicalFilesToShow)
                 {
-                    <div class="file-block mx-2" @onclick="() => HandleShowFile(file)">
+                    <div class="file-block mx-2" style="cursor: pointer;" @onclick="() => HandleShowFile(file)">
                         <div class="bi-x-circle"></div>
                         <div class="bi-file-icon"></div>
                     </div>

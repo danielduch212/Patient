@@ -1,0 +1,176 @@
+﻿@layout Patient.Api.Client.Layout.UserLayout
+
+@rendermode @(new InteractiveWebAssemblyRenderMode(false))
+
+@using Patient.Api.Client.Services
+@using Shared.AdditionalClasses
+@using Shared.Constants
+@using Blazored.Typeahead
+@using MudBlazor
+
+@inject UserApiService _userApiService
+@inject NavigationManager _navigationManager
+
+
+<div >
+    @if (isReportBeingAdded)
+    {
+        <MudPaper Class="pa-4 ma-3 summary-item" Elevation="3">
+            <h4>Dodawanie raportu...</h4>
+            <MudBlazor.MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+        </MudPaper>
+        
+    }
+    else
+    {
+        <MudPaper Class="pa-4 ma-3 summary-item" Elevation="3">
+            <section class="mt-5 mb-3">
+                <div class="row">
+                    <h4>Pliki</h4>
+                    <p>Wgraj pliki (np. zdjęcia zmian skórnych lub innych jeśli chcesz)</p>
+                </div>
+                <div class="row">
+                    <div>
+                        <InputFile OnChange="HandleFileSelected" multiple id="File" class="form-control"></InputFile>
+                    </div>
+                </div>
+                <div class="row">
+                    @if (filesPreview.Count > 0)
+                    {
+                        <div class="d-flex pt-5">
+                            @foreach (var file in filesPreview)
+                            {
+                                <div>
+                                    <div class="file-block mx-2">
+                                        <div @onclick="() => HandleEraseFile(file)" class="bi-x-circle"></div>
+                                        <div class="bi-file-icon"></div>
+                                        <p class="font-10px text-center">@file.Name</p>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+
+            </section>
+        </MudPaper>
+        
+        <MudPaper Class="pa-4 ma-3 summary-item" Elevation="3">
+            <section>
+                <section>
+                    <div class="row">
+                        <div class="col text-start">
+                            <btn type="button" class="back-icon bi-arrow-left" @onclick="HandleShowPreviousForm"></btn>
+                        </div>
+                        <div class="col">
+                            <btn type="button" class="btn btn-primary btn-custom-primary" @onclick="HandleAddReport">
+                                Dodaj Raport
+                            </btn>
+                        </div>
+                    </div>
+                </section>
+            </section>
+        </MudPaper>
+        
+    }
+</div>
+
+
+
+
+@code {
+
+    [CascadingParameter]
+    public ReportDtoFront ReportDto { get; set; }
+
+    private List<Stream> files = new();
+    private List<string> filePreviewUrls = new List<string>();
+    private List<IBrowserFile> filesPreview = new();
+    private List<string> fileNames = new();
+    private int maxAllowedSize = 10 * 1024 * 1024;
+
+    //
+    private bool isReportBeingAdded = false;
+    private bool reportAddedSuccesfully;
+    private bool reportAddingFailed;
+
+    //
+    [Parameter]
+    public EventCallback OnPrevious { get; set; }
+
+
+
+    private async void HandleAddReport()
+    {
+
+        if (isReportBeingAdded)
+            return;
+
+        reportAddingFailed = false;
+        reportAddedSuccesfully = false;
+        isReportBeingAdded = true;
+        StateHasChanged();
+        //
+        MakeFileStreams();
+        //GetPatientsAnswers();
+        //trzeba wczesniej miec te odpowiedzi - juz w pierwszym komponencie
+
+
+        var response = await _userApiService.SendAddReportRequest(ReportDto);
+        await Task.Delay(1000);
+        if (response.IsSuccessStatusCode)
+        {
+            isReportBeingAdded = false;
+            reportAddedSuccesfully = true;
+            _navigationManager.NavigateTo("/pacjent/raporty");
+            StateHasChanged();
+        }
+        else
+        {
+            isReportBeingAdded = false;
+            reportAddingFailed = true;
+            _navigationManager.NavigateTo("/pacjent/raporty");
+            StateHasChanged();
+            //no i tu tez powinno byc inaczej - ze po prostu jest kontrola danych wprowadzanych do tego.
+            //a nie jak request zwroci
+        }
+    }
+
+    private async void HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        var currentGivenFiles = e.GetMultipleFiles();
+        files = ReportDto.Files.ToList();
+
+        if (currentGivenFiles.Count > 0)
+        {
+            foreach (var file in currentGivenFiles)
+            {
+                filesPreview.Add(file);
+            }
+        }
+    }
+    private async void HandleEraseFile(IBrowserFile file)
+    {
+        filesPreview.Remove(file);
+    }
+
+    private async void MakeFileStreams()
+    {
+        files.Clear();
+        fileNames.Clear();
+        foreach (var file in filesPreview)
+        {
+            fileNames.Add(file.Name);
+            var stream = file.OpenReadStream(maxAllowedSize);
+            files.Add(stream);
+        }
+        ReportDto.Files = files;
+        ReportDto.FileNames = fileNames;
+    }
+
+    private async void HandleShowPreviousForm()
+    {
+        await OnPrevious.InvokeAsync();
+    }
+    
+}

@@ -1,0 +1,139 @@
+﻿@layout Patient.Api.Client.Layout.UserLayout
+
+@rendermode @(new InteractiveWebAssemblyRenderMode(false))
+
+@using Patient.Api.Client.Services
+@using Shared.AdditionalClasses
+@using Shared.Constants
+@using Blazored.Typeahead
+@using MudBlazor
+
+@if (!showNextForm)
+{
+    <div >
+        <EditForm method="post" Model="@ReportDto" FormName="CreateReport" Enhance>
+            <MudPaper Class="pa-4 ma-3 summary-item" Elevation="3">
+                <section class="mt-5 mb-3">
+                    <div class="row">
+                        <div class="col-4">
+                            <img src="/images/Reports/diseaseImage.png" style="max-width: 200px;" />
+                        </div>
+                        <div class="col">
+                            <h4>Objawy</h4>
+                            <p>Wymień objawy choroby (jeśli występują)</p>
+                            <div class="row">
+                                <div class="col-10">
+                                    <BlazoredTypeahead SearchMethod="SearchSymptomBySearchPhrase" @bind-Value="diseaseSymptom">
+                                        <SelectedTemplate Context="contextSymptom">
+                                            @contextSymptom
+                                        </SelectedTemplate>
+                                        <ResultTemplate Context="contextSymptom">
+                                            @contextSymptom
+                                        </ResultTemplate>
+                                    </BlazoredTypeahead>
+                                </div>
+                                <div class="col">
+                                    <btn type="button" class="btn btn-outline-primary btn-custom-outline" @onclick="AddSymptom">
+                                        Dodaj
+                                    </btn>
+                                </div>
+                            </div>
+                            <div class="row d-flex mt-4 mb-4">
+                                @foreach (var item in ReportDto.PatientsSymptoms)
+                                {
+                                    <span class="badge bg-primary badge-item-custom-erasable mr-2 mb-2" @onclick="()=>EraseSymptom(item)">@item</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                </section>
+            </MudPaper>
+
+            <MudPaper Class="pa-4 ma-3 summary-item" Elevation="3">
+                <section>
+                    <div class="row">
+                        <div class="col text-start">
+                            <btn type="button" class="back-icon bi-arrow-left" @onclick="HandleShowPreviousForm"></btn>
+                        </div>
+                        <div class="col text-end">
+                            <btn type="button" class="back-icon bi-arrow-right" @onclick="HandleShowNextForm"></btn>
+                        </div>
+                    </div>
+                </section>
+            </MudPaper>
+        </EditForm>
+    </div>   
+}
+else
+{
+    <CascadingValue Value="ReportDto">
+        <ReportForm3 OnPrevious="HandleFormBack" />
+    </CascadingValue>
+}
+
+
+
+
+@code {
+
+    [CascadingParameter]
+    public ReportDtoFront ReportDto { get; set; }
+
+    private List<string> symptomTypes = new();
+
+    private string diseaseSymptom = "";
+
+    //zmiana
+    private bool showNextForm;
+    [Parameter]
+    public EventCallback OnPrevious { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        symptomTypes = DiseaseSymptom.GetAllSymptoms();
+
+    }
+
+    private void AddSymptom()
+    {
+        ReportDto.PatientsSymptoms.Add(diseaseSymptom);
+    }
+
+    private void EraseSymptom(string item)
+    {
+        ReportDto.PatientsSymptoms.Remove(item);
+    }
+
+    private async Task<IEnumerable<string>> SearchSymptomBySearchPhrase(string searchPhrase)
+    {
+        if (string.IsNullOrWhiteSpace(searchPhrase))
+        {
+            return new List<string>();
+        }
+        var result = symptomTypes
+            .Where(symptom => symptom.Contains(searchPhrase, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+
+        return await Task.FromResult(result);
+    }
+
+    private async void HandleShowPreviousForm()
+    {
+        await OnPrevious.InvokeAsync();
+    }
+
+    private void HandleShowNextForm()
+    {
+        showNextForm = true;
+    }
+
+    private void HandleFormBack()
+    {
+        showNextForm = false;
+        StateHasChanged();
+    }
+
+    //report added
+    
+}

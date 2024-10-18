@@ -19,44 +19,52 @@ internal class CreateReportCommandHandler(ILogger<CreateReportCommandHandler> lo
 {
     public async Task<int> Handle(CreateReportCommand request, CancellationToken cancellationToken)
     {
-        var user = userContext.GetCurrentUser();
-        logger.LogInformation($"Trying to add report from user(email): {user.Email}");
-
-        List<string> fileNames = new();
-        if (request.Files.Any())
+        try
         {
-            foreach (var file in request.Files)
+            var user = userContext.GetCurrentUser();
+            logger.LogInformation($"Trying to add report from user(email): {user.Email}");
+
+            List<string> fileNames = new();
+            if (request.Files.Any())
             {
-                var stream = file.OpenReadStream();
-                fileNames.Add(await blobStorageService.UploadReportsFilesToBob(stream, file.FileName, user.Id));
+                foreach (var file in request.Files)
+                {
+                    var stream = file.OpenReadStream();
+                    fileNames.Add(await blobStorageService.UploadReportsFilesToBob(stream, file.FileName, user.Id));
+                }
             }
-        }
-        List<Doctor> doctorsToCheck = new List<Doctor>();
+            List<Doctor> doctorsToCheck = new List<Doctor>();
 
-        //sprawdzenie
-        var patientsDoctorFirstContact = await doctorsRepository.GetPatientsFirstContactDoctor(user.Id, cancellationToken);
-        if(patientsDoctorFirstContact == null)
-        {
-            throw new NotFullfilledMedicalInterviewException();
+            //sprawdzenie
+            var patientsDoctorFirstContact = await doctorsRepository.GetPatientsFirstContactDoctor(user.Id, cancellationToken);
+            if (patientsDoctorFirstContact == null)
+            {
+                throw new NotFullfilledMedicalInterviewException();
+            }
+            doctorsToCheck.Add(patientsDoctorFirstContact);
+
+            Report report = new()
+            {
+                AdditionalDescription = request.Description,
+                FileNames = fileNames,
+                PatientId = user.Id,
+                DateOfCreating = DateTime.Today.ToString("yyyy-MM-dd"),
+                DoctorsToCheck = doctorsToCheck,
+                PatientsHealthRating = 2,
+                PatientsSymptoms = request.PatientsSymptoms,
+                PatientsAnswersForQuestions = request.PatientsAnswers,
+
+            };
+
+            await reportRepository.CreateReport(report, cancellationToken);
+            logger.LogInformation($"Created report with given id: {report.Id}");
+            return report.Id;
         }
-        doctorsToCheck.Add(patientsDoctorFirstContact);
+        catch(Exception ex)
+        {
+            return 0;
+        }
         
-        Report report = new()
-        {
-            AdditionalDescription = request.Description,
-            FileNames = fileNames,
-            PatientId = user.Id,
-            DateOfCreating = DateTime.Today.ToString("yyyy-MM-dd"),
-            DoctorsToCheck = doctorsToCheck,
-            PatientsHealthRating = 2,
-            PatientsSymptoms = request.PatientsSymptoms,
-            PatientsAnswersForQuestions = request.PatientsAnswers,
-
-        };
-
-        await reportRepository.CreateReport(report, cancellationToken);
-        logger.LogInformation($"Created report with given id: {report.Id}");
-        return report.Id;
 
     }
 
