@@ -44,7 +44,10 @@ internal class CreateRecommandationCommandHandler(ILogger<CreateRecommandationCo
             Report = report,
             DateOfIssue = DateOnly.FromDateTime(DateTime.Today),
             DoctorId = doctor.Id,
-        }; 
+        };
+        report.IsChecked = true;
+        await reportRepository.AddDoctorsWhoCheckedReport(doctor, report.Id, cancellationToken);
+
         await recommandationRepository.CreateRecommandation(recommandation, cancellationToken);
         return true;
     }

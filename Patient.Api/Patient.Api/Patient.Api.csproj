@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Components\Pages\PatientPages\MedicalDocumentation\Additional\PatientsDocumentationComponent.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\Patient.Application\Patient.Application.csproj" />
     <ProjectReference Include="..\..\Patient.Infrastructure\Patient.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Shared\Shared.csproj" />
@@ -45,6 +49,18 @@
   <ItemGroup>
     <Folder Include="Components\Pages\DoctorPages\Account\" />
     <Folder Include="wwwroot\images\backgrounds\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Components\Pages\PatientPages\MedicalDocumentation\Additional\PatientsDocumentationComponent.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Components\Pages\PatientPages\MedicalDocumentation\Additional\PatientsDocumentationComponent.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Components\Pages\PatientPages\MedicalDocumentation\AdditionalComponents\PatientsDocumentationComponent.razor" />
   </ItemGroup>
 
 </Project>

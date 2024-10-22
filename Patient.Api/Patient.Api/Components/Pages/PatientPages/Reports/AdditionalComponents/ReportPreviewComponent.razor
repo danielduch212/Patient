@@ -4,7 +4,7 @@
 @using Patient.Domain.Interfaces
 @using Shared.Constants
 @using Patient.Application.Users
-
+@using Shared.AdditionalClasses
 
 @inject IPatientApiService _patientApiService
 @inject NavigationManager _navigationManager
@@ -12,96 +12,154 @@
 @inject IPrescriptionRequestRepository _prescriptionRequestRepository
 @inject IUserContext _userContext
 
-<div class="container">
-    <MudPaper Class="pa-16 ma-2" Elevation="3">
-
-        <h2 class="text-center">Raport</h2>
-        @if (!loading)
-        {
-            <section class="p-3 mb-4 bg-light">
-                <div class="row mx-5">
-                    <div class="col-5">
-                        <MudAvatar Size="Size.Large" Style="width: 10%; height: 10%;">
-                            <MudImage Src="/images/pies-rasy-beagle.jpg"></MudImage>
-                        </MudAvatar>
+<div class="container" style="max-width: 70%; color: white;">
+    
+    <h2 class="text-center">Raport            Data: @ReportToShow.DateOfCreating</h2>
+    @if (!loading)
+    {
+        <MudPaper Class="pa-8 ma-2" Elevation="3">
+            <section >
+                <div class="row">
+                    <div class="col-4 d-flex justify-content-center">
+                        <div class="img-avatar" style="max-width: 150px;">
+                            <img src="/images/icons/patientIcon.jpg" />
+                        </div>
                     </div>
-                    <div class="col-5">
+                    <div class="col text-start">
+                        <small>Imie i nazwisko</small>
                         <h3>@currentPatient.Name @currentPatient.Surname</h3>
+                        <small>Pesel</small>
                         <h3> @currentPatient.Pesel</h3>
                     </div>
-                    <div class="col">
-                        <h3>@ReportToShow.Urgency</h3>
+
+                </div>
+            </section>
+        </MudPaper>
+
+        @* <section class="p-3 mb-4 bg-light">
+            <div class="row">
+                <h4 style="text-decoration: underline;">Przebieg choroby</h4>
+            </div>
+        </section> *@
+        <MudPaper Class="pa-8 ma-2" Elevation="3">
+            <section class="mt-4 mb-4">
+                <div class="row d-flex">
+                    <div class="col-4 d-flex justify-content-center align-content-center">
+                        <img src="/images/Reports/heartMeassureIconServer.png" style="max-width: 150px;" />
+                    </div>
+                    <div class="col justify-content-center">
+                        <h3 class="py-5">Samopoczucie pacjenta:  </h3>
+                        <div class="d-flex ">
+                            @for (int i = 0; i < ReportToShow.PatientsHealthRating; i++)
+                            {
+                                <div class="bi-heart-icon">
+                                    <div class="bi-heart-fill"></div>
+                                </div>
+                            }
+                            @for (int i = 0; i < (10 - ReportToShow.PatientsHealthRating); i++)
+                            {
+                                <div class="bi-heart-icon">
+                                    <div class="bi-heart-unfill"></div>
+                                </div>
+                            }
+                        </div>                  
                     </div>
                 </div>
             </section>
+        </MudPaper>
 
-            @* <section class="p-3 mb-4 bg-light">
+        <MudPaper Class="pa-8 ma-2" Elevation="3">
+            <section>
                 <div class="row">
-                    <h4 style="text-decoration: underline;">Przebieg choroby</h4>
-                </div>
-            </section> *@
-
-            <section class="p-3 mb-4 bg-light">
-                <div class="row d-flex align-items-center">
-                    <div class="col">
-                        <h6 class="text-start">Data: @ReportToShow.DateOfCreating</h6>
+                    <div class="col-4 d-flex justify-content-center align-content-center">
+                        <img src="/images/Reports/questionsIconServer.png" style="max-width: 150px; max-height: 150px;" />
                     </div>
-                    <div class="col">
-                        <MudRating SelectedValue="@ReportToShow.PatientsHealthRating" MaxValue="10" FullIcon="@Icons.Material.Filled.Favorite" EmptyIcon="@Icons.Material.Filled.FavoriteBorder" Color="Color.Secondary" />
-                    </div>
-
+                    <div class="col d-flex align-items-center align-content-center text-start">
+                        <h3>Pytania i odpowiedzi</h3>                       
+                    </div>                    
                 </div>
                 <div class="row">
-                    <h4 class="text-start">Pytania i odpowiedzi</h4>                 
-                    <div class="row pt-5">
-                        <h3>Pytania</h3>
-                    </div>
-                    @for (int i = 0; i < questionList.Count(); i++)
-                    {
-                        <div class="list-group-item">
-                            <div class="row mt-4 mb-3">
-                                <p>@questionList[i]</p>
-                                @* <p>@ReportToShow.PatientsAnswersForQuestions[i]</p> *@
+                    <div class="accordion" id="accordionQuestions">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headerAccordionQuestions">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseQuestions" aria-expanded="true" aria-controls="collapseQuestions" />
+                            </h2>
+                            <div id="collapseQuestions" class="accordion-collapse collapse" aria-labelledby="headerAccordionQuestions" data-bs-parent="#accordionQuestions">
+                                <div class="accordion-body">
+                                    <div class="list-group">
+                                        @foreach (var item in @patientsAnswers)
+                                        {
+                                            <div class="list-group-item" @key="item.Id">
+                                                <div class="row mt-2 mb-2 justify-content-center text-center">
+                                                    <h6 class="text-start">@questionList[item.Id]</h6>
+                                                    <h6>@item.Answer</h6>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                    <div>
+                                        <p>Dodatkowy opis</p>
+                                        <p>@ReportToShow.Description</p>
+                                    </div>
+
+                                </div>
                             </div>
                         </div>
-
-                    }
-                    <div class="row">
-                        <p>Dodatkowy opis</p>
-                        <p>@ReportToShow.Description</p>
                     </div>
-                    
                 </div>
+            </section>
+        </MudPaper>
+
+        <MudPaper Class="pa-8 ma-2" Elevation="3">
+            <section>
                 <div class="row">
-                    <h5>Pliki</h5>
+                    <div class="col-4 d-flex justify-content-center align-content-center">
+                        <img src="/images/Reports/diseaseImage.png" style="max-width: 150px; max-height: 150px;" />
+                    </div>
+                    <div class="col">
+                        <h5 >Objawy</h5>
+                        <div class="row d-flex mt-4 mb-4">
+                            @foreach (var item in ReportToShow.PatientsSymptoms)
+                            {
+                                <span class="badge bg-primary badge-item-custom mr-2 mb-2">@item</span>
+                            }
+                        </div>
+                    </div>               
                 </div>
+            </section>
+        </MudPaper>
+
+        <MudPaper Class="pa-8 ma-2" Elevation="3">
+            <section>
                 <div class="row">
-                    <h5>Objawy</h5>
-                    <div class="row d-flex mt-4 mb-4">
-                        @foreach (var item in ReportToShow.PatientsSymptoms)
+                    <div class="col-4 d-flex align-items-center align-content-center justify-content-center">
+                        <img src="/images/Reports/logoFolder.png" style="max-width: 100px; max-height: 100px;" />
+                    </div>
+                    <div class="col">
+                        <h4>Pliki</h4>
+                        @foreach (var file in ReportToShow.FilesBase64)
                         {
-                            <span class="badge bg-primary badge-item-custom-erasable mr-2 mb-2">@item</span>
+                            <div class="file-block mx-2" style="cursor: pointer;" >
+                                <div class="bi-x-circle"></div>
+                                <div class="bi-file-icon"></div>
+                            </div>
                         }
-                    </div>
+                    </div>                  
                 </div>
-            </section>
-            
-            <section class="p-3 mb-4 bg-light">
-                <div class="row">
-                    <h4>Prosby</h4>
-                </div>
-            </section>
-        }
-        else
-        {
-            <MudProgressCircular Color="Color.Primary" Indeterminate="true"></MudProgressCircular>
-        }
+            </section>            
+        </MudPaper>
+           
+        @* <section >
+            <div class="row">
+                <h4>Prosby</h4>
+            </div>
+        </section> *@
+    }
+    else
+    {
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true"></MudProgressCircular>
+    }
 
-
-
-
-    </MudPaper>
-    
 </div>
 
 
@@ -115,6 +173,7 @@
 
     private bool loading;
     private List<string> questionList = new();
+    private List<Shared.AdditionalClasses.AnswerItem> patientsAnswers = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -122,13 +181,24 @@
         var currentUser = await _userContext.GetCurrentUserAsync();
         currentPatient = await _patientManager.FindByIdAsync(currentUser.Id);
 
-        await Task.Delay(1000);
+        await Task.Delay(200);
         loading = false;
         questionList = QuestionsForReport.GetAllQuestions();
+        MakeAnswearElements();
         StateHasChanged();
     }
 
     
-
+    private async void MakeAnswearElements()
+    {
+        for (int i = 0; i < ReportToShow.PatientsAnswersForQuestions.Count(); i++)
+        {
+            patientsAnswers.Add(new AnswerItem
+                {
+                    Id = i,
+                    Answer = ReportToShow.PatientsAnswersForQuestions[i]
+                });
+        }
+    }
 
 }

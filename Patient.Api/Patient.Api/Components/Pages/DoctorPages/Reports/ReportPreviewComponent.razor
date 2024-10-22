@@ -1,88 +1,256 @@
-﻿
+﻿@using Patient.Domain.Entities.DTOs.Reports
+@using Shared.Constants
+@using Shared.AdditionalClasses
 
+<div class="container" style="max-width: 70%; color: white;">
 
+    <h2 class="text-center">Raport            Data: @ReportToShow.DateOfCreating</h2>
+    @if (!loading)
+    {
+        <MudPaper Class="pa-8 ma-2" Elevation="3">
+            <section>
+                <div class="row">
+                    <div class="col-4 d-flex justify-content-center">
+                        <btn type="button" class="highlight-on-hover" @onclick="HandleShowPatientModal">
+                            <div class="img-avatar" style="max-width: 150px;">
+                                <img src="/images/icons/patientIcon.jpg" />
+                            </div>
+                        </btn>
+                        
+                    </div>
+                    <div class="col text-start">
+                        <small>Imie i nazwisko</small>
+                        <h3>@CurrentPatient.Name @CurrentPatient.Surname</h3>
+                        <small>Pesel</small>
+                        <h3> @CurrentPatient.Pesel</h3>
+                    </div>
 
-<div class="container">
-    <MudPaper Class="pa-16 ma-2" Elevation="3">
-
-        <h2 class="text-center">Raport</h2>
-        <section class="p-3 mb-4 bg-light">
-            <div class="row mx-5">
-                <div class="col-5">
-                    <MudAvatar Size="Size.Large" Style="width: 10%; height: 10%;">
-                        <MudImage Src="/images/pies-rasy-beagle.jpg"></MudImage>
-                    </MudAvatar>
                 </div>
-                <div class="col-5">
-                    <h3>Imie i nazwisko</h3>
-                    <h3> Piesel</h3>
-                </div>
-                <div class="col">
-                    <h3>Pilnosc</h3>
-                </div>
-            </div>
-        </section>
+            </section>
+        </MudPaper>
 
-        <section class="p-3 mb-4 bg-light">
-            <div class="row">
-                <h4 style="text-decoration: underline;">Przebieg choroby</h4>
-            </div>
-        </section>
-
-        <section class="p-3 mb-4 bg-light">
-            <div class="row d-flex align-items-center">
-                <div class="col">
-                    <h6 class="text-start">Data:</h6>
+        @* <section class="p-3 mb-4 bg-light">
+    <div class="row">
+    <h4 style="text-decoration: underline;">Przebieg choroby</h4>
+    </div>
+    </section> *@
+        <MudPaper Class="pa-8 ma-2" Elevation="3">
+            <section class="mt-4 mb-4">
+                <div class="row d-flex">
+                    <div class="col-4 d-flex justify-content-center align-content-center">
+                        <img src="/images/Reports/heartMeassureIconServer.png" style="max-width: 150px;" />
+                    </div>
+                    <div class="col justify-content-center">
+                        <h3 class="py-5">Samopoczucie pacjenta:  </h3>
+                        <div class="d-flex ">
+                            @for (int i = 0; i < ReportToShow.PatientsHealthRating; i++)
+                            {
+                                <div class="bi-heart-icon">
+                                    <div class="bi-heart-fill"></div>
+                                </div>
+                            }
+                            @for (int i = 0; i < (10 - ReportToShow.PatientsHealthRating); i++)
+                            {
+                                <div class="bi-heart-icon">
+                                    <div class="bi-heart-unfill"></div>
+                                </div>
+                            }
+                        </div>
+                    </div>
                 </div>
-                <div class="col">
-                    <MudRating SelectedValue="1" MaxValue="10" FullIcon="@Icons.Material.Filled.Favorite" EmptyIcon="@Icons.Material.Filled.FavoriteBorder" Color="Color.Secondary" />
+            </section>
+        </MudPaper>
+
+        <MudPaper Class="pa-8 ma-2" Elevation="3">
+            <section>
+                <div class="row">
+                    <div class="col-4 d-flex justify-content-center align-content-center">
+                        <img src="/images/Reports/questionsIconServer.png" style="max-width: 150px; max-height: 150px;" />
+                    </div>
+                    <div class="col d-flex align-content-center text-start">
+                        <h3>Pytania i odpowiedzi</h3>
+                    </div>
                 </div>
-                                
-            </div>
-            <div class="row">
-                <h4 class="text-start">Opis</h4>
-                <p>Opis...</p>
-                <p>Opis</p>
-                <p>Opis</p>
-                <p>Opis</p>
-                <p>Opis</p>
-            </div>
-            <div class="row">
-                <h5>Pliki</h5>
-            </div>
-            <div class="row">
-                <h5>Objawy</h5>
-                <div class="d-flex">
-                    <p>Kaszel...</p>
-                    <p>Gruzlica...</p>
+                <div class="row">
+                    <div class="accordion" id="accordionQuestions">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headerAccordionQuestions">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseQuestions" aria-expanded="true" aria-controls="collapseQuestions" />
+                            </h2>
+                            <div id="collapseQuestions" class="accordion-collapse collapse" aria-labelledby="headerAccordionQuestions" data-bs-parent="#accordionQuestions">
+                                <div class="accordion-body">
+                                    <div class="list-group">
+                                        @foreach (var item in @patientsAnswers)
+                                        {
+                                            <div class="list-group-item" @key="item.Id">
+                                                <div class="row mt-2 mb-2 justify-content-center text-center">
+                                                    <h6 class="text-start">@questionList[item.Id]</h6>
+                                                    <h6>@item.Answer</h6>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                    <div>
+                                        <p>Dodatkowy opis</p>
+                                        <p>@ReportToShow.Description</p>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>           
-        </section >
-        <section class ="p-3 mb-4 bg-light">
+            </section>
+        </MudPaper>
+
+        <MudPaper Class="pa-8 ma-2" Elevation="3">
+            <section>
+                <div class="row">
+                    <div class="col-4 d-flex justify-content-center align-content-center">
+                        <img src="/images/Reports/diseaseImage.png" style="max-width: 150px; max-height: 150px;" />
+                    </div>
+                    <div class="col">
+                        <h5 class="text-start">Objawy</h5>
+                        <div class="row d-flex mt-4 mb-4">
+                            @foreach (var item in ReportToShow.PatientsSymptoms)
+                            {
+                                <span class="badge bg-primary badge-item-custom mr-2 mb-2">@item</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </MudPaper>
+
+        <MudPaper Class="pa-8 ma-2" Elevation="3">
+            <section>
+                <div class="row">
+                    <div class="col-4 d-flex align-items-center align-content-center justify-content-center">
+                        <img src="/images/Reports/logoFolder.png" style="max-width: 100px; max-height: 100px;" />
+                    </div>
+                    <div class="col">
+                        <h4>Pliki</h4>
+                        @foreach (var file in ReportToShow.FilesBase64)
+                        {
+                            <div class="file-block mx-2" style="cursor: pointer;" @onclick="() => HandleShowFile(filePostionOnListCounter)">
+                                <div class="bi-x-circle"></div>
+                                <div class="bi-file-icon"></div>
+                            </div>
+                            filePostionOnListCounter += 1; 
+
+                        }
+                    </div>
+                </div>
+            </section>
+        </MudPaper>
+
+        @* <section >
             <div class="row">
-                <h4>Odczucia Pacjenta</h4>
-                <p>Tutaj wrzucic jakies odpowiedzi na pytania ktore powinny byc w tym dla pacjenta formularzu</p>
+            <h4>Prosby</h4>
             </div>
-            
-        </section>
-        <section class="p-3 mb-4 bg-light">
-            <div class="row">
-                <h4>Prosby</h4>
-                
-            </div>
-        </section>
+        </section> *@
+    }
+    else
+    {
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true"></MudProgressCircular>
+    }
 
-
-
-    </MudPaper>
-    
 </div>
-
+@if (showPreviewFileModal)
+{
+    <CascadingValue Value="previewFileModalData">
+        <Patient.Api.Components.Pages.AdditionalComponents.PreviewFileModal OnClose="CloseModalFilePreview" />
+    </CascadingValue>
+}
+@if (showPatientModal)
+{
+    <CascadingValue Value="CurrentPatient" >
+        <Patient.Api.Components.Pages.DoctorPages.Patients.PatientPreviewModal tokenSource="TokenSource" OnClose="HandleClosePatientModal" />
+    </CascadingValue>
+    
+}
 
 
 @code {
+    [CascadingParameter]
+    public ReportForDoctorToShowDto ReportToShow { get; set; }
+
     [Parameter]
     public CancellationTokenSource TokenSource { get; set; }
 
+    [Parameter]
+    public Patient.Domain.Entities.Actors.Patient CurrentPatient { get; set; }
 
+    private bool loading;
+    private List<string> questionList = new();
+    private List<Shared.AdditionalClasses.AnswerItem> patientsAnswers = new();
+
+
+    //file
+    //PreviewFileModal
+    private bool showPreviewFileModal;
+    private PreviewFileModalData previewFileModalData = new();
+    private int filePostionOnListCounter;
+
+    //showpatient
+    private bool showPatientModal;
+
+    protected override async Task OnInitializedAsync()
+    {
+        loading = true;
+        await Task.Delay(200);
+        loading = false;
+        questionList = QuestionsForReport.GetAllQuestions();
+        MakeAnswearElements();
+        StateHasChanged();
+    }
+
+    private async void MakeAnswearElements()
+    {
+        for (int i = 0; i < ReportToShow.PatientsAnswersForQuestions.Count(); i++)
+        {
+            patientsAnswers.Add(new AnswerItem
+                {
+                    Id = i,
+                    Answer = ReportToShow.PatientsAnswersForQuestions[i]
+                });
+        }
+    }
+
+    //file
+
+    private void HandleShowFile(int positionOnTheList)
+    {
+        previewFileModalData.CurrentFileBase64 = ReportToShow.FilesBase64.ElementAt(positionOnTheList);
+        previewFileModalData.CurrentFileName = ReportToShow.FileNames.ElementAt(positionOnTheList);
+        previewFileModalData.ShowPreviewFileModal = true;
+
+        StateHasChanged();
+    }
+
+    private void CloseModalFilePreview()
+    {
+        previewFileModalData.ShowPreviewFileModal = false;
+        StateHasChanged();
+    }
+
+    // showPatient modal
+    private void HandleShowPatientModal()
+    {
+        showPatientModal = true;
+    }
+
+    private void HandleClosePatientModal()
+    {
+        showPatientModal = false;
+    }
+
+
+    //klasy pomocnicze
+    public class PreviewFileModalData()
+    {
+        public string CurrentFileBase64 { get; set; } = "";
+        public string CurrentFileName { get; set; } = "";
+        public bool ShowPreviewFileModal { get; set; }
+    }
 }

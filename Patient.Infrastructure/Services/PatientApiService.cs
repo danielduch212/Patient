@@ -4,7 +4,7 @@ using Patient.Domain.Entities.DTOs.MedicalFiles;
 using Patient.Domain.Entities.DTOs.PrescriptionRequest;
 using Patient.Domain.Entities.DTOs.Recommandation;
 using Patient.Application.Diseases.Command.Patient.AddPatientsDiseases;
-using Patient.Application.Diseases.Query.GetPatientsDiseases;
+using Patient.Application.Diseases.Query.Patient.GetPatientsDiseases;
 using Patient.Application.MedicalData.Commands.Patient.AddMedicalFiles;
 using Patient.Application.MedicalData.Queries.Patient.GetMedicalFiles;
 using Patient.Application.Prescriptions.Queries.Patient.GetPatientPrescriptions;
@@ -44,7 +44,7 @@ internal class PatientApiService : IPatientApiService
 
     public async Task<List<MedicalFileToShowDto>> GetMedicalFiles(CancellationToken cancellationToken)
     {
-        var query = new GetMedicalFilesQuery();
+        var query = new GetPatientsMedicalFilesQuery();
         var result = await _mediator.Send(query, cancellationToken);
         return result;
     }

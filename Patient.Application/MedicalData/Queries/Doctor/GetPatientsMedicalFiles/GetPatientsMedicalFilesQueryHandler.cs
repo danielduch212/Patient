@@ -9,7 +9,7 @@ using Patient.Domain.Constants;
 using Patient.Domain.Entities.DTOs.MedicalFiles;
 using Patient.Application.Users;
 
-namespace Patient.Application.MedicalData.Queries.Patient.GetMedicalFiles;
+namespace Patient.Application.MedicalData.Queries.Doctor.GetPatientsMedicalFiles;
 
 internal class GetPatientsMedicalFilesQueryHandler(ILogger<GetPatientsMedicalFilesQueryHandler> logger,
     IdentityUserAccessor userAccessor, UserManager<Domain.Entities.Actors.Patient> patientManager,
@@ -19,10 +19,10 @@ internal class GetPatientsMedicalFilesQueryHandler(ILogger<GetPatientsMedicalFil
     public async Task<List<MedicalFileToShowDto>> Handle(GetPatientsMedicalFilesQuery request, CancellationToken cancellationToken)
     {
         var user = await userContext.GetCurrentUserAsync();
-        var patient = await patientManager.FindByEmailAsync(user.Email);
-        logger.LogInformation($"Getting medical files for user: {user.Email}");
+        
+        logger.LogInformation($"Getting medical files for doctor: {user.Email}");
 
-        var medicalFiles = await medicalDataRepository.GetPatientFiles(patient.Id, cancellationToken);
+        var medicalFiles = await medicalDataRepository.GetPatientFiles(request.PatientId, cancellationToken);
 
         List<MedicalFileToShowDto> medicalFilesToShowDto = new List<MedicalFileToShowDto>();
         if (medicalFiles.Any())
@@ -42,7 +42,7 @@ internal class GetPatientsMedicalFilesQueryHandler(ILogger<GetPatientsMedicalFil
                 medicalFilesToShowDto.Add(medicalFile);
             }
         }
-        logger.LogInformation($"Returning to user: {patient.Email}  : {medicalFilesToShowDto.Count} files");
+        logger.LogInformation($"Returning to doctor: {user.Email}  : {medicalFilesToShowDto.Count} files");
         return medicalFilesToShowDto;
 
     }

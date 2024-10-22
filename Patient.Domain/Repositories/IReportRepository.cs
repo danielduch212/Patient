@@ -12,5 +12,7 @@ public interface IReportRepository
     public Task<List<Report>> GetDoctorReports(Doctor doctor, CancellationToken cancellationToken);
     public Task<Report> GetReport(int reportId, CancellationToken cancellationToken);
     public Task<int> GetDoctorReportsNumber(Doctor doctor, CancellationToken cancellationToken);
+    public Task AddDoctorsWhoCheckedReport(Doctor doctor, int reportId, CancellationToken cancellationToken);
+
 
 }

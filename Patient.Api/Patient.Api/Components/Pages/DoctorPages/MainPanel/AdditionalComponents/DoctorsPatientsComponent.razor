@@ -20,6 +20,10 @@
 
                     </MudListItem>
                 }
+                @if (doctorsPatients.Count == 0)
+                {
+                    <small>Brak pacjentów</small>
+                }
             </MudList>
         </MudPaper>            
     </section>

@@ -17,7 +17,7 @@
 @implements IDisposable
 
 
-<div class="container px-4">
+<div class="container px-4 position-relative">
     <div class="row pt-5">
         <div class="justify-content-start align-content-start">
             <NavLink href="/pacjent/raporty">
@@ -58,7 +58,7 @@
     protected async override Task OnInitializedAsync()
     {
         readingReport = true;
-        var reportToShow = await _patientApiService.GetReport(Id, TokenSource.Token);
+        reportToShow = await _patientApiService.GetReport(Id, TokenSource.Token);
         if (reportToShow.FileNames.Any())
         {
             foreach (var filename in reportToShow.FileNames)
@@ -68,9 +68,9 @@
             }
         }
 
-        StateHasChanged();
+        
         readingReport = false;
-
+        StateHasChanged();
     }
 
     private async void HandleShowFile(int positionOnTheList)

@@ -1,2 +1,10 @@
 ﻿body {
 }
+
+.highlight-on-hover{
+
+}
+    .highlight-on-hover:hover{
+        border: 2px solid aquamarine;
+        border-color: aquamarine;
+    }

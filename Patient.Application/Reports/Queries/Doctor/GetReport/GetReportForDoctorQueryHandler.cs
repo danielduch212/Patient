@@ -45,6 +45,9 @@ internal class GetReportForDoctorQueryHandler(ILogger<GetReportForDoctorQueryHan
             IsChecked = report.IsChecked,
             DateOfCreating = report.DateOfCreating,
             Urgency = report.Urgency,
+            PatientsHealthRating = report.PatientsHealthRating,
+            PatientsAnswersForQuestions = report.PatientsAnswersForQuestions,
+            PatientsSymptoms = report.PatientsSymptoms,
 
             PatientId = report.PatientId,
             PatientName = report.Patient.Name,

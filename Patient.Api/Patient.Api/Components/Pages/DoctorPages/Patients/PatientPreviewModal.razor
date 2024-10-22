@@ -5,14 +5,17 @@
 
 @using Patient.Domain.Entities
 @using Patient.Application.Account
-
+@using Patient.Api.Client.Pages.PatientPages.MedicalInterview.AdditionalComponents
+@using Shared.Dtos
+@using Patient.Domain.Interfaces
 
 @inject UserManager<Patient.Domain.Entities.Actors.Patient> _patientManager
 @inject NavigationManager _navigationManager
+@inject IDoctorApiService _doctorApiService
 
 
 
-<div class="container px-4">
+<div class="container px-4" >
     <div class="modal-backdrop">
         <div class="modal" tabindex="-1" style="display: block;">
             <div class="modal-content">
@@ -22,24 +25,39 @@
                 </div>
                 <div class="modal-body">
                     <div class="container">
+                        
                         <div class="row justify-content-center align-items-center align-content-center pt-2">
-                            <MudAvatar Size="Size.Large" Style="width: 10%; height: 10%;">
-                                <MudImage Src="/images/patientIconClientVersion.jpg"></MudImage>
-                            </MudAvatar>
+                            <div class="img-avatar" style="max-width: 150px;">
+                                <img src="/images/icons/patientIcon.jpg" />
+                            </div>
                         </div>
-                        <div class="row">
+
+                        <div class="row p-2">
                             <h4>Dane</h4>
                             <ul class="list-group text-center">
-                                <li class="list-group-item"><strong>Imię:  @currentPatient.Name</strong></li>
-                                <li class="list-group-item"><strong>Nazwisko:  @currentPatient.Surname</strong></li>
-                                <li class="list-group-item"><strong>Email: @currentPatient.Email</strong></li>
-                                <li class="list-group-item"><strong>PESEL:  @currentPatient.Pesel</strong></li>
+                                <li class="list-group-item"><strong>Imię:  @CurrentPatient.Name</strong></li>
+                                <li class="list-group-item"><strong>Nazwisko:  @CurrentPatient.Surname</strong></li>
+                                <li class="list-group-item"><strong>Email: @CurrentPatient.Email</strong></li>
+                                <li class="list-group-item"><strong>PESEL:  @CurrentPatient.Pesel</strong></li>
                             </ul>
                         </div>
+
+                        <section>
+                            <CascadingValue Value="patientsDiseases">
+                                <ShowPatientsDiseasesComponent />
+                            </CascadingValue>                           
+                        </section>
+                        
+                        <section>
+                            <h4>Dokumentacja pacjenta</h4>
+                            <PatientsDocumentationForDoctorComponent PatientId="@CurrentPatient.Id" TokenSource="tokenSource"/>
+                        </section>
+
+
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-secondary" data-bs-dismiss="modal">Zamknij</button>
+                    <button class="btn btn-primary btn-custom-primary" data-bs-dismiss="modal" @onclick="HandleCloseModal">Zamknij</button>
                 </div>
             </div>
         </div>
@@ -50,27 +68,27 @@
 
 
 @code {
-
-
-    [SupplyParameterFromQuery]
-    private string? PatientId { get; set; }
+    [CascadingParameter]
+    public Patient.Domain.Entities.Actors.Patient CurrentPatient { get; set; } = new();
 
     [Parameter]
     public CancellationTokenSource tokenSource { get; set; }
 
-    private Patient.Domain.Entities.Actors.Patient currentPatient = new();
+    [Parameter]
+    public EventCallback OnClose { get; set; }
+
+    private List<PatientsDiseaseDto> patientsDiseases = new();
 
     protected override async Task OnInitializedAsync()
     {
-        currentPatient = await _patientManager.FindByIdAsync(PatientId);
+        patientsDiseases = await _doctorApiService.GetPatientsDiseases(CurrentPatient.Id, tokenSource.Token);
 
     }
 
-    private void HandleBack()
+    private async void HandleCloseModal()
     {
-        
+        await OnClose.InvokeAsync();
     }
-    //zrobic to jako modal ;) - zeby mozna bylo sobie to gdziekolwiek wywolywac
 
     
 }

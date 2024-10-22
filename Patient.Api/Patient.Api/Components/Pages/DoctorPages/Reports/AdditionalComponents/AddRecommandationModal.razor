@@ -26,7 +26,7 @@
     <div class="modal" tabindex="-1" style="display:block;">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Podglad</h5>
+                <h5 class="modal-title"></h5>
                 <button type="button" class="btn-close" @onclick="CloseModalAddRecommandation"></button>
             </div>
             <div class="modal-body">
@@ -51,11 +51,9 @@
                     }
                     else
                     {
-                        <h3>Dodaj Rekomendację</h3>
-                        <h4>Pacjent: </h4>
-                        <h4>@addRecommandationModalData.CurrentPatient.Pesel</h4>
-                        <h5 class="pt-2">Opis:</h5>
-                        <InputTextArea id="description" style="width: 100%; height: 200px; resize: none;" @bind-Value="medicalRecommandation.Description" class="form-control"></InputTextArea>
+                        <h3>Dodaj rekomendację dla pacjenta</h3>
+                        <h5 class="pt-2 text-start">Opis:</h5>
+                        <InputTextArea id="description" style="width: 100%; height: 100px; resize: none;" @bind-Value="medicalRecommandation.Description" class="form-control"></InputTextArea>
                         <div class="row pt-5">
                             <div class="col d-flex justify-content-center align-items-center">
                                 <div class="form-check">
@@ -68,7 +66,7 @@
                                 </div>
                             </div>
                             <div class="col">
-                                <btn type="button" class="btn btn-primary" @onclick="ToggleAddPrescription">Dodaj Receptę</btn>
+                                <btn type="button" class="btn btn-primary btn-custom-primary" @onclick="ToggleAddPrescription">Dodaj Receptę</btn>
                             </div>
 
                         </div>
@@ -120,8 +118,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <btn type="button" class="btn btn-primary" @onclick="AddRecommandationAsync">Dodaj rekomendację</btn>
-                <button class="btn btn-secondary" @onclick="CloseModalAddRecommandation">Zamknij</button>
+                <btn type="button" class="btn btn-primary btn-custom-primary" @onclick="AddRecommandationAsync">Dodaj rekomendację</btn>
+                <button class="btn btn-outline-primary btn-custom-outline" @onclick="CloseModalAddRecommandation">Zamknij</button>
 
             </div>
         </div>

@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Patient.Application.Diseases.Command.Patient.AddPatientsDiseases;
-using Patient.Application.Diseases.Query.GetPatientsDiseases;
+using Patient.Application.Diseases.Query.Patient.GetPatientsDiseases;
 using Patient.Application.Prescriptions.Commands.Patient.AskForPrescription;
 using Patient.Domain.Repositories;
 using Shared.Dtos;

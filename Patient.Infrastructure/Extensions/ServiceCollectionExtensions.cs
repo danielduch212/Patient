@@ -92,6 +92,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IUserSeeder, UserSeeder>();
         services.AddScoped<IPatientsRepository, PatientsRepository>();
 
-        
+        services.AddScoped<IManageService, ManageService>();
     }
 }

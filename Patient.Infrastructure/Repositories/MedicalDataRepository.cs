@@ -15,9 +15,9 @@ internal class MedicalDataRepository(PatientDbContext dbContext) : IMedicalDataR
         await dbContext.SaveChangesAsync();
     }
 
-    public async Task<List<MedicalFile>> GetPatientFiles(Patient.Domain.Entities.Actors.Patient patient, CancellationToken cancellationToken)
+    public async Task<List<MedicalFile>> GetPatientFiles(string patientId, CancellationToken cancellationToken)
     {
-        var results = await dbContext.MedicalFiles.Where(m=>m.PatientId == patient.Id).ToListAsync();
+        var results = await dbContext.MedicalFiles.Where(m=>m.PatientId == patientId).ToListAsync();
         return results;
     }
     

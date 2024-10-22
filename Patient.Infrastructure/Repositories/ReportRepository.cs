@@ -6,6 +6,7 @@ using Patient.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Patient.Domain.Entities.DTOs;
 using Patient.Domain.Entities.Actors;
+using Microsoft.Identity.Client;
 
 internal class ReportRepository(PatientDbContext dbContext) : IReportRepository
 {
@@ -75,5 +76,18 @@ internal class ReportRepository(PatientDbContext dbContext) : IReportRepository
         
 
         return results;
+    }
+
+    public async Task AddDoctorsWhoCheckedReport(Doctor doctor, int reportId, CancellationToken cancellationToken)
+    {
+        var result = await dbContext.Reports
+            .Include(r => r.DoctorsWhoChecked)
+            .Where(r => r.Id == reportId)
+            .FirstOrDefaultAsync();
+
+        var doctorsWhoChecked = result.DoctorsWhoChecked.ToList();
+        doctorsWhoChecked.Add(doctor);
+        result.DoctorsWhoChecked = doctorsWhoChecked;
+        await dbContext.SaveChangesAsync();
     }
 }

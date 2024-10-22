@@ -30,14 +30,14 @@
 @inject IDialogService DialogService
 @inject IReportRepository _reportRepository
 @inject ISnackbar snackBar
+@inject IManageService _manageService
 
 
 @implements IDisposable
 
 
-<div>
+<div class="container position-relative">
     <div class="container px-4  ">
-
         <div class="row pt-5 position-relative">
             <div class="justify-content-start align-content-start">
                 <NavLink href="/lekarz/raporty">
@@ -52,7 +52,7 @@
             {
                 <div class="mx-5">
                     <CascadingValue Value="reportToShow">
-                        <Patient.Api.Components.Pages.DoctorPages.Reports.ReportPreviewComponent TokenSource="tokenSource"/>
+                        <Patient.Api.Components.Pages.DoctorPages.Reports.ReportPreviewComponent TokenSource="tokenSource" CurrentPatient="currentPatient"/>
                     </CascadingValue>
                 </div>
             }
@@ -62,11 +62,11 @@
     <div class="container px-4">
         <div class="row d-flex mx-5">
             <div class="col text-center mx-5">
-                <btn type="button" class="btn btn-primary mt-5" @onclick="HandleShowRecommandationModal">Dodaj rekomendacje</btn>
+                <btn type="button" class="btn btn-outline-primary btn-custom-outline mt-5" @onclick="HandleShowRecommandationModal">Dodaj rekomendacje</btn>
             </div>
-            <div class="col text-center mx-5">
+            <div class="col text-center mx-5 py-5">
                 <div class="position-relative">
-                    <button class="btn btn-primary mt-5" type="button" data-toggle="collapse" data-target="#collapseCard" aria-expanded="false" aria-controls="collapseCard">
+                    <button class="btn btn-primary btn-custom-primary" type="button" data-toggle="collapse" data-target="#collapseCard" aria-expanded="false" aria-controls="collapseCard">
                         Popros o konsultacje
                     </button>
                     <div class="collapse position-relative" id="collapseCard" style="left: 33.5%; width: 70%;">
@@ -82,12 +82,6 @@
             
              
     </div>
-    @if (showPreviewFileModal)
-    {
-        <CascadingValue Value="previewFileModalData">
-            <Patient.Api.Components.Pages.AdditionalComponents.PreviewFileModal OnClose="CloseModalFilePreview" />
-        </CascadingValue>
-    }
     @if (showAddRecommandationModal)
     {
         <CascadingValue Value="addRecommandationModalData">
@@ -106,6 +100,8 @@
 
     private CancellationTokenSource tokenSource = new();
     private ReportForDoctorToShowDto reportToShow = new();
+    private Patient.Domain.Entities.Actors.Patient currentPatient = new();
+
 
     private bool fileGet;
     private bool readingReport;
@@ -113,17 +109,9 @@
     private bool showAddRecommandationModal;
     private bool loading;
 
-
     private List<Patient.Domain.Entities.Actors.Doctor> doctors = new();
 
-    //PreviewFileModal
 
-    private bool showPreviewFileModal;
-    private PreviewFileModalData previewFileModalData = new();
-
-    ///
-
-    private Patient.Domain.Entities.Actors.Patient currentPatient = new();
 
     //RecommendationModal
     AddRecommandationModalData addRecommandationModalData = new();
@@ -136,13 +124,13 @@
     {
         readingReport = true;
 
-        var reportToShow = await _doctorApiService.GetReport(ReportId, tokenSource.Token);
+        reportToShow = await _doctorApiService.GetReport(ReportId, tokenSource.Token);
         if (reportToShow.FileNames.Any())
         {
             foreach (var filename in reportToShow.FileNames)
             {
                 var url = await _blobStorageService.GetBlobSasUrl(filename, BlobContainerNames.ReportsFiles);
-                var fileBase64 = await LoadImageBase64(url);
+                var fileBase64 = await _manageService.LoadImageBase64(url);
                 reportToShow.FilesBase64.Add(fileBase64);
             }
         }
@@ -157,14 +145,7 @@
 
     }
 
-    private void HandleShowFile(int positionOnTheList)
-    {
-        previewFileModalData.CurrentFileBase64 = reportToShow.FilesBase64.ElementAt(positionOnTheList);
-        previewFileModalData.CurrentFileName = reportToShow.FileNames.ElementAt(positionOnTheList);
-        previewFileModalData.ShowPreviewFileModal = true;      
 
-        StateHasChanged();
-    }
 
     private async void HandleShowPatient()
     {
@@ -197,28 +178,9 @@
         showAskForConsultationModal = false;
     }
 
-    private void CloseModalFilePreview()
-    {
-        previewFileModalData.ShowPreviewFileModal = false;
-        StateHasChanged();
-    }
+   
 
-    private async Task<string> LoadImageBase64(string url)
-    {
-        using (var _httpClient = new HttpClient())
-        {
-            var response = await _httpClient.GetAsync(url);
-            if (response.IsSuccessStatusCode)
-            {
-                var imageBytes = await response.Content.ReadAsByteArrayAsync();
-                return $"data:image/jpeg;base64,{Convert.ToBase64String(imageBytes)}";
-
-            };
-            return null;
-        }
-
-    }
-
+    //Modal klasy pomocnicze
     public sealed class MedicineToPrescription()
     {
         public int Id;
@@ -226,13 +188,7 @@
         public string MedicineDosingDescription { get; set; } = "";
     }
 
-    //Modal klasy pomocnicze
-    public class PreviewFileModalData()
-    {
-        public string CurrentFileBase64 { get; set; } = "";
-        public string CurrentFileName { get; set; } = "";
-        public bool ShowPreviewFileModal { get; set; }
-    }
+   
     public class AddRecommandationModalData()
     {      
         public Patient.Domain.Entities.Actors.Patient CurrentPatient { get; set; }

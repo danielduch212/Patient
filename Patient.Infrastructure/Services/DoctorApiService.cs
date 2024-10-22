@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Http;
 using Patient.Application.Reports.Queries.Doctor.GetReports;
 using Patient.Application.Reports.Queries.Doctor.GetReport;
-using Patient.Application.MedicalData.Queries.Patient.GetMedicalFiles;
 using Patient.Application.PrescriptionRequests.Commands.Doctor.PrescribePrescriptionFromRequest;
 using Patient.Application.PrescriptionRequests.Queries.Doctor.GetDoctorsPrescriptionRequests;
 using Patient.Application.Recommandation.Commands.Doctor.CreateRecommandation;
@@ -13,6 +12,10 @@ using System.Text.Json;
 using Patient.Application.Users;
 using Patient.Domain.Entities.DTOs.Reports;
 using Patient.Domain.Entities.DTOs.MedicalFiles;
+using Patient.Application.Diseases.Query.Doctor.GetPatientsDiseases;
+using Patient.Application.MedicalData.Queries.Doctor.GetPatientsMedicalFiles;
+using Shared.Dtos;
+
 
 namespace Patient.Infrastructure.Services;
 
@@ -40,13 +43,6 @@ public class DoctorApiService : IDoctorApiService
         return result;
     }
 
-    public async Task<List<MedicalFileToShowDto>> GetMedicalFiles(CancellationToken cancellationToken)
-    {
- 
-        var result = await _mediator.Send(new GetMedicalFilesQuery(), cancellationToken);
-        return result;
-    }
-
     public async Task<bool> AddRecommandation(MedicalRecommandationDto dto, CancellationToken cancellationToken)
     {
 
@@ -63,6 +59,21 @@ public class DoctorApiService : IDoctorApiService
     public async Task<bool> PrescribePrescription(PrescriptionRequestToShowToDoctorDto dto, CancellationToken cancellationToken)
     {
         var result = await _mediator.Send(new PrescribePrescriptionFromRequestCommand { Dto = dto }, cancellationToken);
+        return result;
+    }
+
+    public async Task<List<PatientsDiseaseDto>> GetPatientsDiseases(string patientId, CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new GetPatientsDiseasesQuery {PatientId = patientId }, cancellationToken);
+        return result;
+    }
+
+    public async Task<List<MedicalFileToShowDto>> GetPatientsMedicalDoc(string patientId, CancellationToken cancellationToken)
+    {
+        var query = new GetPatientsMedicalFilesQuery(){
+            PatientId = patientId,
+        };
+        var result = await _mediator.Send(query, cancellationToken);
         return result;
     }
 }
