@@ -20,10 +20,8 @@
             @if (filesGet)
             {
                 @foreach (var file in medicalFilesToShow)
-                {
-                    <div class="file-block mx-2" style="cursor: pointer;" @onclick="() => HandleShowFile(file)">
-                        <div class="bi-file-icon"></div>
-                    </div>
+                {        
+                     <div class="bi-file-icon mx-2" style="cursor: pointer;" @onclick="() => HandleShowFile(file)"></div>                   
                 }
             }
             @if (showPreviewModal)

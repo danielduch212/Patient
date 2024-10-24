@@ -32,6 +32,7 @@
                 else
                 {
                     <div class="container">
+                        <Patient.Api.Components.ManageComponents.StatusMessage Message="@errorMessage"/>
                         <div class="row">
                             <div class="col-10">
                                 <BlazoredTypeahead SearchMethod="GetMedicinesBySearchPhrase"
@@ -46,12 +47,12 @@
                                 </btn>
                             </div>
                         </div>
-                        <MudList T="MedicineToPrescriptionRequest" Class="pt-5">
+                        <MudList T="MedicineToPrescriptionRequest" Class="pt-5" Style="max-height: 200px; overflow-y: auto;">
                             @foreach (var item in medicinesToPrescript)
                             {
                                 <MudListItem @key="item.Id">
-                                    <div class="row p-2">
-                                        <div class="col-10 text-center justify-content-center align-items-center">
+                                    <div class="row">
+                                        <div class="col-10 text-start justify-content-center align-items-center">
                                             <p>Nazwa leku</p>
                                             <p>@item.ChosenMedicine.Name</p>
                                         </div>
@@ -81,6 +82,8 @@
     [Parameter]
     public CancellationTokenSource SourceToken { get; set; }
 
+    //error
+    private string? errorMessage;
 
     private MedicineToPrescriptionRequest medicineToPrescription = new();
     private Medicine medicine = new();
@@ -89,6 +92,9 @@
 
     //loading
     private bool addingRequest;
+
+    //
+    private int maxMedicinesOnPrescriptionRequest = 5;
 
     private async Task HandleAddPrescriptionRequest()
     {
@@ -133,6 +139,11 @@
 
     private void AddMedicine()
     {
+        if (medicinesToPrescript.Count == maxMedicinesOnPrescriptionRequest)
+        {
+            errorMessage = "Maksymalna liczba leków to 5";
+            return;
+        }
         MedicineToPrescriptionRequest medicineToPrescription = new()
         {
             ChosenMedicine = medicine,

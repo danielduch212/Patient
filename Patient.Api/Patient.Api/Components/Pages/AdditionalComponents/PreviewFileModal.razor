@@ -22,7 +22,7 @@
                     <div class="row">
 
                         <div class="col">
-                            <img src=@CurrentFileBase64 />
+                            <img src="@CurrentFileBase64" class="img-fluid" style="max-width:100%; height:auto;" />
                             <p>Opis</p>
                         </div>
                     </div>
@@ -38,11 +38,13 @@
 @code {
 
     [Parameter]
-    public string CurrentFileBase64 { get; set; } = "";
+    public string? CurrentFileBase64 { get; set; } = "";
     [Parameter]
-    public string CurrentFileName { get; set; } = "";
+    public string? CurrentFileName { get; set; } = "";
     [Parameter]
     public string? CurrentFileType { get; set; }
+    [Parameter]
+    public string? CustomStyle { get; set; } = "";
     [Parameter]
     public EventCallback OnClose { get; set; }
 

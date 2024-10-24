@@ -10,14 +10,14 @@ internal class PrescriptionRequestRepository(PatientDbContext dbContext) : IPres
     public async Task AddPrescriptionRequest(PrescriptionRequest entity, CancellationToken cancellationToken)
     {
         await dbContext.PrescriptionRequests.AddAsync(entity);
-        await dbContext.SaveChangesAsync();
+        await dbContext.SaveChangesAsync(cancellationToken);
     }
 
     public async Task<int> CountPatientsPrescriptions(string patientId, CancellationToken cancellationToken)
     {
         var results = await dbContext.PrescriptionRequests
             .Where(p => (p.PatientId == patientId && p.IsIssued==false))
-            .CountAsync();
+            .CountAsync(cancellationToken);
         return results;
     }
 
@@ -25,7 +25,7 @@ internal class PrescriptionRequestRepository(PatientDbContext dbContext) : IPres
     {
         var prescriptionRequestsNumber = await dbContext.PrescriptionRequests
             .Where(pr => (pr.DoctorId == doctorId) && (pr.IsIssued == false))
-            .CountAsync();
+            .CountAsync(cancellationToken);
         return prescriptionRequestsNumber;
     }
 
@@ -33,7 +33,7 @@ internal class PrescriptionRequestRepository(PatientDbContext dbContext) : IPres
     {
         var prescriptionRequests = await dbContext.PrescriptionRequests
             .Where(pr=>(pr.IsIssued==false)&&(pr.DoctorId==doctorId))
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
         return prescriptionRequests;
     }
 
@@ -42,7 +42,7 @@ internal class PrescriptionRequestRepository(PatientDbContext dbContext) : IPres
         var prescriptionRequest = await dbContext.PrescriptionRequests
             .FirstOrDefaultAsync(pr=>pr.Id==prescriptionId);
         prescriptionRequest.IsIssued = true;
-        await dbContext.SaveChangesAsync();
+        await dbContext.SaveChangesAsync(cancellationToken);
     }
 
     public async Task ErasePrescriptionRequest(int prescriptionRequestId, CancellationToken cancellationToken)
@@ -50,7 +50,7 @@ internal class PrescriptionRequestRepository(PatientDbContext dbContext) : IPres
         var prescriptionRequest = await dbContext.PrescriptionRequests
             .FirstOrDefaultAsync(pr=>pr.Id == prescriptionRequestId);
         dbContext.Remove(prescriptionRequest);
-        await dbContext.SaveChangesAsync();
+        await dbContext.SaveChangesAsync(cancellationToken);
     }
 
 

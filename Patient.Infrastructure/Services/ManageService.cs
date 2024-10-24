@@ -19,4 +19,18 @@ internal class ManageService : IManageService
         }
 
     }
+
+    public async Task<string> GetFileNameFromUrl(string url, string patientId)
+    {
+        int lastSlashIndex = url.LastIndexOf('/');
+
+        if(lastSlashIndex != -1 && lastSlashIndex + 1 < url.Length)
+        {
+            string restOfUrl = url.Substring(lastSlashIndex + 1);
+            var filename = restOfUrl.Substring(patientId.Length);
+            filename = filename.Substring(10);
+            return filename; 
+        }
+        return null;
+    }
 }

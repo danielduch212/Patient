@@ -9,7 +9,7 @@ internal class DoctorsRepository(PatientDbContext dbContext) :  IDoctorsReposito
 {
     public async Task<Doctor> GetDoctorByIdAsync(string id, CancellationToken cancellationToken)
     {
-        var doctor = await dbContext.Doctors.FirstOrDefaultAsync(d => d.Id == id);
+        var doctor = await dbContext.Doctors.FirstOrDefaultAsync(d => d.Id == id, cancellationToken);
         return doctor;
     }
     public async Task<Doctor> AssignAvailibleDoctor (CancellationToken cancellationToken)
@@ -23,7 +23,7 @@ internal class DoctorsRepository(PatientDbContext dbContext) :  IDoctorsReposito
                 ReportsCount = d.ReportsToCheck.Count() 
             })
             .OrderBy(d => d.ReportsCount)
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(cancellationToken);
 
         return doctor.Doctor;
     }
@@ -33,7 +33,7 @@ internal class DoctorsRepository(PatientDbContext dbContext) :  IDoctorsReposito
         var patient = await dbContext.Patients
             .Include(p => p.Doctors)
             .Where(p => p.Id == patientId)
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(cancellationToken);
         return patient.Doctors.FirstOrDefault(d=>d.DoctorSpecializations.Contains("Lekarz pierwszego kontaktu"));
     }
     public async Task AssignFirstContactDoctorToPatient(string patientId, CancellationToken cancellationToken)
@@ -48,11 +48,11 @@ internal class DoctorsRepository(PatientDbContext dbContext) :  IDoctorsReposito
             PatientsCount = d.Patients.Count()
         })
         .OrderBy(d => d.PatientsCount)
-        .FirstOrDefaultAsync();
+        .FirstOrDefaultAsync(cancellationToken);
 
         var patient = await dbContext.Patients
             .Include(p => p.Doctors)
-            .FirstOrDefaultAsync(p => p.Id == patientId);
+            .FirstOrDefaultAsync(p => p.Id == patientId, cancellationToken);
 
         if (doctor != null && patient != null)
         {
@@ -72,26 +72,26 @@ internal class DoctorsRepository(PatientDbContext dbContext) :  IDoctorsReposito
             }
 
             doctor.Doctor.Patients = doctorsPatientsList;
-            await dbContext.SaveChangesAsync();
+            await dbContext.SaveChangesAsync(cancellationToken);
         }
     }
     public async Task AssignDoctorSpecializationForDoctor(string doctorId, string DoctorSpecialization, CancellationToken cancellationToken)
     {
         var result = await dbContext.Doctors
-            .FirstOrDefaultAsync(d=>d.Id == doctorId);
+            .FirstOrDefaultAsync(d=>d.Id == doctorId, cancellationToken);
         result.DoctorSpecializations.Add(DoctorSpecialization);
-        await dbContext.SaveChangesAsync();
+        await dbContext.SaveChangesAsync(cancellationToken);
     }
     public async Task<List<Doctor>> GetPatientsDoctorsToShow(string patientId, CancellationToken cancellationToken)
     {
         var result = await dbContext.Patients
             .Include(p => p.Doctors)
             .Where(p => p.Id == patientId)
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(cancellationToken);
         return result.Doctors.ToList();
     }
     public async Task SaveDbAsync(CancellationToken cancellationToken)
     {
-        await dbContext.SaveChangesAsync();
+        await dbContext.SaveChangesAsync(cancellationToken);
     }
 }

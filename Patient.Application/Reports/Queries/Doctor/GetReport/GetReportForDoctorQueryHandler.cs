@@ -11,13 +11,15 @@ using Patient.Domain.Entities;
 using Patient.Domain.Entities.DTOs.Reports;
 using Patient.Domain.Constants;
 using Patient.Application.Users;
+using Patient.Domain.Entities.Additional;
 
 namespace Patient.Application.Reports.Queries.Doctor.GetReport;
 
 internal class GetReportForDoctorQueryHandler(ILogger<GetReportForDoctorQueryHandler> logger,
     IdentityUserAccessor userAccessor, UserManager<Domain.Entities.Actors.Doctor> doctorManager,
     IUserContext userContext, HttpClient _httpClient, IBlobStorageService blobStorageService,
-    IReportRepository reportsRepository, IMapper mapper) : IRequestHandler<GetReportForDoctorQuery, ReportForDoctorToShowDto>
+    IReportRepository reportsRepository, IMapper mapper,
+    IManageService manageService) : IRequestHandler<GetReportForDoctorQuery, ReportForDoctorToShowDto>
 {
     public async Task<ReportForDoctorToShowDto> Handle(GetReportForDoctorQuery request, CancellationToken cancellationToken)
     {
@@ -37,11 +39,19 @@ internal class GetReportForDoctorQueryHandler(ILogger<GetReportForDoctorQueryHan
             idDoctorsToCheck.Add(doctorToCheck.Id);
         }
 
+        List<FilePreviewData> filesPreviewData = new();
+        foreach (var fileUrl in report.FileNames)
+        {
+            var filePreviewData = new FilePreviewData(){ FileUrl=fileUrl};
+            filePreviewData.FileName = await manageService.GetFileNameFromUrl(fileUrl, report.PatientId);
+            filesPreviewData.Add(filePreviewData);
+        }
+
         var result = new ReportForDoctorToShowDto()
         {
             Id = report.Id,
             Description = report.AdditionalDescription,
-            FileNames = report.FileNames,
+            FilesPreviewData = filesPreviewData,
             IsChecked = report.IsChecked,
             DateOfCreating = report.DateOfCreating,
             Urgency = report.Urgency,

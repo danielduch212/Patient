@@ -11,6 +11,6 @@ internal class MedicineRepository(PatientDbContext dbContext) : IMedicineReposit
     {
         return await dbContext.Medicines
             .Where(m=>m.Name.Contains(searchTerm.ToLower()))
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
     }
 }

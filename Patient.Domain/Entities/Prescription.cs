@@ -10,6 +10,7 @@ public class Prescription
     public string Description { get; set; } = default!;
     public DateOnly DateOfIssue { get; set; }
     public DateOnly DateOfExpiration { get; set; }
+    //public string CodeToGet { get; set; } = default!;
 
 
 

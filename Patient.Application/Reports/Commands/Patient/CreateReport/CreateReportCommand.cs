@@ -6,7 +6,7 @@ namespace Patient.Application.Reports.Commands.Patient.CreateReport;
 
 public class CreateReportCommand() : IRequest<int>
 {
-    public string Description { get; set; } = default!;
+    public string? Description { get; set; } = default!;
     public IEnumerable<IFormFile>? Files { get; set; } = new List<IFormFile>();
 
     public List<string> PatientsAnswers { get; set; } = new();

@@ -11,14 +11,14 @@ internal class RecommandationRepository(PatientDbContext dbContext) : IRecommand
     public async Task CreateRecommandation(MedicalRecommandation entity, CancellationToken cancellationToken)
     {
         await dbContext.MedicalRecommandations.AddAsync(entity);
-        await dbContext.SaveChangesAsync();
+        await dbContext.SaveChangesAsync(cancellationToken);
     }
 
     public async Task<int> CountPatientsNewRecommandations(string patientId, CancellationToken cancellationToken)
     {
         var results = await dbContext.MedicalRecommandations
             .Where(mr=>(mr.PatientId==patientId&&mr.DoesPatientChecked==false ))
-            .CountAsync();
+            .CountAsync(cancellationToken);
         return results;
     }
 }

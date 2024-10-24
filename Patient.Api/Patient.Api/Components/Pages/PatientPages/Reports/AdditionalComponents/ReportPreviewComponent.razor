@@ -5,6 +5,7 @@
 @using Shared.Constants
 @using Patient.Application.Users
 @using Shared.AdditionalClasses
+@using Patient.Domain.Entities.Additional
 
 @inject IPatientApiService _patientApiService
 @inject NavigationManager _navigationManager
@@ -12,7 +13,7 @@
 @inject IPrescriptionRequestRepository _prescriptionRequestRepository
 @inject IUserContext _userContext
 
-<div class="container" style="max-width: 70%; color: white;">
+<div class="container mb-5" style="max-width: 70%; color: white;">
     
     <h2 class="text-center">Raport            Data: @ReportToShow.DateOfCreating</h2>
     @if (!loading)
@@ -51,16 +52,12 @@
                         <h3 class="py-5">Samopoczucie pacjenta:  </h3>
                         <div class="d-flex ">
                             @for (int i = 0; i < ReportToShow.PatientsHealthRating; i++)
-                            {
-                                <div class="bi-heart-icon">
-                                    <div class="bi-heart-fill"></div>
-                                </div>
+                            {                               
+                                 <div class="bi-heart-icon bi-heart-fill"></div>                               
                             }
                             @for (int i = 0; i < (10 - ReportToShow.PatientsHealthRating); i++)
-                            {
-                                <div class="bi-heart-icon">
-                                    <div class="bi-heart-unfill"></div>
-                                </div>
+                            {                               
+                                <div class="bi-heart-icon bi-heart-unfill"></div>                               
                             }
                         </div>                  
                     </div>
@@ -90,17 +87,18 @@
                                         @foreach (var item in @patientsAnswers)
                                         {
                                             <div class="list-group-item" @key="item.Id">
-                                                <div class="row mt-2 mb-2 justify-content-center text-center">
-                                                    <h6 class="text-start">@questionList[item.Id]</h6>
-                                                    <h6>@item.Answer</h6>
+                                                <div class="row mt-2 mb-2 justify-content-center text-start">
+                                                    <strong class="text-start">@questionList[item.Id]</strong>
+                                                    <small>@item.Answer</small>
                                                 </div>
                                             </div>
                                         }
+                                        <div class="list-group-item">
+                                            <strong>Dodatkowy opis</strong>
+                                            <small>@ReportToShow.Description</small>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <p>Dodatkowy opis</p>
-                                        <p>@ReportToShow.Description</p>
-                                    </div>
+                                    
 
                                 </div>
                             </div>
@@ -129,7 +127,7 @@
             </section>
         </MudPaper>
 
-        <MudPaper Class="pa-8 ma-2" Elevation="3">
+        <MudPaper Class="pa-8 ma-2 pb-5" Elevation="3">
             <section>
                 <div class="row">
                     <div class="col-4 d-flex align-items-center align-content-center justify-content-center">
@@ -137,12 +135,9 @@
                     </div>
                     <div class="col">
                         <h4>Pliki</h4>
-                        @foreach (var file in ReportToShow.FilesBase64)
+                        @foreach (var filePreviewData in ReportToShow.FilesPreviewData)
                         {
-                            <div class="file-block mx-2" style="cursor: pointer;" >
-                                <div class="bi-x-circle"></div>
-                                <div class="bi-file-icon"></div>
-                            </div>
+                            <div class="bi-file-icon mx-2" style="cursor: pointer;" @onclick="() => HandleShowFile(filePreviewData)"></div>
                         }
                     </div>                  
                 </div>
@@ -161,7 +156,14 @@
     }
 
 </div>
+@if (showPreviewFileModal)
+{
 
+    <Patient.Api.Components.Pages.AdditionalComponents.PreviewFileModal CurrentFileBase64="@filePreviewDataToShow.FileBase64"
+                                                                        CurrentFileName="@filePreviewDataToShow.FileName" OnClose="CloseModalFilePreview"
+                                                                        CustomStyle="custom-style-class" />
+
+}
 
 
 
@@ -174,6 +176,10 @@
     private bool loading;
     private List<string> questionList = new();
     private List<Shared.AdditionalClasses.AnswerItem> patientsAnswers = new();
+
+    //PreviewFileModal
+    private bool showPreviewFileModal;
+    private FilePreviewData filePreviewDataToShow = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -201,4 +207,17 @@
         }
     }
 
+    private void HandleShowFile(FilePreviewData filePreviewData)
+    {
+        filePreviewDataToShow = filePreviewData;
+        showPreviewFileModal = true;
+
+        StateHasChanged();
+    }
+
+    private void CloseModalFilePreview()
+    {
+        showPreviewFileModal = false;
+        StateHasChanged();
+    }
 }

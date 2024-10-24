@@ -18,8 +18,8 @@ public class UserApiService
     
     public async Task<HttpResponseMessage> SendAddReportRequest(ReportDtoFront report)
     {
-        var form = new MultipartFormDataContent();
-        form.Add(new StringContent(report.Description), "Description");
+        var form = new MultipartFormDataContent();        
+        form.Add(new StringContent(report.Description), "Description");       
         form.Add(new StringContent(report.PatientsHealthRating.ToString()), "PatientsHealthRating");
         foreach (var symptom in report.PatientsSymptoms)
         {

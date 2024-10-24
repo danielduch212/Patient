@@ -1,41 +1,40 @@
 ﻿namespace Patient.Infrastructure.Repositories;
-using Patient.Domain;
-using Patient.Domain.Repositories;
-using Patient.Domain.Entities;
-using Patient.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
-using Patient.Domain.Entities.DTOs;
+using Patient.Domain.Entities;
 using Patient.Domain.Entities.Actors;
-using Microsoft.Identity.Client;
+using Patient.Domain.Repositories;
+using Patient.Infrastructure.Persistence;
 
 internal class ReportRepository(PatientDbContext dbContext) : IReportRepository
 {
     public async Task CreateReport(Report entity, CancellationToken cancellationToken)
     {
         await dbContext.Reports.AddAsync(entity);
-        await dbContext.SaveChangesAsync();
+        await dbContext.SaveChangesAsync(cancellationToken);
     }
 
     public async Task<Report> GetReport(int reportId, CancellationToken cancellationToken)
     {
         return await dbContext.Reports
             .Include(r=>r.MedicalRecommandation)
-            .Where(r => r.Id == reportId).FirstOrDefaultAsync();
+            .Where(r => r.Id == reportId).FirstOrDefaultAsync(cancellationToken);
     }
     public async Task<List<Report>> GetPatientReports(Patient patient, CancellationToken cancellationToken)
     {
-        var results = await dbContext.Reports.Where(r => r.PatientId == patient.Id).ToListAsync();
+        var results = await dbContext.Reports.Where(r => r.PatientId == patient.Id)
+            .ToListAsync(cancellationToken);
         return results;
     }
 
     public async Task<Report> GetReportForPatient(int id, Patient patient, CancellationToken cancellationToken)
     {
         var result = await dbContext.Patients
-            .Include(p => p.Reports)
-            .Where(p => p.Reports.Any(r => r.Id == id))
-            .SelectMany(p=>p.Reports)
-            .FirstOrDefaultAsync();
-        
+        .Where(p => p.Id == patient.Id) 
+        .Include(p => p.Reports) 
+        .SelectMany(p => p.Reports) 
+        .Where(r => r.Id == id) 
+        .FirstOrDefaultAsync(cancellationToken); 
+
         return result;
     }
 
@@ -45,7 +44,7 @@ internal class ReportRepository(PatientDbContext dbContext) : IReportRepository
                     .Include(r => r.DoctorsToCheck)
                     .Include(r=>r.Patient)
                     .Where(r => r.DoctorsToCheck.Any(d => d.Id == doctor.Id))
-                    .ToListAsync();
+                    .ToListAsync(cancellationToken);
         return results;
     }
 
@@ -53,18 +52,20 @@ internal class ReportRepository(PatientDbContext dbContext) : IReportRepository
     {
 
         var result = await dbContext.Doctors
-            .Include(d => d.ReportsToCheck)
-            .Include(d=>d.ReportsChecked)
-            .Where(r => r.ReportsToCheck.Any(r => r.Id == id))
-            .SelectMany(r=>r.ReportsToCheck)
-            .Include(r=>r.Patient)
-            .Include(r=>r.DoctorsToCheck)
-            .Include(r=>r.DoctorsWhoChecked)
-            .FirstOrDefaultAsync();
+        .Where(d => d.Id == doctor.Id) 
+        .Include(d => d.ReportsToCheck)
+        .ThenInclude(r => r.Patient) 
+        .Include(d => d.ReportsToCheck)
+        .ThenInclude(r => r.DoctorsToCheck) 
+        .Include(d => d.ReportsChecked)
+        .ThenInclude(r => r.DoctorsWhoChecked) 
+        .SelectMany(d => d.ReportsToCheck) 
+        .Where(r => r.Id == id) 
+        .FirstOrDefaultAsync(cancellationToken); 
 
         return result;
-         
-           
+
+
     }
 
     public async Task<int> GetDoctorReportsNumber(Doctor doctor, CancellationToken cancellationToken)
@@ -72,7 +73,7 @@ internal class ReportRepository(PatientDbContext dbContext) : IReportRepository
         var results = await dbContext.Reports
                     .Include(r => r.DoctorsToCheck)
                     .Where(r => r.DoctorsToCheck.Any(d => d.Id == doctor.Id))
-                    .CountAsync();
+                    .CountAsync(cancellationToken);
         
 
         return results;
@@ -83,11 +84,11 @@ internal class ReportRepository(PatientDbContext dbContext) : IReportRepository
         var result = await dbContext.Reports
             .Include(r => r.DoctorsWhoChecked)
             .Where(r => r.Id == reportId)
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(cancellationToken);
 
         var doctorsWhoChecked = result.DoctorsWhoChecked.ToList();
         doctorsWhoChecked.Add(doctor);
         result.DoctorsWhoChecked = doctorsWhoChecked;
-        await dbContext.SaveChangesAsync();
+        await dbContext.SaveChangesAsync(cancellationToken);
     }
 }

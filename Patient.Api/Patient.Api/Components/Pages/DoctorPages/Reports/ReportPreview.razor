@@ -38,7 +38,7 @@
 
 <div class="container position-relative">
     <div class="container px-4  ">
-        <div class="row pt-5 position-relative">
+        <div class="row pt-5">
             <div class="justify-content-start align-content-start">
                 <NavLink href="/lekarz/raporty">
                     <btn type="button" class="btn back-icon bi-arrow-left"></btn>
@@ -58,30 +58,33 @@
             }
         </div> 
 
-    </div>        
-    <div class="container px-4">
-        <div class="row d-flex mx-5">
-            <div class="col text-center mx-5">
-                <btn type="button" class="btn btn-outline-primary btn-custom-outline mt-5" @onclick="HandleShowRecommandationModal">Dodaj rekomendacje</btn>
-            </div>
-            <div class="col text-center mx-5 py-5">
-                <div class="position-relative">
-                    <button class="btn btn-primary btn-custom-primary" type="button" data-toggle="collapse" data-target="#collapseCard" aria-expanded="false" aria-controls="collapseCard">
-                        Popros o konsultacje
-                    </button>
-                    <div class="collapse position-relative" id="collapseCard" style="left: 33.5%; width: 70%;">
-                        <div class="card card-body position-absolute" style="z-index: 1000; transform: translateY(0);">
-                            <CascadingValue Value="ReportId">
-                                <AskForConsultationComponent TokenSource="tokenSource"/>
-                            </CascadingValue>
-                        </div>  
+    </div>       
+    <MudPaper Class="pa-8 ma-2" Elevation="3">
+        <div class="container px-4">
+            <div class="row d-flex mx-5">
+                <div class="col text-center mx-5">
+                    <btn type="button" class="btn btn-outline-primary btn-custom-outline mt-5" @onclick="HandleShowRecommandationModal">Dodaj rekomendacje</btn>
+                </div>
+                <div class="col text-center mx-5 py-5">
+                    <div class="position-relative">
+                        <button class="btn btn-primary btn-custom-primary" type="button" data-toggle="collapse" data-target="#collapseCard" aria-expanded="false" aria-controls="collapseCard">
+                            Popros o konsultacje
+                        </button>
+                        <div class="collapse position-relative" id="collapseCard" style="left: 33.5%; width: 70%;">
+                            <div class="card card-body position-absolute" style="z-index: 1000; transform: translateY(0);">
+                                <CascadingValue Value="ReportId">
+                                    <AskForConsultationComponent TokenSource="tokenSource" />
+                                </CascadingValue>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+
+
         </div>
-            
-             
-    </div>
+    </MudPaper>
+    
     @if (showAddRecommandationModal)
     {
         <CascadingValue Value="addRecommandationModalData">
@@ -112,7 +115,6 @@
     private List<Patient.Domain.Entities.Actors.Doctor> doctors = new();
 
 
-
     //RecommendationModal
     AddRecommandationModalData addRecommandationModalData = new();
 
@@ -125,13 +127,13 @@
         readingReport = true;
 
         reportToShow = await _doctorApiService.GetReport(ReportId, tokenSource.Token);
-        if (reportToShow.FileNames.Any())
+        if (reportToShow.FilesPreviewData.Any())
         {
-            foreach (var filename in reportToShow.FileNames)
+            foreach (var filePreviewData in reportToShow.FilesPreviewData)
             {
-                var url = await _blobStorageService.GetBlobSasUrl(filename, BlobContainerNames.ReportsFiles);
+                var url = await _blobStorageService.GetBlobSasUrl(filePreviewData.FileUrl, BlobContainerNames.ReportsFiles);
                 var fileBase64 = await _manageService.LoadImageBase64(url);
-                reportToShow.FilesBase64.Add(fileBase64);
+                
             }
         }
         foreach (var doctorId in reportToShow.DoctorsId)
@@ -201,4 +203,6 @@
         tokenSource.Cancel();
         tokenSource.Dispose();
     }
+
+   
 }

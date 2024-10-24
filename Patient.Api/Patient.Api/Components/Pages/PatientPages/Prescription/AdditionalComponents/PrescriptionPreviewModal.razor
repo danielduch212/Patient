@@ -11,8 +11,7 @@
     <div class="modal" tabindex="-1" style="display:block;">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Recepta</h5>
-                <button type="button" class="btn-close" @onclick="CloseModal"></button>
+                <h5 class="modal-title">Recepta</h5>              
             </div>
             <div class="modal-body">
                 @if (loading)
@@ -20,32 +19,37 @@
                     <div class="row text-center">
                         <MudProgressCircular Color="Color.Primary" Indeterminate="true"></MudProgressCircular>
                     </div>
-
                 }
                 else
                 {
                     <div class="container">
                         <div class="row">
-                            <p>Kod recepty</p>
-                            <small>Data wystawienia: @prescription.DateOfIssue</small>
-                            <small>Data ważności: @prescription.DateOfExpiration</small>
+                            <div class="col text-start">
+                                <strong>Data wystawienia: @prescription.DateOfIssue</strong>
+                            </div>
+                            <div class="col text-start">
+                                <strong>Data ważności: @prescription.DateOfExpiration</strong>
+                            </div>
+                            <strong class="text-start pb-5">Kod recepty: 3214</strong>
+                                                     
                         </div>
                         <div class="row">
-                            <div class="col">
-                                <p>Lekarz wystawiający</p>
-                                <small>@prescription.DoctorName</small>
-                                <small>@prescription.DoctorSurname</small>
-                                @* <small>@doctor.DoctorNumber</small> *@
+                            <div class="col text-start">
+                                <small style="display: block;">Lekarz wystawiający</small>
+                                <strong>@prescription.DoctorName</strong>
+                                <strong>@prescription.DoctorSurname</strong>
+                                @* <small>@prescription.DoctorNumber</small> *@
                             </div>
-                            <div class="col">
-                                <p>Dane pacjenta</p>
-                                <small>@PrescriptionData.CurrentPatient.Name</small>
-                                <small>@PrescriptionData.CurrentPatient.Surname</small>
-                                <small>@PrescriptionData.CurrentPatient.Pesel</small>
+                            <div class="col text-start">
+                                <small style="display: block;">Dane pacjenta</small>                               
+                                <strong>@PrescriptionData.CurrentPatient.Name</strong>
+                                <strong>@PrescriptionData.CurrentPatient.Surname</strong>
+                                <small style="display: block;">Pesel</small>
+                                <strong style="display: block;">@PrescriptionData.CurrentPatient.Pesel</strong>
                             </div>
                         </div>
-                        <div class="row">
-                            <p>Leki</p>
+                        <div class="row text-start">
+                            <strong>Leki</strong>
                             @foreach(var medicineName in prescription.MedicineNames)
                             {
                                 <small>@medicineName</small>
@@ -53,8 +57,8 @@
                             
                         </div>
                         <div class="row">
-                            <p>Opis dawkowania</p>
-                            <p>@prescription.Description</p>
+                            <strong>Opis dawkowania</strong>
+                            <strong>@prescription.Description</strong>
                         </div>                    
                     </div>
                 }               
@@ -84,7 +88,7 @@
     {
         loading = true;
         prescription = PrescriptionData.CurrentPrescription;
-        await Task.Delay(1000);
+        await Task.Delay(100);
         loading = false;
         StateHasChanged();
     }

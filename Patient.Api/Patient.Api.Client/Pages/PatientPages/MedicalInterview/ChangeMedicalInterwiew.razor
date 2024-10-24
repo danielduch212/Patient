@@ -42,41 +42,37 @@
                 <div class="list-group-item" id="@item.IdToDistinction">
                     <div class="row p-2">
                         <div class="col-10">
-                            <p><strong>Nazwa</strong></p>
-                            <p>@item.Disease.Name</p>
+                            <p><strong>@item.Disease.Name</strong></p>
                         </div>
                         <div class="col">
                             <div class="col-2 d-flex justify-content-center align-items-center">
-                                <button class="btn btn-danger" @onclick="(()=>RemoveDisease(item))">
-                                    <i class="bi bi-trash"></i> Usuń
+                                <button class="btn btn-danger" style="max-width: 70px; max-height:70px; border-radius: 30%;" @onclick="(()=>RemoveDisease(item))">
+                                    <i class="bi-trash"></i> Usuń
                                 </button>
                             </div>
                         </div>
                     </div>
-                    <div class="row mt-3">
-                        <div class="col-10">
-                            <p>Opisz swoje dotychczasowe odczucia związane z chorobą: (nie wymagane)</p>
-                            <textarea class="form-control" @bind="item.UserExperienceWithDisease" rows="3" placeholder="Opisz dawkowanie"></textarea>
-
-                        </div>
-                        <div class="col">
-                        </div>
+                    <div class="row mt-1">                        
+                        <p>Opisz swoje dotychczasowe odczucia związane z chorobą: (nie wymagane)</p>
+                        <textarea class="form-control" @bind="item.UserExperienceWithDisease" rows="3" style="resize: none;"></textarea>                       
                     </div>
                 </div>
             }
         </section>
+        
         <section>
-            <div class="row text-center">
-                <p>Jeżeli jesteś tutaj dla profilaktyki - kliknij tutaj: </p>
-                <btn type="button" class="btn btn-outline-primary btn-custom-outline">
-                    Profilaktyka
+            <div class="row text-center pt-5">
+                <btn type="button" class="btn btn-primary btn-custom-primary" style="max-width: auto;" @onclick="HandleAddDiseases">
+                    Zatwierdz
                 </btn>
             </div>
         </section>
+
         <section>
-            <div class="row text-center">
-                <btn type="button" class="btn btn-primary btn-custom-primary" @onclick="HandleAddDiseases">
-                    Zatwierdz
+            <div class="row text-center pt-5">
+                <strong>Jeżeli jesteś tutaj dla profilaktyki - kliknij tutaj: </strong>
+                <btn type="button" class="btn btn-outline-primary btn-custom-outline" style="max-width: auto;">
+                    Profilaktyka
                 </btn>
             </div>
         </section>
@@ -106,6 +102,8 @@
     private bool addingData;
 
     private List<PatientsDiseaseDto> patientsDiseases = new();
+
+
 
     private async Task<IEnumerable<Disease>> GetDiseasesBySearchPhrase(string searchTerm)
     {

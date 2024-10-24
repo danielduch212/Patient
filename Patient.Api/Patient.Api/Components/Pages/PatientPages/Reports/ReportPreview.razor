@@ -12,6 +12,7 @@
 
 @inject IPatientApiService _patientApiService
 @inject IBlobStorageService _blobStorageService
+@inject IManageService _manageService
 
 
 @implements IDisposable
@@ -59,16 +60,15 @@
     {
         readingReport = true;
         reportToShow = await _patientApiService.GetReport(Id, TokenSource.Token);
-        if (reportToShow.FileNames.Any())
+        if (reportToShow.FilesPreviewData.Any())
         {
-            foreach (var filename in reportToShow.FileNames)
+            foreach (var filePreviewData in reportToShow.FilesPreviewData)
             {
-                var url = await _blobStorageService.GetBlobSasUrl(filename, BlobContainerNames.ReportsFiles);
-                reportToShow.FilesBase64.Add(await LoadImageBase64(url));
+                var url = await _blobStorageService.GetBlobSasUrl(filePreviewData.FileUrl, BlobContainerNames.ReportsFiles);
+                filePreviewData.FileBase64 = await _manageService.LoadImageBase64(url);
+                
             }
-        }
-
-        
+        }        
         readingReport = false;
         StateHasChanged();
     }
@@ -81,22 +81,6 @@
         // medicalFileToShowPreview.FileBase64 = await LoadImageBase64(medicalFileToShowPreview.FileUrl);
         // loadingDocument = false;
         // StateHasChanged();
-    }
-
-    private async Task<string> LoadImageBase64(string url)
-    {
-        using (var _httpClient = new HttpClient())
-        {
-            var response = await _httpClient.GetAsync(url);
-            if (response.IsSuccessStatusCode)
-            {
-                var imageBytes = await response.Content.ReadAsByteArrayAsync();
-                return $"data:image/jpeg;base64,{Convert.ToBase64String(imageBytes)}";
-
-            };
-            return null;
-        }
-
     }
 
     public void Dispose()

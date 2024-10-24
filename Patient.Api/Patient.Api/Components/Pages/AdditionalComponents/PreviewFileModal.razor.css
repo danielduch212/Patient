@@ -6,6 +6,7 @@
     width: 50rem;
     height: 75rem;
     z-index: 1050;
+    transform: translate(55%, 14%);
     border-radius: 10px;
     justify-content: center;
     text-align: center;

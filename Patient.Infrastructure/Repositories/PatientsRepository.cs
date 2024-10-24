@@ -12,7 +12,7 @@ internal class PatientsRepository(PatientDbContext dbContext) : IPatientsReposit
         var result = await dbContext.Doctors
             .Include(d => d.Patients)
             .Where(d => d.Id == doctorId)
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(cancellationToken);
         return result.Patients.ToList();
     }
     public async Task<int> CountDoctorsPatients(string doctorId, CancellationToken cancellationToken)
@@ -20,7 +20,7 @@ internal class PatientsRepository(PatientDbContext dbContext) : IPatientsReposit
         var resultsNumber = await dbContext.Doctors
             .Where(d => d.Id == doctorId)
             .SelectMany(d => d.Patients)
-            .CountAsync();
+            .CountAsync(cancellationToken);
         return resultsNumber;
     }
 }

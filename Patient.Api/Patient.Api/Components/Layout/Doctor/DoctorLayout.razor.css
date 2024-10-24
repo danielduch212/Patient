@@ -17,6 +17,7 @@ body {
 
 main {
     flex: 1;
+    overflow-y: auto;
 }
 
 .menu-bar {

@@ -1,26 +1,6 @@
 ﻿
 
 
-.file-block {
-    display: inline-block;
-    position: relative;
-    width: 4.5rem;
-    height: 5rem;
-    margin-block: 1rem;
-    margin-left: 2rem;
-    margin-right: 2rem;
-    border: 2px solid black;
-}
-
-.font-10px {
-    font-size: 10px;
-}
-
-.report {
-    border: 1px solid black;
-    border-radius: 10px;
-}
-
 
 .modal {
     position: fixed;

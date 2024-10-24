@@ -50,7 +50,7 @@ internal class CreateReportCommandHandler(ILogger<CreateReportCommandHandler> lo
                 PatientId = user.Id,
                 DateOfCreating = DateTime.Today.ToString("yyyy-MM-dd"),
                 DoctorsToCheck = doctorsToCheck,
-                PatientsHealthRating = 2,
+                PatientsHealthRating = request.PatientsHealthRating,
                 PatientsSymptoms = request.PatientsSymptoms,
                 PatientsAnswersForQuestions = request.PatientsAnswers,
 

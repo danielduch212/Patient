@@ -1,6 +1,7 @@
 ﻿@using Patient.Domain.Entities.DTOs.Reports
 @using Shared.Constants
 @using Shared.AdditionalClasses
+@using Patient.Domain.Entities.Additional
 
 <div class="container" style="max-width: 70%; color: white;">
 
@@ -45,15 +46,11 @@
                         <div class="d-flex ">
                             @for (int i = 0; i < ReportToShow.PatientsHealthRating; i++)
                             {
-                                <div class="bi-heart-icon">
-                                    <div class="bi-heart-fill"></div>
-                                </div>
+                                <div class="bi-heart-icon bi-heart-fill"></div>
                             }
                             @for (int i = 0; i < (10 - ReportToShow.PatientsHealthRating); i++)
                             {
-                                <div class="bi-heart-icon">
-                                    <div class="bi-heart-unfill"></div>
-                                </div>
+                                <div class="bi-heart-icon bi-heart-unfill"></div>
                             }
                         </div>
                     </div>
@@ -83,18 +80,18 @@
                                         @foreach (var item in @patientsAnswers)
                                         {
                                             <div class="list-group-item" @key="item.Id">
-                                                <div class="row mt-2 mb-2 justify-content-center text-center">
-                                                    <h6 class="text-start">@questionList[item.Id]</h6>
-                                                    <h6>@item.Answer</h6>
+                                                <div class="row mt-2 mb-2 justify-content-center text-start">
+                                                    <strong class="text-start">@questionList[item.Id]</strong>
+                                                    <small>@item.Answer</small>
                                                 </div>
                                             </div>
                                         }
+                                        <div class="list-group-item">
+                                            <strong>Dodatkowy opis</strong>
+                                            <small>@ReportToShow.Description</small>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <p>Dodatkowy opis</p>
-                                        <p>@ReportToShow.Description</p>
-                                    </div>
-
+                                   
                                 </div>
                             </div>
                         </div>
@@ -114,7 +111,7 @@
                         <div class="row d-flex mt-4 mb-4">
                             @foreach (var item in ReportToShow.PatientsSymptoms)
                             {
-                                <span class="badge bg-primary badge-item-custom mr-2 mb-2">@item</span>
+                                <span class="badge badge-item-custom mr-2 mb-2">@item</span>
                             }
                         </div>
                     </div>
@@ -130,15 +127,10 @@
                     </div>
                     <div class="col">
                         <h4>Pliki</h4>
-                        @foreach (var file in ReportToShow.FilesBase64)
+                        @foreach (var filePreviewData in ReportToShow.FilesPreviewData)
                         {
-                            <div class="file-block mx-2" style="cursor: pointer;" @onclick="() => HandleShowFile(filePostionOnListCounter)">
-                                <div class="bi-x-circle"></div>
-                                <div class="bi-file-icon"></div>
-                            </div>
-                            filePostionOnListCounter += 1; 
-
-                        }
+                            <div class="bi-file-icon mx-2" style="cursor: pointer;" @onclick="() => HandleShowFile(filePreviewData)"></div>
+                        }                       
                     </div>
                 </div>
             </section>
@@ -158,9 +150,11 @@
 </div>
 @if (showPreviewFileModal)
 {
-    <CascadingValue Value="previewFileModalData">
-        <Patient.Api.Components.Pages.AdditionalComponents.PreviewFileModal OnClose="CloseModalFilePreview" />
-    </CascadingValue>
+
+    <Patient.Api.Components.Pages.AdditionalComponents.PreviewFileModal CurrentFileBase64="@filePreviewDataToShow.FileBase64"
+                                                                        CurrentFileName="@filePreviewDataToShow.FileName" OnClose="CloseModalFilePreview" 
+                                                                        CustomStyle="custom-style-class" />
+
 }
 @if (showPatientModal)
 {
@@ -186,11 +180,9 @@
     private List<Shared.AdditionalClasses.AnswerItem> patientsAnswers = new();
 
 
-    //file
     //PreviewFileModal
     private bool showPreviewFileModal;
-    private PreviewFileModalData previewFileModalData = new();
-    private int filePostionOnListCounter;
+    private FilePreviewData filePreviewDataToShow = new();
 
     //showpatient
     private bool showPatientModal;
@@ -219,18 +211,17 @@
 
     //file
 
-    private void HandleShowFile(int positionOnTheList)
+    private void HandleShowFile(FilePreviewData filePreviewData)
     {
-        previewFileModalData.CurrentFileBase64 = ReportToShow.FilesBase64.ElementAt(positionOnTheList);
-        previewFileModalData.CurrentFileName = ReportToShow.FileNames.ElementAt(positionOnTheList);
-        previewFileModalData.ShowPreviewFileModal = true;
+        filePreviewDataToShow = filePreviewData;
+        showPreviewFileModal = true;
 
         StateHasChanged();
     }
 
     private void CloseModalFilePreview()
     {
-        previewFileModalData.ShowPreviewFileModal = false;
+        showPreviewFileModal = false;
         StateHasChanged();
     }
 
@@ -245,12 +236,5 @@
         showPatientModal = false;
     }
 
-
-    //klasy pomocnicze
-    public class PreviewFileModalData()
-    {
-        public string CurrentFileBase64 { get; set; } = "";
-        public string CurrentFileName { get; set; } = "";
-        public bool ShowPreviewFileModal { get; set; }
-    }
+    
 }

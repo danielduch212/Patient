@@ -27,10 +27,12 @@
             <section class="mt-5 mb-3">
                 <div class="row">
                     <h4>Pliki</h4>
+                    <Patient.Api.Client.Layout.ManageComponents.StatusMessage Message="@errorMessage"/>
                     <p>Wgraj pliki (np. zdjęcia zmian skórnych lub innych jeśli chcesz)</p>
                 </div>
                 <div class="row">
                     <div>
+                        <small>Maksymalny rozmiar pliku: 10mb</small>
                         <InputFile OnChange="HandleFileSelected" multiple id="File" class="form-control"></InputFile>
                     </div>
                 </div>
@@ -98,7 +100,8 @@
     [Parameter]
     public EventCallback OnPrevious { get; set; }
 
-
+    //error
+    private string? errorMessage;
 
     private async void HandleAddReport()
     {
@@ -117,7 +120,7 @@
 
 
         var response = await _userApiService.SendAddReportRequest(ReportDto);
-        await Task.Delay(1000);
+        await Task.Delay(100);
         if (response.IsSuccessStatusCode)
         {
             isReportBeingAdded = false;
@@ -138,6 +141,9 @@
 
     private async void HandleFileSelected(InputFileChangeEventArgs e)
     {
+        var allowedFormats = new List<string> { "image/jpeg", "image/png", "application/pdf" };
+
+
         var currentGivenFiles = e.GetMultipleFiles();
         files = ReportDto.Files.ToList();
 
@@ -145,6 +151,16 @@
         {
             foreach (var file in currentGivenFiles)
             {
+                if (file.Size > maxAllowedSize)
+                {
+                    errorMessage = $"Plik: {file.Name} jest za duży";
+                    continue;
+                }
+                if(!allowedFormats.Contains(file.ContentType))
+                {
+                    errorMessage = $"Plik: {file.Name} nieprawidłowy typ pliku";
+                    continue;
+                }
                 filesPreview.Add(file);
             }
         }

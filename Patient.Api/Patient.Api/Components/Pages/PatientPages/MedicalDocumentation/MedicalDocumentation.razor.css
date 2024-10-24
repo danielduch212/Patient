@@ -1,14 +1,4 @@
 ﻿
-.file-block {
-    display: inline-block;
-    position: static;
-    width: 4.5rem;
-    height: 5rem;
-    margin-block: 1rem;
-    margin-left: 2rem;
-    margin-right: 2rem;
-    border: 2px solid black;
-}
 
 .font-10px {
     font-size: 10px;

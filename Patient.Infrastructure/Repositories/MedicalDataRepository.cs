@@ -12,12 +12,12 @@ internal class MedicalDataRepository(PatientDbContext dbContext) : IMedicalDataR
 {
     public async Task SaveChanges(CancellationToken cancellationToken)
     {        
-        await dbContext.SaveChangesAsync();
+        await dbContext.SaveChangesAsync(cancellationToken);
     }
 
     public async Task<List<MedicalFile>> GetPatientFiles(string patientId, CancellationToken cancellationToken)
     {
-        var results = await dbContext.MedicalFiles.Where(m=>m.PatientId == patientId).ToListAsync();
+        var results = await dbContext.MedicalFiles.Where(m=>m.PatientId == patientId).ToListAsync(cancellationToken);
         return results;
     }
     

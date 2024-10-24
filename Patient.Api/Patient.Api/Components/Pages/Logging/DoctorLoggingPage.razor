@@ -99,6 +99,8 @@
         var resultCheckPassword = await _signInManager.CheckPasswordSignInAsync(user, Input.Password, false);
         if (user == null || !resultCheckPassword.Succeeded)
         {
+            errorMessage = "Nieprawidlowy email lub hasło";
+            badRequest = true;
             return;
         }
         var claimsPrincipal = await _signInManager.CreateUserPrincipalAsync(user);

@@ -14,11 +14,13 @@
                 {
                     <MudListItem @key="item.Id">
                         <div class="row p-2">
-                            <small>@item.DoctorSpecializations.FirstOrDefault()</small>
-                            <div class="col text-center justify-content-center align-items-center">
+                            <strong>@item.DoctorSpecializations.FirstOrDefault()</strong>
+                            <div class="col text-start justify-content-center align-items-center">
+                                <small>Imie i nazwisko</small>
                                 <p>@item.Name @item.Surname</p>
                             </div>
-                            <div class="col">
+                            <div class="col text-start">
+                                <small>Nr lekarza</small>
                                 <p>@item.DoctorNumber</p>
                             </div>
                         </div>
@@ -28,7 +30,7 @@
                 @if (patientsDoctors.Count() == 0)
                 {
                     <MudListItem >
-                        Nie posiadasz jeszcze żadnych przypisanych lekarzy
+                        <small>Nie posiadasz jeszcze żadnych przypisanych lekarzy</small>
                     </MudListItem>
                 }
             </MudList>

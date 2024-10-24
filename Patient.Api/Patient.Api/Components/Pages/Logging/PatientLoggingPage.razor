@@ -68,7 +68,6 @@
     private string? errorMessage;
 
     private string SecurityToken { get; set; }
-    private bool badRequest;
     private string email;
     private string password;
 
@@ -101,7 +100,6 @@
         else
         {
             errorMessage = "Nieprawidlowy email lub hasło";
-            badRequest = true;
         }       
 
     }

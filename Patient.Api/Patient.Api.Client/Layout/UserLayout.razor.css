@@ -1,5 +1,6 @@
 body{
     overflow-x: hidden;
+    
 }
 
 .page {
@@ -13,12 +14,14 @@ body{
     background-attachment: fixed;
     width: 100vw;
     height: 100vh;
+    
 }
 
 
 
 main {
     flex: 1;
+    overflow-y: auto;
 }
 
 .menu-bar{
