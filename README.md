@@ -31,15 +31,7 @@ Patient has also his Prescriptions, Reports - as I mentioned - and his diseases 
 Soon
 
 
-## How to run/test the project:
 
-I created 2 users: 
-- Patient (email: patient@patient.com / password: Password1!)
-- Doctor (email: doctor@doctor.com / password: Password1!)
-
-They are for test to show you functionality - but you can of course use Registeration to create your profiles. after you log to fresh patient account - remember to fullfill medical interview.
-
-Okay to test app visit: https://dzielny-pacjent.pl/
 
 And here it is quick presentation of some components:
 
