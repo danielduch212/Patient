@@ -1,7 +1,5 @@
 # Patient App
 
-Working app here: https://dzielny-pacjent.pl/
-Working in progress.. (still developing)
 
 ## Introduction
 
